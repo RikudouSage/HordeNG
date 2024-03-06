@@ -1827,11 +1827,6 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.0.tgz#96116f2a912e0c02817345b3c10751069920d553"
   integrity sha512-+9jVqKhRSpsc591z5vX+X5Yyw+he/HCB4iQ/RYxw35CEPaY1gnsNE43nf9n9AaYjAQrTiI/mOwKUKdUs9vf7Xg==
 
-"@thunder04/supermap@^3.0.2":
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/@thunder04/supermap/-/supermap-3.0.4.tgz#6cb5cdcfafd7dcb7167b9249f12020d2f66076c9"
-  integrity sha512-LiPOoZ/a0L9I9+a0F3Ba4VMQIkZ4gAG0hBT9eqMWc+pjohSsYpxiMbyego+UxUk4nzh9yCHVWjYx3o6B7EGPhg==
-
 "@tufjs/canonical-json@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@tufjs/canonical-json/-/canonical-json-2.0.0.tgz#a52f61a3d7374833fca945b2549bc30a2dd40d0a"
@@ -2174,13 +2169,6 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
   integrity sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==
-
-"@zeldafan0225/ai_horde@^5.0.11":
-  version "5.0.11"
-  resolved "https://registry.yarnpkg.com/@zeldafan0225/ai_horde/-/ai_horde-5.0.11.tgz#945f5311c92ad3c2eaee6c6069bda8c5f08ebe83"
-  integrity sha512-LrXX2QqgDJOsF5OfUsZOLRvxhpQ4Nl1E3xWEZ+Tg8j9azEGlvO9LoG7BB+shEaf9A46vOnRM7excbq07lLAIOw==
-  dependencies:
-    "@thunder04/supermap" "^3.0.2"
 
 abbrev@^2.0.0:
   version "2.0.0"
