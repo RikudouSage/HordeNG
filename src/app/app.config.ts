@@ -11,7 +11,7 @@ import {defaultTranslocoMarkupTranspilers} from "ngx-transloco-markup";
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideClientHydration(),
+    // provideClientHydration(),
     provideHttpClient(withFetch()),
     provideTransloco({
       config: {

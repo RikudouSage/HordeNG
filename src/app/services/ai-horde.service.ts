@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {HttpMethod} from "../types/http-method";
 import {catchError, map, Observable, of} from "rxjs";
 import {ApiResponse} from "../types/api-response";
 import {environment} from "../../environments/environment";
 import {ErrorResponse} from "../types/error-response";
+import {AuthManagerService} from "./auth-manager.service";
+import {UserDetails} from "../types/horde/user-details";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,12 @@ import {ErrorResponse} from "../types/error-response";
 export class AiHorde {
   constructor(
     private readonly httpClient: HttpClient,
+    private readonly authManager: AuthManagerService,
   ) {
+  }
+
+  public currentUser(): Observable<ApiResponse<UserDetails>> {
+    return this.sendRequest(HttpMethod.Get, `find_user`);
   }
 
   private sendRequest<T>(
@@ -23,9 +30,7 @@ export class AiHorde {
   ): Observable<ApiResponse<T>> {
     headers ??= {};
     headers['Client-Agent'] = `${environment.appName}:${environment.appVersion}:${environment.maintainer}`;
-    // if (this.authManager.currentInstanceSnapshot.apiKey) {
-    //   headers['apikey'] ??= this.authManager.currentInstanceSnapshot.apiKey;
-    // }
+    headers['apikey'] ??= this.authManager.apiKey;
 
     let url = this.createUrl(endpoint);
     if (method === HttpMethod.Get && body !== null) {
