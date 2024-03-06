@@ -30,7 +30,7 @@ export class AiHorde {
   ): Observable<ApiResponse<T>> {
     headers ??= {};
     headers['Client-Agent'] = `${environment.appName}:${environment.appVersion}:${environment.maintainer}`;
-    headers['apikey'] ??= this.authManager.apiKey;
+    headers['apikey'] ??= this.authManager.apiKey();
 
     let url = this.createUrl(endpoint);
     if (method === HttpMethod.Get && body !== null) {

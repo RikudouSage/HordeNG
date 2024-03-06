@@ -1,17 +1,14 @@
-import { Injectable } from '@angular/core';
+import {Injectable, Signal, signal, WritableSignal} from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthManagerService {
-  private readonly defaultApiKey = '0000000000';
+  public readonly anonymousApiKey = '0000000000';
+  private _apiKey: WritableSignal<string> = signal(typeof localStorage === 'undefined' ? this.anonymousApiKey : localStorage.getItem('ai_horde_api_key') ?? this.anonymousApiKey);
 
-  public get apiKey(): string {
-    if (typeof localStorage === 'undefined') {
-      return this.defaultApiKey;
-    }
-
-    return localStorage.getItem('ai_horde_api_key') ?? this.defaultApiKey;
+  public get apiKey(): Signal<string> {
+    return this._apiKey;
   }
 
   public set apiKey(apiKey: string) {
@@ -20,5 +17,6 @@ export class AuthManagerService {
     }
 
     localStorage.setItem('ai_horde_api_key', apiKey);
+    this._apiKey.set(apiKey);
   }
 }

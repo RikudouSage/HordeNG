@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, effect, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {TopMenuComponent} from "./components/top-menu/top-menu.component";
 import {AiHorde} from "./services/ai-horde.service";
+import {AuthManagerService} from "./services/auth-manager.service";
+import {toPromise} from "./helper/resolvable";
 
 @Component({
   selector: 'app-root',
@@ -13,10 +15,16 @@ import {AiHorde} from "./services/ai-horde.service";
 export class AppComponent implements OnInit {
   constructor(
     private readonly aiHorde: AiHorde,
+    private readonly authManager: AuthManagerService,
   ) {
   }
 
-  ngOnInit(): void {
-    this.aiHorde.currentUser().subscribe(user => console.log(user));
+  public async ngOnInit(): Promise<void> {
+    if (this.authManager.apiKey() !== this.authManager.anonymousApiKey) {
+      const user = await toPromise(this.aiHorde.currentUser());
+      if (!user.success) {
+        this.authManager.apiKey = this.authManager.anonymousApiKey;
+      }
+    }
   }
 }
