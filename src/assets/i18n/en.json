@@ -1,8 +1,11 @@
 {
+  "app.title.simple": "HordeNG",
   "app.title": "[b]H[/b]orde[b]NG[/b]",
   "app.generate": "Generate",
   "app.images": "Images",
   "app.settings": "Settings",
   "app.horde": "Horde",
-  "app.logo.alt": "Application logo featuring a robot"
+  "app.logo.alt": "Application logo featuring a robot",
+  "app.about.intro": "{{app.title.simple}} is yet another AI Horde frontend. The design is inspired by Artificial Art and Stable UI. This project aims to be a feature complete frontend for AI Horde while maintaining the simplicity of the aforementioned inspirations.",
+  "app.about.author": "{{app.title.simple}} was created by rikudou."
 }
