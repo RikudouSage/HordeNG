@@ -10,4 +10,5 @@ import {TopMenuComponent} from "./components/top-menu/top-menu.component";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
+
 }
