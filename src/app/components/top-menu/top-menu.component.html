@@ -1,0 +1,34 @@
+<ul>
+  <li>
+    <a routerLink="/generate" class="logo">
+      <img ngSrc="/assets/logo-64x64.png" height="64" width="64" alt="{{'app.logo.alt' | transloco}}"/>
+      <span>
+        <transloco key="app.title" />
+      </span>
+    </a>
+  </li>
+  <li>
+    <a routerLink="/generate">
+      <fa-icon [icon]="iconSliders" />
+      <span>{{'app.generate' | transloco}}</span>
+    </a>
+  </li>
+  <li>
+    <a routerLink="/images">
+      <fa-icon [icon]="iconImages" />
+      <span>{{'app.images' | transloco}}</span>
+    </a>
+  </li>
+  <li>
+    <a routerLink="/horde">
+      <fa-icon [icon]="iconHorde" />
+      <span>{{'app.horde' | transloco}}</span>
+    </a>
+  </li>
+  <li>
+    <a routerLink="/settings">
+      <fa-icon [icon]="iconSettings" />
+      <span>{{'app.settings' | transloco}}</span>
+    </a>
+  </li>
+</ul>

@@ -1,0 +1,51 @@
+ul {
+  list-style-type: none;
+  display: flex;
+}
+
+li {
+  height: 72px;
+  display: block;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+  height: 100%;
+  padding: 0 10px;
+
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: #18222c;
+    color: #409eff;
+  }
+
+  span {
+    font-variant: small-caps;
+    font-size: 18px;
+  }
+
+  & > * {
+    display: block;
+  }
+}
+
+.logo {
+  padding-right: 20px;
+
+  img {
+    margin-right: 20px;
+  }
+
+  span {
+    font-size: 30px;
+  }
+}
+
+fa-icon {
+  width: 26px;
+  height: 26px;
+  margin-right: 10px;
+}
