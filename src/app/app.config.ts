@@ -8,9 +8,7 @@ import {TranslocoHttpLoader} from './transloco-loader';
 import {provideTransloco} from '@ngneat/transloco';
 import {defaultTranslocoMarkupTranspilers} from "ngx-transloco-markup";
 
-const {AIHorde} = require("@zeldafan0225/ai_horde");
-
-export const AI_HORDE = new InjectionToken<typeof AIHorde>('AIHorde');
+// const {AIHorde} = require("@zeldafan0225/ai_horde");
 
 export const appConfig: ApplicationConfig = {
   providers: [

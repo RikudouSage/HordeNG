@@ -3,5 +3,6 @@
   "app.generate": "Generate",
   "app.images": "Images",
   "app.settings": "Settings",
-  "app.horde": "Horde"
+  "app.horde": "Horde",
+  "app.logo.alt": "Application logo featuring a robot"
 }
