@@ -7,7 +7,7 @@ import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
-import {BoxComponent} from "../../components/box/box.component";
+import {SmallBoxComponent} from "../../components/box/small-box.component";
 import {faCoins, faCrosshairs, faImage} from "@fortawesome/free-solid-svg-icons";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 
@@ -18,7 +18,7 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
     LoaderComponent,
     TranslocoPipe,
     TranslocoMarkupComponent,
-    BoxComponent,
+    SmallBoxComponent,
     FormatNumberPipe
   ],
   templateUrl: './horde.component.html',

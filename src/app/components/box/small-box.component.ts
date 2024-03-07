@@ -4,15 +4,15 @@ import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 
 @Component({
-  selector: 'app-box',
+  selector: 'app-small-box',
   standalone: true,
   imports: [
     FaIconComponent
   ],
-  templateUrl: './box.component.html',
-  styleUrl: './box.component.scss'
+  templateUrl: './small-box.component.html',
+  styleUrl: './small-box.component.scss'
 })
-export class BoxComponent implements OnInit {
+export class SmallBoxComponent implements OnInit {
   public title: InputSignal<string> = input.required();
   public color: InputSignal<string> = input.required();
   public icon: InputSignal<IconDefinition> = input.required();
