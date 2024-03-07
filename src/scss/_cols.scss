@@ -1,9 +1,11 @@
+@use "sass:math";
+
 .row {
   display: flex;
 }
 
 @mixin col($i) {
-  flex-basis: 100% * ($i / 12);
+  flex-basis: 100% * math.div($i, 12);
 }
 
 .col-md-1 {
