@@ -1,17 +1,21 @@
-<div class="row">
-  <div class="col-md-3">
-    <form [formGroup]="form">
-      <div class="form-group">
-        <label for="inputApiKey">{{'app.api_key' | transloco}}</label>
-        <div class="flex">
-          <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="apiKey" class="form-control" id="inputApiKey" />
-          <button class="icon-button" (click)="togglePasswordVisibility()" type="button">
-            <fa-icon [icon]="passwordFieldIcon()" size="lg" />
-          </button>
+@if (loading()) {
+  <app-loader />
+} @else {
+  <div class="row">
+    <div class="col-md-3">
+      <form [formGroup]="form" (ngSubmit)="submitForm()">
+        <div class="form-group">
+          <label for="inputApiKey">{{'app.api_key' | transloco}}</label>
+          <div class="flex">
+            <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="apiKey" class="form-control" id="inputApiKey" />
+            <button class="icon-button" (click)="togglePasswordVisibility()" type="button">
+              <fa-icon [icon]="passwordFieldIcon()" size="lg" />
+            </button>
+          </div>
         </div>
-      </div>
 
-      <button class="btn" type="submit">{{'app.save' | transloco}}</button>
-    </form>
+        <button class="btn" type="submit">{{'app.save' | transloco}}</button>
+      </form>
+    </div>
   </div>
-</div>
+}
