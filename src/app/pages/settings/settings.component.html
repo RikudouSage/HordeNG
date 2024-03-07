@@ -5,11 +5,13 @@
         <label for="inputApiKey">{{'app.api_key' | transloco}}</label>
         <div class="flex">
           <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="apiKey" class="form-control" id="inputApiKey" />
-          <button class="icon-button" (click)="togglePasswordVisibility()">
+          <button class="icon-button" (click)="togglePasswordVisibility()" type="button">
             <fa-icon [icon]="passwordFieldIcon()" size="lg" />
           </button>
         </div>
       </div>
+
+      <button class="btn" type="submit">{{'app.save' | transloco}}</button>
     </form>
   </div>
 </div>
