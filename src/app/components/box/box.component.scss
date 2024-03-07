@@ -1,0 +1,37 @@
+.box {
+  width: 300px;
+  height: 104px;
+  background: #1d1e1f;
+  box-shadow: rgba(0, 0, 0, 0.72) 0 0 12px 0;
+  border-radius: 4px;
+  border: 1px solid #414243;
+  align-items: center;
+  padding: 15px;
+}
+
+.icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 15px;
+  text-align: center;
+
+  fa-icon {
+    height: 60px;
+    line-height: 60px;
+  }
+}
+
+.content-wrapper {
+  flex-direction: column;
+  text-align: left;
+}
+
+.title {
+  color: gray;
+  margin-bottom: 6px;
+}
+
+.content {
+  font-size: 22px;
+}

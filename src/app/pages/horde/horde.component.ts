@@ -7,6 +7,9 @@ import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
+import {BoxComponent} from "../../components/box/box.component";
+import {faCoins, faCrosshairs, faImage} from "@fortawesome/free-solid-svg-icons";
+import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 
 @Component({
   selector: 'app-horde',
@@ -14,7 +17,9 @@ import {TranslocoMarkupComponent} from "ngx-transloco-markup";
   imports: [
     LoaderComponent,
     TranslocoPipe,
-    TranslocoMarkupComponent
+    TranslocoMarkupComponent,
+    BoxComponent,
+    FormatNumberPipe
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
@@ -22,6 +27,10 @@ import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 export class HordeComponent implements OnInit {
   public loading = signal(true);
   public currentUser: WritableSignal<UserDetails | null> = signal(null);
+
+  public kudosIcon = signal(faCoins);
+  public requestedIcon = signal(faImage);
+  public generatedIcon = signal(faCrosshairs);
 
   constructor(
     private readonly horde: AiHorde,

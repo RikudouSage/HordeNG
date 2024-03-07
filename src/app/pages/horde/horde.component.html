@@ -3,7 +3,20 @@
 } @else {
   <div class="row">
     <div class="col-md-12 text-center">
-      <h2><transloco key="app.logged_in_as" [params]="{username: currentUser()!.username}" /></h2>
+      <h1><transloco key="app.logged_in_as" [params]="{username: currentUser()!.username}" /></h1>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-md-12 flex flex-justify-content-center">
+      <app-box [title]="'app.kudos' | transloco" color="#67c23a" [icon]="kudosIcon()">
+        {{currentUser()!.kudos | formatNumber}}
+      </app-box>
+      <app-box [title]="'app.requested' | transloco" color="#f56c6c" [icon]="requestedIcon()">
+        {{currentUser()!.records.request.image | formatNumber}}
+      </app-box>
+      <app-box [title]="'app.generated' | transloco" color="#f56c6c" [icon]="generatedIcon()">
+        {{currentUser()!.records.fulfillment.image | formatNumber}}
+      </app-box>
     </div>
   </div>
 }

@@ -1,0 +1,11 @@
+<div class="flex box">
+  <div class="icon" [style.background-color]="color()">
+    <fa-icon [icon]="icon()" size="1x" />
+  </div>
+  <div class="flex content-wrapper">
+    <span class="title">{{title()}}</span>
+    <div class="content">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
