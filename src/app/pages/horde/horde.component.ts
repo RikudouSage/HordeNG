@@ -7,7 +7,7 @@ import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
-import {SmallBoxComponent} from "../../components/box/small-box.component";
+import {SmallBoxComponent} from "../../components/small-box/small-box.component";
 import {faCoins, faCrosshairs, faImage} from "@fortawesome/free-solid-svg-icons";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 
