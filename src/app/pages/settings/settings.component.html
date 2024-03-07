@@ -1,1 +1,10 @@
-<p>settings works!</p>
+<div class="row">
+  <div class="col-md-3">
+    <form [formGroup]="form">
+      <div class="form-group">
+        <label for="inputApiKey">{{'app.api_key' | transloco}}</label>
+        <input type="password" formControlName="apiKey" class="form-control" id="inputApiKey" />
+      </div>
+    </form>
+  </div>
+</div>
