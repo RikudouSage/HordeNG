@@ -15,3 +15,12 @@ p {
   line-height: 1.5;
   margin-bottom: 20px;
 }
+
+a {
+  color: #409eff;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
