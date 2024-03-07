@@ -1,7 +1,11 @@
 @use "sass:math";
 
-.row {
+.flex {
   display: flex;
+}
+
+.row {
+  @extend .flex;
 }
 
 @mixin col($i) {

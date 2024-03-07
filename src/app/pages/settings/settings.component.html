@@ -3,7 +3,12 @@
     <form [formGroup]="form">
       <div class="form-group">
         <label for="inputApiKey">{{'app.api_key' | transloco}}</label>
-        <input type="password" formControlName="apiKey" class="form-control" id="inputApiKey" />
+        <div class="flex">
+          <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="apiKey" class="form-control" id="inputApiKey" />
+          <button class="icon-button" (click)="togglePasswordVisibility()">
+            <fa-icon [icon]="passwordFieldIcon()" size="lg" />
+          </button>
+        </div>
       </div>
     </form>
   </div>
