@@ -1,0 +1,9 @@
+@if (loading()) {
+  <app-loader />
+} @else {
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <h2><transloco key="app.logged_in_as" [params]="{username: currentUser()!.username}" /></h2>
+    </div>
+  </div>
+}

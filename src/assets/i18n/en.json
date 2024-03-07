@@ -15,5 +15,7 @@
   "app.error": "Error",
   "app.error.form_invalid": "The form is not filled out correctly.",
   "app.error.invalid_api_key": "The provided API key is not valid.",
-  "app.success.settings_form": "The api key was successfully saved."
+  "app.success.settings_form": "The api key was successfully saved.",
+  "app.error.api_error": "There was an api error (code: {{code}}): {{message}}",
+  "app.logged_in_as": "You are logged in as [b]{{username}}[/b]."
 }
