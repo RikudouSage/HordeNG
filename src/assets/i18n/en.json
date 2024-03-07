@@ -20,5 +20,8 @@
   "app.logged_in_as": "You are logged in as [b]{{username}}[/b].",
   "app.kudos": "Kudos",
   "app.requested": "Requested images",
-  "app.generated": "Generated images"
+  "app.generated": "Generated images",
+  "app.horde.status": "Horde status",
+  "app.horde.stats": "There are [b]{{requests}}[/b] queued requests for [b]{{mps}}[/b] MPS with [b]{{workers}}[/b] workers ([b]{{threads}}[/b] threads).",
+  "app.horde.stats_minute": "[b]{{mps}}[/b] MPS have been processed in the past minute."
 }

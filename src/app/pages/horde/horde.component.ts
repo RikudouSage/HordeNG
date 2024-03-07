@@ -10,6 +10,8 @@ import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {SmallBoxComponent} from "../../components/small-box/small-box.component";
 import {faCoins, faCrosshairs, faImage} from "@fortawesome/free-solid-svg-icons";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
+import {BoxComponent} from "../../components/box/box.component";
+import {HordePerformance} from "../../types/horde/horde-performance";
 
 @Component({
   selector: 'app-horde',
@@ -19,14 +21,17 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
     TranslocoPipe,
     TranslocoMarkupComponent,
     SmallBoxComponent,
-    FormatNumberPipe
+    FormatNumberPipe,
+    BoxComponent
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
 })
 export class HordeComponent implements OnInit {
   public loading = signal(true);
+
   public currentUser: WritableSignal<UserDetails | null> = signal(null);
+  public performanceStatus: WritableSignal<HordePerformance | null> = signal(null);
 
   public kudosIcon = signal(faCoins);
   public requestedIcon = signal(faImage);
@@ -40,14 +45,23 @@ export class HordeComponent implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
-    const response = await toPromise(this.horde.currentUser());
-    if (!response.success) {
-      await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
-      this.loading.set(false);
-      return;
+    const responses = await Promise.all([
+      toPromise(this.horde.currentUser()),
+      toPromise(this.horde.getPerformanceStatus()),
+    ]);
+
+    for (const response of responses) {
+      if (!response.success) {
+        await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
+        this.loading.set(false);
+        return;
+      }
     }
 
-    this.currentUser.set(response.successResponse!);
+
+    this.currentUser.set(responses[0].successResponse!);
+    this.performanceStatus.set(responses[1].successResponse!);
+
     this.loading.set(false);
   }
 }
