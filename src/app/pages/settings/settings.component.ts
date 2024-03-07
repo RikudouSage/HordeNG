@@ -7,6 +7,8 @@ import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
 import {LoaderComponent} from "../../components/loader/loader.component";
+import {MessageService} from "../../services/message.service";
+import {TranslatorService} from "../../services/translator.service";
 
 @Component({
   selector: 'app-settings',
@@ -41,6 +43,8 @@ export class SettingsComponent implements OnInit {
   constructor(
     private readonly authManager: AuthManagerService,
     private readonly horde: AiHorde,
+    private readonly messageService: MessageService,
+    private readonly translator: TranslatorService,
   ) {
   }
 
@@ -58,6 +62,7 @@ export class SettingsComponent implements OnInit {
 
   public async submitForm(): Promise<void> {
     if (!this.form.valid) {
+      await this.messageService.error(this.translator.get('app.error.form_invalid'));
       return;
     }
     this.loading.set(true);
@@ -66,7 +71,9 @@ export class SettingsComponent implements OnInit {
     const response = await toPromise(this.horde.currentUser());
     if (!response.success) {
       this.authManager.apiKey = previous;
-      // todo show message
+      await this.messageService.error(this.translator.get('app.error.invalid_api_key'));
+    } else {
+      await this.messageService.success(this.translator.get('app.success.settings_form'));
     }
 
     this.loading.set(false);
