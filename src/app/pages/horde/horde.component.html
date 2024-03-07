@@ -14,7 +14,7 @@
       <app-box [title]="'app.requested' | transloco" color="#f56c6c" [icon]="requestedIcon()">
         {{currentUser()!.records.request.image | formatNumber}}
       </app-box>
-      <app-box [title]="'app.generated' | transloco" color="#f56c6c" [icon]="generatedIcon()">
+      <app-box [title]="'app.generated' | transloco" color="#409eff" [icon]="generatedIcon()">
         {{currentUser()!.records.fulfillment.image | formatNumber}}
       </app-box>
     </div>
