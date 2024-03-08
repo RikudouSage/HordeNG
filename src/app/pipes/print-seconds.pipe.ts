@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {Observable} from "rxjs";
+import {min, Observable} from "rxjs";
 import {TranslatorService} from "../services/translator.service";
 import {toPromise} from "../helper/resolvable";
 
@@ -26,16 +26,15 @@ export class PrintSecondsPipe implements PipeTransform {
     const seconds = remainder;
 
     let shouldPrint = false;
-    const values = {
-      [days]: await toPromise(this.translator.get('app.days')),
-      [hours]: await toPromise(this.translator.get('app.hours')),
-      [minutes]: await toPromise(this.translator.get('app.minutes')),
-      [seconds]: await toPromise(this.translator.get('app.seconds')),
-    };
+    const values = new Map<number, string>();
+    values.set(days, await toPromise(this.translator.get('app.days')));
+    values.set(hours, await toPromise(this.translator.get('app.hours')));
+    values.set(minutes, await toPromise(this.translator.get('app.minutes')));
+    values.set(seconds, await toPromise(this.translator.get('app.seconds')));
 
     let result = '';
-    for (const value of Object.keys(values)) {
-      if (Number(value) > 0) {
+    for (const value of values.keys()) {
+      if (value > 0) {
         shouldPrint = true;
       }
 
@@ -43,7 +42,7 @@ export class PrintSecondsPipe implements PipeTransform {
         continue;
       }
 
-      result += `${Number(value)} ${values[Number(value)]}, `;
+      result += `${value} ${values.get(value)}, `;
     }
 
     result = result.substring(0, result.length - 2);
