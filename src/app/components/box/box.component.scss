@@ -3,6 +3,12 @@
   box-shadow: rgba(0, 0, 0, 0.72) 0 0 12px 0;
   border-radius: 4px;
   border: 1px solid #414243;
+  overflow: hidden;
+  height: auto;
+
+  &.collapsed {
+    height: 47px;
+  }
 }
 
 .card-header {

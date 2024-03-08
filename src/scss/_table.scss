@@ -1,0 +1,13 @@
+.table {
+  width: 100%;
+
+  &.key-value {
+    td:first-child {
+      font-weight: bold;
+    }
+  }
+
+  td {
+    padding: 5px 0;
+  }
+}

@@ -8,6 +8,7 @@ import {ErrorResponse} from "../types/error-response";
 import {AuthManagerService} from "./auth-manager.service";
 import {UserDetails} from "../types/horde/user-details";
 import {HordePerformance} from "../types/horde/horde-performance";
+import {WorkerDetails} from "../types/horde/worker-details";
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,10 @@ export class AiHorde {
 
   public getPerformanceStatus(): Observable<ApiResponse<HordePerformance>> {
     return this.sendRequest(HttpMethod.Get, `status/performance`);
+  }
+
+  public getWorkerDetail(id: string): Observable<ApiResponse<WorkerDetails>> {
+    return this.sendRequest(HttpMethod.Get, `workers/${id}`);
   }
 
   private sendRequest<T>(

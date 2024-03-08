@@ -2,6 +2,7 @@
 
 @import "scss/forms";
 @import "scss/cols";
+@import "scss/table";
 
 * {
   padding: 0;
@@ -37,4 +38,16 @@ a {
 
 h1, h2, h3 {
   font-weight: normal;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.font-weight-normal {
+  font-weight: normal !important;
+}
+
+li {
+  margin-left: 15px;
 }

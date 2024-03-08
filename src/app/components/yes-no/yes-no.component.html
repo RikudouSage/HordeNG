@@ -1,0 +1,7 @@
+@if (value() === null) {
+  <code>{{'app.not_applicable' | transloco}}</code>
+} @else if (value()) {
+  {{'app.yes' | transloco}}
+} @else {
+  {{'app.no' | transloco}}
+}
