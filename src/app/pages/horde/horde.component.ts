@@ -94,7 +94,7 @@ export class HordeComponent implements OnInit {
 
       return response.successResponse!;
     }));
-    this.workers.set(<WorkerDetails[]>workers.filter(worker => worker !== null));
+    this.workers.set(<WorkerDetails[]>workers.filter(worker => worker !== null && worker.type === WorkerType.image));
 
     this.loading.set(false);
   }
