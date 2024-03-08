@@ -20,7 +20,7 @@
     </div>
   </div>
   <div class="row mt-2">
-    <div class="col-md-6 mr-2">
+    <div class="col-md-6 mr-1">
       <app-box [title]="'app.horde.status' | transloco">
         <p>
           <transloco key="app.horde.stats" [params]="{
@@ -33,6 +33,10 @@
         <p>
           <transloco key="app.horde.stats_minute" [params]="{mps: performanceStatus()!.past_minute_megapixelsteps | formatNumber}"/>
         </p>
+      </app-box>
+    </div>
+    <div class="col-md-6">
+      <app-box [title]="'app.workers.yours' | transloco">
       </app-box>
     </div>
   </div>
