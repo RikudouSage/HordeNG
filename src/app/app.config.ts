@@ -1,4 +1,4 @@
-import {ApplicationConfig, isDevMode} from '@angular/core';
+import {ApplicationConfig, InjectionToken, isDevMode} from '@angular/core';
 import {provideRouter} from '@angular/router';
 
 import {routes} from './app.routes';
@@ -9,6 +9,12 @@ import {provideTransloco} from '@ngneat/transloco';
 import {defaultTranslocoMarkupTranspilers} from "ngx-transloco-markup";
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {provideToastr} from "ngx-toastr";
+import {ImageStorage} from "./services/image-storage/image-storage";
+import {IndexedDbImageStorage} from "./services/image-storage/indexed-db.image-storage";
+import {S3ImageStorage} from "./services/image-storage/s3.image-storage";
+import {Credentials} from "./types/credentials/credentials";
+
+export const IMAGE_STORAGE = new InjectionToken<ImageStorage<Credentials>>('ImageStorage');
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,5 +44,7 @@ export const appConfig: ApplicationConfig = {
       extendedTimeOut: 2_000,
       progressBar: true,
     }),
+    {useClass: IndexedDbImageStorage, provide: IMAGE_STORAGE, multi: true},
+    {useClass: S3ImageStorage, provide: IMAGE_STORAGE, multi: true},
   ],
 };
