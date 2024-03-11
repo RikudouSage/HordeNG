@@ -81,7 +81,8 @@
                       seed: result()!.seed,
                       id: result()!.id,
                       workerId: result()!.workerId,
-                      workerName: result()!.workerName
+                      workerName: result()!.workerName,
+                      kudosCost: result()!.kudos | formatNumber
                     }"/>
                   </p>
                   @if (result()!.censored) {

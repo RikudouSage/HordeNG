@@ -23,6 +23,7 @@ import {GenerationResult} from "../../types/horde/generation-result";
 import {BlobToUrlPipe} from "../../pipes/blob-to-url.pipe";
 import {JobMetadata} from "../../types/job-metadata";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
+import {RequestStatusFull} from "../../types/horde/request-status-full";
 
 interface Result {
   width: number;
@@ -34,6 +35,7 @@ interface Result {
   seed: string;
   id: string;
   censored: boolean;
+  kudos: number;
 }
 
 @Component({
@@ -165,7 +167,10 @@ export class GenerateImageComponent implements OnInit {
 
       if (status.done) {
         this.loading.set(true);
-        const job = this.inProgress()!;
+        const job = this.inProgress() ?? (await this.database.getJobsInProgress())[0] ?? null;
+        if (job === null) {
+          throw new Error("Job cannot be null");
+        }
 
         const resultResponse = await toPromise(this.api.getGeneratedImageResult(job));
         if (!resultResponse.success) {
@@ -175,8 +180,8 @@ export class GenerateImageComponent implements OnInit {
         }
 
         const result = resultResponse.successResponse!;
-        const metadata = await this.database.getJobMetadata(job);
-        await this.downloadImages(result.generations, metadata!);
+        const metadata = (await this.database.getJobMetadata(job))!;
+        await this.downloadImages(result, metadata);
 
         if (this.inProgress()) {
           await this.database.deleteInProgressJob(this.inProgress()!);
@@ -235,7 +240,8 @@ export class GenerateImageComponent implements OnInit {
     };
   }
 
-  private async downloadImages(generations: GenerationResult[], metadata: JobMetadata): Promise<void> {
+  private async downloadImages(result: RequestStatusFull, metadata: JobMetadata): Promise<void> {
+    const generations = result.generations;
     const promises: Array<Promise<HttpResponse<Blob>>> = [];
     for (const generation of generations) {
       promises.push(toPromise(this.httpClient.get(generation.img, {observe: 'response', responseType: 'blob'})));
@@ -248,6 +254,7 @@ export class GenerateImageComponent implements OnInit {
       return;
     }
 
+    console.log(result);
     this.result.set({
       source: URL.createObjectURL(image),
       width: metadata.width,
@@ -258,6 +265,7 @@ export class GenerateImageComponent implements OnInit {
       workerName: generations[0].worker_name,
       seed: generations[0].seed,
       id: generations[0].id,
+      kudos: result.kudos,
     });
   }
 }
