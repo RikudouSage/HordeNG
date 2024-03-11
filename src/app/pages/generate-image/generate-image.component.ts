@@ -27,7 +27,7 @@ import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 interface Result {
   width: number;
   height: number;
-  source: Blob;
+  source: string;
   workerId: string;
   workerName: string;
   model: string;
@@ -198,6 +198,9 @@ export class GenerateImageComponent implements OnInit {
       return;
     }
     this.loading.set(true);
+    if (this.result()) {
+      URL.revokeObjectURL(this.result()!.source);
+    }
     this.result.set(null);
     const response = await toPromise(this.api.generateImage(this.formAsOptions));
     if (!response.success) {
@@ -246,7 +249,7 @@ export class GenerateImageComponent implements OnInit {
     }
 
     this.result.set({
-      source: image,
+      source: URL.createObjectURL(image),
       width: metadata.width,
       height: metadata.height,
       workerId: generations[0].worker_id,

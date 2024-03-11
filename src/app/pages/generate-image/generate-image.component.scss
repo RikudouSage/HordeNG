@@ -15,6 +15,10 @@
     width: 100%;
     height: auto;
   }
+
+  & > div {
+    padding: 1vh 1vw;
+  }
 }
 
 .progress {

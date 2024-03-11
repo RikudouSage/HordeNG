@@ -69,7 +69,9 @@
           <div class="col-md-12">
             <div id="image-wrapper">
               @if (result()) {
-                <img src="{{result()!.source | blobToUrl}}"/>
+                <a href="{{result()!.source}}" target="_blank">
+                  <img src="{{result()!.source}}"/>
+                </a>
                 <div class="mt-2">
                   <p>
                     <transloco key="app.generate.result.info" [params]="{
