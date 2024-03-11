@@ -3,6 +3,8 @@ import {JobInProgress} from "../types/db/job-in-progress";
 import {GenerationOptions} from "../types/db/generation-options";
 import {Sampler} from "../types/horde/sampler";
 import {JobMetadata} from "../types/job-metadata";
+import {AppSetting} from "../types/app-setting";
+import {Credentials} from "../types/credentials/credentials";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,21 @@ export class DatabaseService {
     Images: 'images',
     GenerationOptions: 'generation_options',
     GenerationMetadata: 'generation_metadata',
+    Settings: 'settings',
   };
+
+  public async getSetting<T>(setting: string, defaultValue: T | undefined = undefined): Promise<AppSetting<T> | undefined> {
+    const value = await this.getValue<AppSetting<T>>(this.ObjectStores.Settings, setting);
+    if (value === undefined && defaultValue !== undefined) {
+      return {setting: setting, value: defaultValue};
+    }
+
+    return value;
+  }
+
+  public async setSetting<T>(setting: AppSetting<T>): Promise<void> {
+    await this.setValue(this.ObjectStores.Settings, setting);
+  }
 
   public getJobsInProgress(): Promise<JobInProgress[]> {
     return this.getAll(this.ObjectStores.JobsInProgress);
@@ -62,8 +78,15 @@ export class DatabaseService {
     await this.setValue(this.ObjectStores.GenerationMetadata, metadata);
   }
 
-  public async getJobMetadata(job: JobInProgress): Promise<JobMetadata> {
+  public async getJobMetadata(job: JobInProgress): Promise<JobMetadata | undefined> {
     return this.getValue(this.ObjectStores.GenerationMetadata, job.id);
+  }
+
+  public async storeCredentials<T extends Credentials>(credentials: T): Promise<void> {
+    await this.setValue(this.ObjectStores.Settings, {
+      setting: 'credentials',
+      ...credentials,
+    });
   }
 
   private async getAll<T>(storeName: string): Promise<T[]> {
@@ -78,7 +101,7 @@ export class DatabaseService {
     });
   }
 
-  private async getValue<T>(storeName: string, key: string): Promise<T> {
+  private async getValue<T>(storeName: string, key: string): Promise<T | undefined> {
     const db = await this.getDatabase();
     const transaction = db.transaction(storeName, "readonly");
     const store = transaction.objectStore(storeName);
@@ -152,6 +175,10 @@ export class DatabaseService {
               });
               db.createObjectStore(this.ObjectStores.GenerationMetadata, {
                 keyPath: 'requestId',
+                autoIncrement: false,
+              });
+              db.createObjectStore(this.ObjectStores.Settings, {
+                keyPath: 'setting',
                 autoIncrement: false,
               });
               break;

@@ -1,3 +1,3 @@
 export interface Credentials {
-  [key: string]: string;
+  [key: string]: string | null | undefined;
 }

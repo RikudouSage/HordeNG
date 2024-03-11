@@ -176,7 +176,7 @@ export class GenerateImageComponent implements OnInit {
 
         const result = resultResponse.successResponse!;
         const metadata = await this.database.getJobMetadata(job);
-        await this.downloadImages(result.generations, metadata);
+        await this.downloadImages(result.generations, metadata!);
 
         if (this.inProgress()) {
           await this.database.deleteInProgressJob(this.inProgress()!);

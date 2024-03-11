@@ -1,5 +1,8 @@
 import {Credentials} from "../../types/credentials/credentials";
+import {Resolvable} from "../../helper/resolvable";
 
 export interface ImageStorage<TCredentials extends Credentials> {
-  validateCredentials(credentials: TCredentials): Promise<boolean>;
+  get name(): string;
+  get displayName(): Resolvable<string>;
+  validateCredentials(credentials: TCredentials): Promise<boolean | string>;
 }

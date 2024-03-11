@@ -1,14 +1,23 @@
-import {Component, computed, OnInit, signal} from '@angular/core';
+import {Component, Inject, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthManagerService} from "../../services/auth-manager.service";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
+import {ImageStorageManagerService} from "../../services/image-storage-manager.service";
+import {isPlatformBrowser, KeyValuePipe} from "@angular/common";
+import {AppValidators} from "../../helper/app-validators";
+import {
+  ToggleablePasswordInputComponent
+} from "../../components/toggleable-password-input/toggleable-password-input.component";
+import {ImageStorage} from "../../services/image-storage/image-storage";
+import {S3Credentials} from "../../types/credentials/s3.credentials";
+import {DatabaseService} from "../../services/database.service";
+import {Credentials} from "../../types/credentials/credentials";
 
 @Component({
   selector: 'app-settings',
@@ -17,48 +26,89 @@ import {TranslatorService} from "../../services/translator.service";
     TranslocoPipe,
     ReactiveFormsModule,
     FaIconComponent,
-    LoaderComponent
+    LoaderComponent,
+    KeyValuePipe,
+    ToggleablePasswordInputComponent
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent implements OnInit {
-  private iconEyeOpen = signal(faEye);
-  private iconEyeClosed = signal(faEyeSlash);
-  public passwordVisible = signal(false);
-  public passwordFieldIcon = computed(() => {
-    if (this.passwordVisible()) {
-      return this.iconEyeClosed();
-    }
+  private readonly isBrowser: boolean;
 
-    return this.iconEyeOpen();
-  });
+  public storageNames: WritableSignal<{[key: string]: string}> = signal({});
 
   public loading = signal(true);
 
   public form = new FormGroup({
-    apiKey: new FormControl<string>(this.authManager.anonymousApiKey, [Validators.required]),
-  });
+    apiKey: new FormControl<string>(this.authManager.anonymousApiKey, [
+      Validators.required,
+    ]),
+    storage: new FormControl<string>('indexed_db', [
+      Validators.required,
+    ]),
+    s3_accessKey: new FormControl<string>(''),
+    s3_secretKey: new FormControl<string>(''),
+    s3_bucket: new FormControl<string>(''),
+    s3_region: new FormControl<string>(''),
+    s3_prefix: new FormControl<string | null>(null),
+  }, [
+    AppValidators.requiredIf(
+      group => group.controls['storage'].value === 's3',
+      's3_accessKey',
+      's3_secretKey',
+      's3_bucket',
+      's3_region',
+    )
+  ]);
 
   constructor(
     private readonly authManager: AuthManagerService,
     private readonly horde: AiHorde,
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
+    private readonly storageManager: ImageStorageManagerService,
+    private readonly database: DatabaseService,
+    @Inject(PLATFORM_ID) platformId: string,
   ) {
+    this.isBrowser = isPlatformBrowser(platformId);
   }
 
   public async ngOnInit(): Promise<void> {
     this.form.patchValue({
       apiKey: this.authManager.apiKey(),
     });
+
+    if (this.isBrowser) {
+      const storage = (await this.database.getSetting('storage', 'indexed_db'))!.value;
+      const credentials = await this.database.getSetting<Credentials>('credentials');
+      if (credentials !== undefined) {
+        switch (storage) {
+          case 's3':
+            this.form.patchValue({
+              s3_region: (<S3Credentials>credentials.value).region,
+              s3_bucket: (<S3Credentials>credentials.value).bucket,
+              s3_prefix: (<S3Credentials>credentials.value).prefix,
+              s3_secretKey: (<S3Credentials>credentials.value).secretAccessKey,
+              s3_accessKey: (<S3Credentials>credentials.value).accessKeyId,
+            });
+            break;
+        }
+      }
+
+      this.form.patchValue({
+        storage: (await this.database.getSetting('storage', 'indexed_db'))!.value,
+      });
+
+      const storages: {[key: string]: string} = {};
+      for (const storage of this.storageManager.allStorages) {
+        storages[storage.name] = await toPromise(storage.displayName);
+      }
+      this.storageNames.set(storages);
+    }
+
     this.loading.set(false);
   }
-
-  public async togglePasswordVisibility(): Promise<void> {
-    this.passwordVisible.update(visible => !visible);
-  }
-
 
   public async submitForm(): Promise<void> {
     if (!this.form.valid) {
@@ -66,6 +116,17 @@ export class SettingsComponent implements OnInit {
       return;
     }
     this.loading.set(true);
+    if (!await this.validateImageStorage()) {
+      this.loading.set(false);
+      return;
+    }
+
+    await this.database.setSetting({
+      setting: 'storage',
+      value: this.form.controls.storage.value!,
+    });
+    await this.storeImageStorageSettings();
+
     const previous = this.authManager.apiKey();
     this.authManager.apiKey = this.form.controls.apiKey.value!;
     const response = await toPromise(this.horde.currentUser());
@@ -77,5 +138,50 @@ export class SettingsComponent implements OnInit {
     }
 
     this.loading.set(false);
+  }
+
+  private async validateImageStorage(): Promise<boolean> {
+    const id = this.form.controls.storage.value!;
+    switch (id) {
+      case 's3':
+        return await this.validateS3Storage();
+      default:
+        return true;
+    }
+  }
+
+  private async validateS3Storage(): Promise<boolean> {
+    const storage: ImageStorage<S3Credentials> = await this.storageManager.findByName(this.form.controls.storage.value!);
+    const result = await storage.validateCredentials({
+      accessKeyId: this.form.controls.s3_accessKey.value!,
+      secretAccessKey: this.form.controls.s3_secretKey.value!,
+      bucket: this.form.controls.s3_bucket.value!,
+      prefix: this.form.controls.s3_prefix.value,
+      region: this.form.controls.s3_region.value!,
+    });
+    if (typeof result === 'string') {
+      await this.messageService.error(this.translator.get('app.error.aws_error', {error: result}));
+      return false;
+    }
+
+    return result;
+  }
+
+  private async storeImageStorageSettings(): Promise<void> {
+    const id = this.form.controls.storage.value!;
+    switch (id) {
+      case 's3':
+        await this.database.setSetting<S3Credentials>({
+          setting: 'credentials',
+          value: {
+            accessKeyId: this.form.controls.s3_accessKey.value!,
+            secretAccessKey: this.form.controls.s3_secretKey.value!,
+            bucket: this.form.controls.s3_bucket.value!,
+            prefix: this.form.controls.s3_prefix.value,
+            region: this.form.controls.s3_region.value!,
+          },
+        });
+        break;
+    }
   }
 }

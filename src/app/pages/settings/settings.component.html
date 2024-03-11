@@ -5,16 +5,43 @@
     <div class="col-md-3">
       <form [formGroup]="form" (ngSubmit)="submitForm()">
         <div class="form-group">
-          <label for="inputApiKey">{{'app.api_key' | transloco}}</label>
-          <div class="flex">
-            <input [type]="passwordVisible() ? 'text' : 'password'" formControlName="apiKey" class="form-control" id="inputApiKey" />
-            <button class="icon-button" (click)="togglePasswordVisibility()" type="button">
-              <fa-icon [icon]="passwordFieldIcon()" size="lg" />
-            </button>
-          </div>
+          <!--suppress XmlInvalidId -->
+          <label for="inputApiKey" class="required">{{'app.api_key' | transloco}}</label>
+          <app-toggleable-password-input inputId="inputApiKey" formControlName="apiKey" />
         </div>
+        <div class="form-group">
+          <label for="inputStorage">{{'app.image_storage' | transloco}}</label>
+          <select class="form-control" formControlName="storage" id="inputStorage">
+            @for (storage of storageNames() | keyvalue; track storage.key) {
+              <option [value]="storage.key">{{storage.value}}</option>
+            }
+          </select>
+        </div>
+        @if (form.controls.storage.value === 's3') {
+          <div class="form-group">
+            <label for="inputS3AccessKeyId">{{'app.settings.s3.access_key' | transloco}}</label>
+            <input type="text" class="form-control" formControlName="s3_accessKey" id="inputS3AccessKeyId" />
+          </div>
+          <div class="form-group">
+            <!--suppress XmlInvalidId -->
+            <label for="inputS3SecretAccessKey">{{'app.settings.s3.secret_key' | transloco}}</label>
+            <app-toggleable-password-input formControlName="s3_secretKey" inputId="inputS3SecretAccessKey" />
+          </div>
+          <div class="form-group">
+            <label for="inputRegion">{{'app.settings.s3.region' | transloco}}</label>
+            <input type="text" formControlName="s3_region" class="form-control" id="inputRegion" />
+          </div>
+          <div class="form-group">
+            <label for="inputBucket">{{'app.settings.s3.bucket' | transloco}}</label>
+            <input type="text" formControlName="s3_bucket" class="form-control" id="inputBucket" />
+          </div>
+          <div class="form-group">
+            <label for="inputS3Prefix">{{'app.settings.s3.prefix' | transloco}}</label>
+            <input type="text" formControlName="s3_prefix" class="form-control" id="inputS3Prefix" />
+          </div>
+        }
 
-        <button class="btn" type="submit">{{'app.save' | transloco}}</button>
+        <button class="btn" type="submit" [disabled]="!form.valid">{{'app.save' | transloco}}</button>
       </form>
     </div>
   </div>

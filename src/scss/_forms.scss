@@ -47,7 +47,7 @@
   width: 100%;
 }
 
-label:has(+ [required]) {
+label:has(+ [required]), label.required {
   &:after {
     padding-left: 3px;
     content: '*';
