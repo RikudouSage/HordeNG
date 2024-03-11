@@ -40,6 +40,7 @@ import {WorkerType} from "../../types/horde/worker-type";
 })
 export class HordeComponent implements OnInit {
   private readonly isBrowser: boolean;
+  protected readonly WorkerType = WorkerType;
 
   public loading = signal(true);
 
@@ -98,6 +99,4 @@ export class HordeComponent implements OnInit {
 
     this.loading.set(false);
   }
-
-  protected readonly WorkerType = WorkerType;
 }

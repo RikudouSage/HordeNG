@@ -13,4 +13,8 @@ export const routes: Routes = [
     path: 'horde',
     loadComponent: () => import('./pages/horde/horde.component').then(m => m.HordeComponent),
   },
+  {
+    path: 'generate',
+    loadComponent: () => import('./pages/generate-image/generate-image.component').then(m => m.GenerateImageComponent),
+  }
 ];

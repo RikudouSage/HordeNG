@@ -1,5 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {JobInProgress} from "../types/db/job-in-progress";
+import {GenerationOptions} from "../types/db/generation-options";
+import {Sampler} from "../types/horde/sampler";
+import {JobMetadata} from "../types/job-metadata";
 
 @Injectable({
   providedIn: 'root'
@@ -10,10 +13,57 @@ export class DatabaseService {
   private readonly ObjectStores = {
     JobsInProgress: 'jobs_in_progress',
     Images: 'images',
+    GenerationOptions: 'generation_options',
+    GenerationMetadata: 'generation_metadata',
   };
 
   public getJobsInProgress(): Promise<JobInProgress[]> {
     return this.getAll(this.ObjectStores.JobsInProgress);
+  }
+
+  public async addInProgressJob(job: JobInProgress): Promise<void> {
+    await this.setValue(this.ObjectStores.JobsInProgress, job);
+  }
+
+  public async deleteInProgressJob(job: JobInProgress): Promise<void> {
+    await this.removeItem(this.ObjectStores.JobsInProgress, job.id);
+  }
+
+  public async storeGenerationOptions(options: GenerationOptions): Promise<void> {
+    const promises: Promise<any>[] = [];
+    for (const key of Object.keys(options)) {
+      promises.push(this.setValue(this.ObjectStores.GenerationOptions, {option: key, value: options[<keyof typeof options>key]}));
+    }
+    await Promise.all(promises);
+  }
+
+  public async getGenerationOptions(): Promise<GenerationOptions> {
+    const values = await this.getAll<{option: string; value: string | number | null | boolean}>(this.ObjectStores.GenerationOptions);
+    const valuesMap: {[option: string]: string | number | null | boolean} = {};
+    for (const value of values) {
+      valuesMap[value.option] = value.value;
+    }
+
+    return {
+      height: <number>valuesMap['height'] ?? 512,
+      width: <number>valuesMap['width'] ?? 512,
+      cfgScale: <number>valuesMap['cfgScale'] ?? 7,
+      denoisingStrength: <number>valuesMap['denoisingStrength'] ?? 0.75,
+      negativePrompt: <string|null>valuesMap['negativePrompt'] ?? null,
+      prompt: <string>valuesMap['prompt'] ?? '',
+      sampler: <Sampler>valuesMap['sampler'] ?? Sampler.k_dpmpp_sde,
+      steps: <number>valuesMap['steps'] ?? 30,
+      model: <string>valuesMap['model'] ?? 'stable_diffusion',
+      karras: <boolean>valuesMap['karras'] ?? true,
+    };
+  }
+
+  public async storeJobMetadata(metadata: JobMetadata): Promise<void> {
+    await this.setValue(this.ObjectStores.GenerationMetadata, metadata);
+  }
+
+  public async getJobMetadata(job: JobInProgress): Promise<JobMetadata> {
+    return this.getValue(this.ObjectStores.GenerationMetadata, job.id);
   }
 
   private async getAll<T>(storeName: string): Promise<T[]> {
@@ -40,13 +90,25 @@ export class DatabaseService {
     });
   }
 
+  private async removeItem(storeName: string, key: string): Promise<void> {
+    const db = await this.getDatabase();
+    const transaction = db.transaction(storeName, "readwrite");
+    const store = transaction.objectStore(storeName);
+
+    return new Promise((resolve, reject) => {
+      const request = store.delete(key);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve();
+    });
+  }
+
   private async setValue<T>(storeName: string, value: T, key: string | null = null): Promise<IDBValidKey> {
     const db = await this.getDatabase();
     const transaction = db.transaction(storeName, "readwrite");
     const store = transaction.objectStore(storeName);
 
     return new Promise((resolve, reject) => {
-      const request = store.add(value, key ?? undefined);
+      const request = store.put(value, key ?? undefined);
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve(request.result);
     });
@@ -83,6 +145,14 @@ export class DatabaseService {
               db.createObjectStore(this.ObjectStores.Images, {
                 keyPath: 'id',
                 autoIncrement: true,
+              });
+              db.createObjectStore(this.ObjectStores.GenerationOptions, {
+                keyPath: 'option',
+                autoIncrement: false,
+              });
+              db.createObjectStore(this.ObjectStores.GenerationMetadata, {
+                keyPath: 'requestId',
+                autoIncrement: false,
               });
               break;
           }

@@ -1,0 +1,16 @@
+export enum Sampler {
+  DDIM = "DDIM",
+  k_euler_a = "k_euler_a",
+  k_lms = "k_lms",
+  k_dpm_2 = "k_dpm_2",
+  lcm = "lcm",
+  k_dpm_2_a = "k_dpm_2_a",
+  k_dpmpp_sde = "k_dpmpp_sde",
+  dpmsolver = "dpmsolver",
+  k_dpmpp_2m = "k_dpmpp_2m",
+  k_euler = "k_euler",
+  k_dpmpp_2s_a = "k_dpmpp_2s_a",
+  k_dpm_fast = "k_dpm_fast",
+  k_heun = "k_heun",
+  k_dpm_adaptive = "k_dpm_adaptive",
+}

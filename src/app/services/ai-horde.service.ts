@@ -9,6 +9,12 @@ import {AuthManagerService} from "./auth-manager.service";
 import {UserDetails} from "../types/horde/user-details";
 import {HordePerformance} from "../types/horde/horde-performance";
 import {WorkerDetails} from "../types/horde/worker-details";
+import {ActiveModel} from "../types/horde/active-model";
+import {GenerationOptions} from "../types/db/generation-options";
+import {AsyncGenerationResponse} from "../types/horde/async-generation-response";
+import {JobInProgress} from "../types/db/job-in-progress";
+import {RequestStatusCheck} from "../types/horde/request-status-check";
+import {RequestStatusFull} from "../types/horde/request-status-full";
 
 @Injectable({
   providedIn: 'root'
@@ -32,10 +38,42 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Get, `workers/${id}`);
   }
 
+  public getModels(): Observable<ApiResponse<ActiveModel[]>> {
+    return this.sendRequest(HttpMethod.Get, `status/models`);
+  }
+
+  public generateImage(options: GenerationOptions): Observable<ApiResponse<AsyncGenerationResponse>> {
+    return this.sendRequest(HttpMethod.Post, `generate/async`, {
+      prompt: options.negativePrompt ? `${options.prompt} ### ${options.negativePrompt}` : options.prompt,
+      params: {
+        sampler_name: options.sampler,
+        cfg_scale: options.cfgScale,
+        denoising_strength: options.denoisingStrength,
+        height: options.height,
+        width: options.width,
+        steps: options.steps,
+        karras: options.karras,
+      },
+      models: [options.model],
+    });
+  }
+
+  public checkGenerationStatus(job: JobInProgress): Observable<ApiResponse<RequestStatusCheck>> {
+    return this.sendRequest(HttpMethod.Get, `generate/check/${job.id}`);
+  }
+
+  public getGeneratedImageResult(job: JobInProgress): Observable<ApiResponse<RequestStatusFull>> {
+    return this.sendRequest(HttpMethod.Get, `generate/status/${job.id}`);
+  }
+
+  public cancelJob(job: JobInProgress): Observable<ApiResponse<any>> {
+    return this.sendRequest(HttpMethod.Delete, `generate/status/${job.id}`);
+  }
+
   private sendRequest<T>(
     method: HttpMethod,
     endpoint: string,
-    body: {[key: string]: string | number | null | boolean} | null = null,
+    body: {[key: string]: any} | null = null,
     headers: {[header: string]: string} | null = null,
   ): Observable<ApiResponse<T>> {
     headers ??= {};

@@ -34,4 +34,23 @@
   padding: 5px 15px;
   border-radius: 2px;
   cursor: pointer;
+
+  &[disabled] {
+    background: #4c4d4f;
+    cursor: not-allowed;
+    color: #999;
+  }
+}
+
+.btn-long {
+  display: block;
+  width: 100%;
+}
+
+label:has(+ [required]) {
+  &:after {
+    padding-left: 3px;
+    content: '*';
+    color: red;
+  }
 }
