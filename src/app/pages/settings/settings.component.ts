@@ -80,7 +80,7 @@ export class SettingsComponent implements OnInit {
     });
 
     if (this.isBrowser) {
-      const storage = (await this.database.getSetting('storage', 'indexed_db'))!.value;
+      const storage = (await this.database.getSetting('image_storage', 'indexed_db'))!.value;
       const credentials = await this.database.getSetting<Credentials>('credentials');
       if (credentials !== undefined) {
         switch (storage) {
@@ -97,7 +97,7 @@ export class SettingsComponent implements OnInit {
       }
 
       this.form.patchValue({
-        storage: (await this.database.getSetting('storage', 'indexed_db'))!.value,
+        storage: storage,
       });
 
       const storages: {[key: string]: string} = {};
@@ -122,7 +122,7 @@ export class SettingsComponent implements OnInit {
     }
 
     await this.database.setSetting({
-      setting: 'storage',
+      setting: 'image_storage',
       value: this.form.controls.storage.value!,
     });
     await this.storeImageStorageSettings();

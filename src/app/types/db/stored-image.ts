@@ -1,4 +1,5 @@
 export interface UnsavedStoredImage {
+  id?: string;
   data: Blob;
   worker: {
     id: string;

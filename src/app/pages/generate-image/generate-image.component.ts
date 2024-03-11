@@ -19,11 +19,12 @@ import {GenerationOptions} from "../../types/db/generation-options";
 import {RequestStatusCheck} from "../../types/horde/request-status-check";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {GenerationResult} from "../../types/horde/generation-result";
 import {BlobToUrlPipe} from "../../pipes/blob-to-url.pipe";
 import {JobMetadata} from "../../types/job-metadata";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {RequestStatusFull} from "../../types/horde/request-status-full";
+import {UnsavedStoredImage} from "../../types/db/stored-image";
+import {ImageStorageManagerService} from "../../services/image-storage-manager.service";
 
 interface Result {
   width: number;
@@ -113,6 +114,7 @@ export class GenerateImageComponent implements OnInit {
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
     private readonly httpClient: HttpClient,
+    private readonly imageStorage: ImageStorageManagerService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -168,6 +170,7 @@ export class GenerateImageComponent implements OnInit {
       if (status.done) {
         this.loading.set(true);
         const job = this.inProgress() ?? (await this.database.getJobsInProgress())[0] ?? null;
+        this.inProgress.set(null);
         if (job === null) {
           throw new Error("Job cannot be null");
         }
@@ -183,10 +186,7 @@ export class GenerateImageComponent implements OnInit {
         const metadata = (await this.database.getJobMetadata(job))!;
         await this.downloadImages(result, metadata);
 
-        if (this.inProgress()) {
-          await this.database.deleteInProgressJob(this.inProgress()!);
-          this.inProgress.set(null);
-        }
+        await this.database.deleteInProgressJob(job);
 
         this.loading.set(false);
       }
@@ -254,7 +254,6 @@ export class GenerateImageComponent implements OnInit {
       return;
     }
 
-    console.log(result);
     this.result.set({
       source: URL.createObjectURL(image),
       width: metadata.width,
@@ -267,5 +266,18 @@ export class GenerateImageComponent implements OnInit {
       id: generations[0].id,
       kudos: result.kudos,
     });
+    const storeData: UnsavedStoredImage = {
+      id: generations[0].id,
+      data: image,
+      model: generations[0].model,
+      seed: generations[0].seed,
+      loras: [],
+      worker: {
+        id: generations[0].worker_id,
+        name: generations[0].worker_name,
+      },
+    };
+    const storage = await this.imageStorage.currentStorage;
+    await storage.storeImage(storeData);
   }
 }

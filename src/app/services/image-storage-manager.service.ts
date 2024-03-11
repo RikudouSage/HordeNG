@@ -17,7 +17,7 @@ export class ImageStorageManagerService {
   public get currentStorage(): Promise<ImageStorage<Credentials>> {
     return new Promise<ImageStorage<Credentials>>((resolve, reject) => {
       this.database.getSetting<string>('image_storage').then(setting => {
-        setting = {
+        setting ??= {
           setting: 'image_storage',
           value: 'indexed_db',
         };

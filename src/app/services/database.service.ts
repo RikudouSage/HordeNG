@@ -5,6 +5,7 @@ import {Sampler} from "../types/horde/sampler";
 import {JobMetadata} from "../types/job-metadata";
 import {AppSetting} from "../types/app-setting";
 import {Credentials} from "../types/credentials/credentials";
+import {UnsavedStoredImage} from "../types/db/stored-image";
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,10 @@ export class DatabaseService {
     GenerationMetadata: 'generation_metadata',
     Settings: 'settings',
   };
+
+  public async storeImage(image: UnsavedStoredImage): Promise<void> {
+    await this.setValue(this.ObjectStores.Images, image);
+  }
 
   public async getSetting<T>(setting: string, defaultValue: T | undefined = undefined): Promise<AppSetting<T> | undefined> {
     const value = await this.getValue<AppSetting<T>>(this.ObjectStores.Settings, setting);

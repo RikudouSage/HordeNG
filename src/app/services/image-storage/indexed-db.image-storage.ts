@@ -3,6 +3,8 @@ import {Injectable} from "@angular/core";
 import {Credentials} from "../../types/credentials/credentials";
 import {TranslatorService} from "../translator.service";
 import {Resolvable} from "../../helper/resolvable";
+import {UnsavedStoredImage} from "../../types/db/stored-image";
+import {DatabaseService} from "../database.service";
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +12,7 @@ import {Resolvable} from "../../helper/resolvable";
 export class IndexedDbImageStorage implements ImageStorage<Credentials> {
   constructor(
     private readonly translator: TranslatorService,
+    private readonly database: DatabaseService,
   ) {
   }
 
@@ -23,5 +26,10 @@ export class IndexedDbImageStorage implements ImageStorage<Credentials> {
 
   public async validateCredentials(credentials: Credentials): Promise<true> {
     return true;
+  }
+
+  public async storeImage(image: UnsavedStoredImage): Promise<void> {
+    delete image.id;
+    await this.database.storeImage(image);
   }
 }
