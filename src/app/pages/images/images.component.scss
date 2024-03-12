@@ -40,3 +40,23 @@
     }
   }
 }
+
+.modal-content {
+  text-align: center;
+
+  .image {
+    img {
+      width: auto;
+      height: 50vh;
+    }
+  }
+
+  .generation-parameters {
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+}

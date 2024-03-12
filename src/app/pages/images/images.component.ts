@@ -1,10 +1,22 @@
-import {Component, Inject, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  signal,
+  TemplateRef,
+  ViewContainerRef,
+  WritableSignal
+} from '@angular/core';
 import {ImageStorageManagerService} from "../../services/image-storage-manager.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {isPlatformBrowser} from "@angular/common";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {StoredImage} from "../../types/db/stored-image";
 import {TranslocoPipe} from "@ngneat/transloco";
+import {ModalService} from "../../services/modal.service";
+import {FormatNumberPipe} from "../../pipes/format-number.pipe";
+import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -16,7 +28,9 @@ interface StoredImageWithLink extends StoredImage {
   imports: [
     RouterLink,
     LoaderComponent,
-    TranslocoPipe
+    TranslocoPipe,
+    FormatNumberPipe,
+    YesNoComponent
   ],
   templateUrl: './images.component.html',
   styleUrl: './images.component.scss'
@@ -35,6 +49,8 @@ export class ImagesComponent implements OnInit {
     private readonly storageManager: ImageStorageManagerService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
+    private readonly modalService: ModalService,
+    private readonly view: ViewContainerRef,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -73,5 +89,9 @@ export class ImagesComponent implements OnInit {
     for (const image of this.currentResults()) {
       URL.revokeObjectURL(image.link);
     }
+  }
+
+  public async openModal(modal: TemplateRef<Element>) {
+    this.modalService.open(this.view, modal);
   }
 }

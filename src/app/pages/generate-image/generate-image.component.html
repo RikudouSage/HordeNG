@@ -29,7 +29,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="inputPostProcessors">{{'app.post_processors' | transloco}}</label>
+          <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>
           <select id="inputPostProcessors" multiple tom-select formControlName="postProcessors">
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
               <option [value]="enumCase.value">{{enumCase.value}}</option>

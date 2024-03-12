@@ -26,8 +26,35 @@
   <div class="row">
     <div class="col-md-12 gallery">
       @for (image of currentResults(); track image.id) {
-        <div>
+        <div class="cursor-pointer" (click)="openModal(modal)">
           <img src="{{image.link}}" alt="{{'app.generated_image.alt' | transloco}}" />
+          <ng-template #modal>
+            <div class="modal-content">
+              <div class="image">
+                <a target="_blank" href="{{image.link}}">
+                  <img src="{{image.link}}" alt="{{'app.generated_image.alt' | transloco}}" />
+                </a>
+              </div>
+              <div class="generation-parameters">
+                <p>{{'app.generate.prompt' | transloco}}: <strong>{{image.prompt}}</strong></p>
+                @if (image.negativePrompt) {
+                  <p>{{'app.generate.negative_prompt' | transloco}}: <strong>{{image.negativePrompt}}</strong></p>
+                }
+                <p>{{'app.image.seed' | transloco}}: <strong>{{image.seed}}</strong></p>
+                <p>{{'app.generate.model' | transloco}}: <strong>{{image.model}}</strong></p>
+                <p>{{'app.generate.sampler' | transloco}}: <strong>{{image.sampler}}</strong></p>
+                <p>{{'app.generate.karras' | transloco}}: <strong><app-yes-no [value]="image.karras" /></strong></p>
+                <p>{{'app.generate.cfg_scale' | transloco}}: <strong>{{image.cfgScale | formatNumber:1}}</strong></p>
+                <p>{{'app.generate.denoising_strength' | transloco}}: <strong>{{image.denoisingStrength | formatNumber:2}}</strong></p>
+                <p>{{'app.generate.size' | transloco}}: <strong>{{image.width | formatNumber}}x{{image.height | formatNumber}} px</strong></p>
+                <p>{{'app.generate.steps' | transloco}}: <strong>{{image.steps | formatNumber}}</strong></p>
+                @if (image.postProcessors.length) {
+                  <p>{{'app.generate.post_processors' | transloco}}: <strong>{{image.postProcessors.join(', ')}}</strong></p>
+                }
+                <p>{{'app.image.worker' | transloco}}: <strong>{{image.worker.name}} ({{image.worker.id}})</strong></p>
+              </div>
+            </div>
+          </ng-template>
         </div>
       }
     </div>
