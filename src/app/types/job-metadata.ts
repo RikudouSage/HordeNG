@@ -1,8 +1,5 @@
-import {PostProcessor} from "./horde/post-processor";
+import {GenerationOptions} from "./db/generation-options";
 
-export interface JobMetadata {
+export interface JobMetadata extends GenerationOptions {
   requestId: string;
-  width: number;
-  height: number;
-  postProcessors: PostProcessor[];
 }

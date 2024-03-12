@@ -1,6 +1,6 @@
-import {PostProcessor} from "../horde/post-processor";
+import {GenerationOptions} from "./generation-options";
 
-export interface UnsavedStoredImage {
+export interface UnsavedStoredImage extends GenerationOptions {
   id?: string;
   data: Blob;
   worker: {
@@ -10,7 +10,6 @@ export interface UnsavedStoredImage {
   model: string;
   seed: string;
   loras: string[];
-  postProcessors: PostProcessor[];
 }
 
 export interface StoredImage extends UnsavedStoredImage {

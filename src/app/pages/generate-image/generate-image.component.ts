@@ -223,9 +223,7 @@ export class GenerateImageComponent implements OnInit {
     await this.database.addInProgressJob(response.successResponse!);
     await this.database.storeJobMetadata({
       requestId: response.successResponse!.id,
-      height: this.formAsOptions.height,
-      width: this.formAsOptions.width,
-      postProcessors: this.formAsOptions.postProcessors,
+      ...this.formAsOptions,
     });
     this.inProgress.set(response.successResponse!);
     this.loading.set(false);
@@ -278,14 +276,14 @@ export class GenerateImageComponent implements OnInit {
     const storeData: UnsavedStoredImage = {
       id: generations[0].id,
       data: image,
-      model: generations[0].model,
       seed: generations[0].seed,
       loras: [],
       worker: {
         id: generations[0].worker_id,
         name: generations[0].worker_name,
       },
-      postProcessors: metadata.postProcessors,
+      ...metadata,
+      model: generations[0].model,
     };
     const storage = await this.imageStorage.currentStorage;
     await storage.storeImage(storeData);

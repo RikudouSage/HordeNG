@@ -44,7 +44,17 @@ export class S3ImageStorage implements ImageStorage<S3Credentials> {
         seed: image.seed,
         loras: image.loras.join(','),
         postProcessors: image.postProcessors.join(','),
+        prompt: image.prompt,
+        negativePrompt: image.negativePrompt ?? '',
+        sampler: image.sampler,
+        cfgScale: String(image.cfgScale),
+        denoisingStrength: String(image.denoisingStrength),
+        height: String(image.height),
+        width: String(image.width),
+        steps: String(image.steps),
+        karras: String(Number(image.karras)),
       },
+      ContentType: 'image/webp',
     }));
   }
 
