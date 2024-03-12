@@ -6,6 +6,7 @@ import {TranslatorService} from "../translator.service";
 import {ListObjectsV2Command, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
+import {PaginatedResult} from "../../types/paginated-result";
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,10 @@ export class S3ImageStorage implements ImageStorage<S3Credentials> {
     private readonly translator: TranslatorService,
     private readonly database: DatabaseService,
   ) {
+  }
+
+  listImageIds(page: number, perPage: number): Promise<PaginatedResult<string>> {
+    throw new Error("Method not implemented.");
   }
 
   public get displayName(): Resolvable<string> {

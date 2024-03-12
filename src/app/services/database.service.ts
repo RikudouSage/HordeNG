@@ -5,8 +5,9 @@ import {Sampler} from "../types/horde/sampler";
 import {JobMetadata} from "../types/job-metadata";
 import {AppSetting} from "../types/app-setting";
 import {Credentials} from "../types/credentials/credentials";
-import {UnsavedStoredImage} from "../types/db/stored-image";
+import {StoredImage, UnsavedStoredImage} from "../types/db/stored-image";
 import {PostProcessor} from "../types/horde/post-processor";
+import {PaginatedResult} from "../types/paginated-result";
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,10 @@ export class DatabaseService {
 
   public async storeImage(image: UnsavedStoredImage): Promise<void> {
     await this.setValue(this.ObjectStores.Images, image);
+  }
+
+  public async getImages(page: number, limit: number): Promise<PaginatedResult<StoredImage>> {
+    return this.getRows(this.ObjectStores.Images, page, limit);
   }
 
   public async getSetting<T>(setting: string, defaultValue: T | undefined = undefined): Promise<AppSetting<T> | undefined> {
@@ -109,6 +114,49 @@ export class DatabaseService {
       const request: IDBRequest<T[]> = store.getAll();
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve(request.result);
+    });
+  }
+
+  private async getRows<T>(storeName: string, page: number, limit: number): Promise<PaginatedResult<T>> {
+    let skipped = false;
+    const start = (page - 1) * limit;
+
+    const db = await this.getDatabase();
+    const transaction = db.transaction(storeName, "readonly");
+    const store = transaction.objectStore(storeName);
+
+    const count = await new Promise<number>((resolve, reject) => {
+      const request = store.count();
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => resolve(request.result);
+    });
+
+    return new Promise((resolve, reject) => {
+      const result: T[] = [];
+      const request = store.openCursor();
+
+      request.onerror = () => reject(request.error);
+      request.onsuccess = event => {
+        const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+
+        if (!skipped && start > 0 && cursor) {
+          cursor.advance(start);
+          skipped = true;
+          return;
+        }
+
+        if (cursor) {
+          result.push(cursor.value);
+
+          if (result.length < limit) {
+            cursor.continue();
+          } else {
+            resolve({page: page, lastPage: Math.ceil(count / limit), rows: result});
+          }
+        } else {
+          resolve({page: page, lastPage: Math.ceil(count / limit), rows: result});
+        }
+      };
     });
   }
 

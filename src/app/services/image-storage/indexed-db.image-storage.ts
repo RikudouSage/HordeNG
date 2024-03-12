@@ -5,6 +5,7 @@ import {TranslatorService} from "../translator.service";
 import {Resolvable} from "../../helper/resolvable";
 import {UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
+import {PaginatedResult} from "../../types/paginated-result";
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,16 @@ export class IndexedDbImageStorage implements ImageStorage<Credentials> {
     private readonly translator: TranslatorService,
     private readonly database: DatabaseService,
   ) {
+  }
+
+  public async listImageIds(page: number, perPage: number): Promise<PaginatedResult<string>> {
+    const images = await this.database.getImages(page, perPage);
+
+    return {
+      page: page,
+      lastPage: images.lastPage,
+      rows: images.rows.map(image => image.id),
+    };
   }
 
   public get displayName(): Resolvable<string> {
