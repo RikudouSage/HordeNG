@@ -289,5 +289,6 @@ export class GenerateImageComponent implements OnInit {
     };
     const storage = await this.imageStorage.currentStorage;
     await storage.storeImage(storeData);
+    await this.database.removeJobMetadata(metadata);
   }
 }

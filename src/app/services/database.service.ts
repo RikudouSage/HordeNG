@@ -89,6 +89,10 @@ export class DatabaseService {
     return this.getValue(this.ObjectStores.GenerationMetadata, job.id);
   }
 
+  public async removeJobMetadata(metadata: JobMetadata): Promise<void> {
+    await this.removeItem(this.ObjectStores.GenerationMetadata, metadata.requestId);
+  }
+
   public async storeCredentials<T extends Credentials>(credentials: T): Promise<void> {
     await this.setValue(this.ObjectStores.Settings, {
       setting: 'credentials',
