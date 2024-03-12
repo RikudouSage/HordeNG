@@ -8,6 +8,7 @@ import {Credentials} from "../types/credentials/credentials";
 import {StoredImage, UnsavedStoredImage} from "../types/db/stored-image";
 import {PostProcessor} from "../types/horde/post-processor";
 import {PaginatedResult} from "../types/paginated-result";
+import {Order} from "../types/order";
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +28,8 @@ export class DatabaseService {
     await this.setValue(this.ObjectStores.Images, image);
   }
 
-  public async getImages(page: number, limit: number): Promise<PaginatedResult<StoredImage>> {
-    return this.getRows(this.ObjectStores.Images, page, limit);
+  public async getImages(page: number, limit: number, order: Order = Order.Asc): Promise<PaginatedResult<StoredImage>> {
+    return this.getRows(this.ObjectStores.Images, page, limit, order);
   }
 
   public async getSetting<T>(setting: string, defaultValue: T | undefined = undefined): Promise<AppSetting<T> | undefined> {
@@ -117,7 +118,7 @@ export class DatabaseService {
     });
   }
 
-  private async getRows<T>(storeName: string, page: number, limit: number): Promise<PaginatedResult<T>> {
+  private async getRows<T>(storeName: string, page: number, limit: number, order: Order): Promise<PaginatedResult<T>> {
     let skipped = false;
     const start = (page - 1) * limit;
 
@@ -133,7 +134,7 @@ export class DatabaseService {
 
     return new Promise((resolve, reject) => {
       const result: T[] = [];
-      const request = store.openCursor();
+      const request = store.openCursor(null, order === Order.Asc ? 'next' : 'prev');
 
       request.onerror = () => reject(request.error);
       request.onsuccess = event => {

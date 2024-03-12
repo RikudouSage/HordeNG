@@ -6,6 +6,7 @@ import {Resolvable} from "../../helper/resolvable";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
 import {PaginatedResult} from "../../types/paginated-result";
+import {Order} from "../../types/order";
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class IndexedDbImageStorage implements ImageStorage<Credentials> {
   }
 
   public loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
-    return this.database.getImages(page, perPage);
+    return this.database.getImages(page, perPage, Order.Desc);
   }
 
   public get displayName(): Resolvable<string> {
