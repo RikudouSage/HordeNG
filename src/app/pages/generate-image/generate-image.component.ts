@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
 import {LoaderComponent} from "../../components/loader/loader.component";
@@ -25,6 +25,8 @@ import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {RequestStatusFull} from "../../types/horde/request-status-full";
 import {UnsavedStoredImage} from "../../types/db/stored-image";
 import {ImageStorageManagerService} from "../../services/image-storage-manager.service";
+import {PostProcessor} from "../../types/horde/post-processor";
+import {TomSelectDirective} from "../../directives/tom-select.directive";
 
 interface Result {
   width: number;
@@ -37,6 +39,7 @@ interface Result {
   id: string;
   censored: boolean;
   kudos: number;
+  postProcessors: string;
 }
 
 @Component({
@@ -52,13 +55,15 @@ interface Result {
     AsyncPipe,
     BlobToUrlPipe,
     NgOptimizedImage,
-    TranslocoMarkupComponent
+    TranslocoMarkupComponent,
+    TomSelectDirective
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
 })
 export class GenerateImageComponent implements OnInit {
   protected readonly Sampler = Sampler;
+  protected readonly PostProcessor = PostProcessor;
 
   public loading = signal(true);
   public kudosCost = signal(0);
@@ -104,6 +109,7 @@ export class GenerateImageComponent implements OnInit {
     model: new FormControl<string>('', [
       Validators.required,
     ]),
+    postProcessors: new FormControl<string[]>([]),
   });
   private readonly isBrowser: boolean;
 
@@ -219,6 +225,7 @@ export class GenerateImageComponent implements OnInit {
       requestId: response.successResponse!.id,
       height: this.formAsOptions.height,
       width: this.formAsOptions.width,
+      postProcessors: this.formAsOptions.postProcessors,
     });
     this.inProgress.set(response.successResponse!);
     this.loading.set(false);
@@ -237,6 +244,7 @@ export class GenerateImageComponent implements OnInit {
       steps: value.steps ?? 30,
       model: value.model ?? '',
       karras: true, // todo
+      postProcessors: value.postProcessors?.map(value => <PostProcessor>value) ?? [],
     };
   }
 
@@ -265,6 +273,7 @@ export class GenerateImageComponent implements OnInit {
       seed: generations[0].seed,
       id: generations[0].id,
       kudos: result.kudos,
+      postProcessors: metadata.postProcessors.join(', '),
     });
     const storeData: UnsavedStoredImage = {
       id: generations[0].id,
@@ -276,6 +285,7 @@ export class GenerateImageComponent implements OnInit {
         id: generations[0].worker_id,
         name: generations[0].worker_name,
       },
+      postProcessors: metadata.postProcessors,
     };
     const storage = await this.imageStorage.currentStorage;
     await storage.storeImage(storeData);

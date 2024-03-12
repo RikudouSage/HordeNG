@@ -1,4 +1,5 @@
 import {Sampler} from "../horde/sampler";
+import {PostProcessor} from "../horde/post-processor";
 
 export interface GenerationOptions {
   prompt: string;
@@ -11,4 +12,5 @@ export interface GenerationOptions {
   steps: number;
   model: string;
   karras: boolean;
+  postProcessors: PostProcessor[];
 }

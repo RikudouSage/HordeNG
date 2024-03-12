@@ -43,6 +43,7 @@ export class S3ImageStorage implements ImageStorage<S3Credentials> {
         model: image.model,
         seed: image.seed,
         loras: image.loras.join(','),
+        postProcessors: image.postProcessors.join(','),
       },
     }));
   }

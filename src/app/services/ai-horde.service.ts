@@ -53,6 +53,7 @@ export class AiHorde {
         width: options.width,
         steps: options.steps,
         karras: options.karras,
+        post_processing: options.postProcessors,
       },
       models: [options.model],
     });

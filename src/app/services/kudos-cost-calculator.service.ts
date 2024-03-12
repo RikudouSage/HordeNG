@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {GenerationOptions} from "../types/db/generation-options";
 import {Sampler} from "../types/horde/sampler";
+import {PostProcessor} from "../types/horde/post-processor";
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,9 @@ export class KudosCostCalculator {
     const steps = this.getAccurateSteps(options);
     let kudos = Math.round(((0.1232 * steps) + result * (0.1232 * steps * 8.75)) * 100) / 100;
 
-    // for (let i = 0; i < postProcessors.length; i++) {
-    //   kudos = Math.round(kudos * 1.2 * 100) / 100;
-    // }
+    for (let i = 0; i < options.postProcessors.length; i++) {
+      kudos = Math.round(kudos * 1.2 * 100) / 100;
+    }
 
     // if (usesControlNet) {
     //   kudos = Math.round(kudos * 3 * 100) / 100;
@@ -26,15 +27,15 @@ export class KudosCostCalculator {
     //   kudos = kudos * 1.5;
     // }
 
-    // if (postProcessors.includes('RealESRGAN_x4plus')) {
-    //   kudos = kudos * 1.3;
-    // }
-    // if (postProcessors.includes('RealESRGAN_x4plus_anime_6B')) {
-    //   kudos = kudos * 1.3;
-    // }
-    // if (postProcessors.includes('CodeFormers')) {
-    //   kudos = kudos * 1.3;
-    // }
+    if (options.postProcessors.includes(PostProcessor.RealESRGAN_x4plus)) {
+      kudos = kudos * 1.3;
+    }
+    if (options.postProcessors.includes(PostProcessor.RealESRGAN_x4plus_anime_6B)) {
+      kudos = kudos * 1.3;
+    }
+    if (options.postProcessors.includes(PostProcessor.CodeFormers)) {
+      kudos = kudos * 1.3;
+    }
 
     let hordeTax = 3;
     // if (shareWithLaionEnabled) {

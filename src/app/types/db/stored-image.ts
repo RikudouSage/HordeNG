@@ -1,3 +1,5 @@
+import {PostProcessor} from "../horde/post-processor";
+
 export interface UnsavedStoredImage {
   id?: string;
   data: Blob;
@@ -8,6 +10,7 @@ export interface UnsavedStoredImage {
   model: string;
   seed: string;
   loras: string[];
+  postProcessors: PostProcessor[];
 }
 
 export interface StoredImage extends UnsavedStoredImage {

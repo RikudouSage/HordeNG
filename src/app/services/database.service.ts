@@ -6,6 +6,7 @@ import {JobMetadata} from "../types/job-metadata";
 import {AppSetting} from "../types/app-setting";
 import {Credentials} from "../types/credentials/credentials";
 import {UnsavedStoredImage} from "../types/db/stored-image";
+import {PostProcessor} from "../types/horde/post-processor";
 
 @Injectable({
   providedIn: 'root'
@@ -59,8 +60,8 @@ export class DatabaseService {
   }
 
   public async getGenerationOptions(): Promise<GenerationOptions> {
-    const values = await this.getAll<{option: string; value: string | number | null | boolean}>(this.ObjectStores.GenerationOptions);
-    const valuesMap: {[option: string]: string | number | null | boolean} = {};
+    const values = await this.getAll<{option: string; value: string | number | null | boolean | string[]}>(this.ObjectStores.GenerationOptions);
+    const valuesMap: {[option: string]: string | number | null | boolean | string[]} = {};
     for (const value of values) {
       valuesMap[value.option] = value.value;
     }
@@ -76,6 +77,7 @@ export class DatabaseService {
       steps: <number>valuesMap['steps'] ?? 30,
       model: <string>valuesMap['model'] ?? 'stable_diffusion',
       karras: <boolean>valuesMap['karras'] ?? true,
+      postProcessors: <PostProcessor[]>valuesMap['postProcessors'] ?? [],
     };
   }
 
