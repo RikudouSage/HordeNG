@@ -6,11 +6,11 @@
       <div class="col-md-5">
         <div class="form-group">
           <label for="inputPrompt">{{ 'app.generate.prompt' | transloco }}</label>
-          <input required type="text" class="form-control" formControlName="prompt" id="inputPrompt"/>
+          <input required type="text" class="form-control" formControlName="prompt" id="inputPrompt" autocomplete="off"/>
         </div>
         <div class="form-group">
           <label for="inputNegativePrompt">{{ 'app.generate.negative_prompt' | transloco }}</label>
-          <input type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt"/>
+          <input type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt" autocomplete="off"/>
         </div>
         <div class="form-group">
           <label for="inputSampler">{{ 'app.generate.sampler' | transloco }}</label>
