@@ -16,5 +16,9 @@ export const routes: Routes = [
   {
     path: 'generate',
     loadComponent: () => import('./pages/generate-image/generate-image.component').then(m => m.GenerateImageComponent),
-  }
+  },
+  {
+    path: 'images',
+    loadComponent: () => import('./pages/images/images.component').then(m => m.ImagesComponent),
+  },
 ];

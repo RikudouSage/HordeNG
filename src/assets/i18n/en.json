@@ -88,5 +88,6 @@
   "app.settings.s3.prefix": "S3 object prefix",
   "app.error.aws_error": "There was an error reported by AWS: {{error}}",
   "app.settings.s3.region": "S3 region",
-  "app.post_processors": "Post processors"
+  "app.post_processors": "Post processors",
+  "app.generated_image.alt": "A generated image"
 }

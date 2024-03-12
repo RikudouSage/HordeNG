@@ -4,7 +4,7 @@ import {S3Credentials} from "../../types/credentials/s3.credentials";
 import {Resolvable} from "../../helper/resolvable";
 import {TranslatorService} from "../translator.service";
 import {ListObjectsV2Command, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
-import {UnsavedStoredImage} from "../../types/db/stored-image";
+import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
 import {PaginatedResult} from "../../types/paginated-result";
 
@@ -18,7 +18,7 @@ export class S3ImageStorage implements ImageStorage<S3Credentials> {
   ) {
   }
 
-  listImageIds(page: number, perPage: number): Promise<PaginatedResult<string>> {
+  loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
     throw new Error("Method not implemented.");
   }
 

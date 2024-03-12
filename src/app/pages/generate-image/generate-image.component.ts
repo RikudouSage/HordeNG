@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
@@ -10,7 +10,7 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {KudosCostCalculator} from "../../services/kudos-cost-calculator.service";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
-import {interval, map} from "rxjs";
+import {interval, map, Subscription} from "rxjs";
 import {WorkerType} from "../../types/horde/worker-type";
 import {JobInProgress} from "../../types/db/job-in-progress";
 import {MessageService} from "../../services/message.service";
@@ -61,9 +61,11 @@ interface Result {
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
 })
-export class GenerateImageComponent implements OnInit {
+export class GenerateImageComponent implements OnInit, OnDestroy {
   protected readonly Sampler = Sampler;
   protected readonly PostProcessor = PostProcessor;
+
+  private checkInterval: Subscription | null = null;
 
   public loading = signal(true);
   public kudosCost = signal(0);
@@ -151,7 +153,7 @@ export class GenerateImageComponent implements OnInit {
     )));
     this.loading.set(false);
 
-    interval(1_000).subscribe(async () => {
+    this.checkInterval ??= interval(1_000).subscribe(async () => {
       if (!this.inProgress()) {
         return;
       }
@@ -197,6 +199,10 @@ export class GenerateImageComponent implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  public async ngOnDestroy(): Promise<void> {
+    this.checkInterval?.unsubscribe();
   }
 
   public async generateImage() {

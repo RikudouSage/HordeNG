@@ -1,6 +1,6 @@
 import {Credentials} from "../../types/credentials/credentials";
 import {Resolvable} from "../../helper/resolvable";
-import {UnsavedStoredImage} from "../../types/db/stored-image";
+import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {PaginatedResult} from "../../types/paginated-result";
 
 export interface ImageStorage<TCredentials extends Credentials> {
@@ -8,5 +8,5 @@ export interface ImageStorage<TCredentials extends Credentials> {
   get displayName(): Resolvable<string>;
   validateCredentials(credentials: TCredentials): Promise<boolean | string>;
   storeImage(image: UnsavedStoredImage): Promise<void>;
-  listImageIds(page: number, perPage: number): Promise<PaginatedResult<string>>;
+  loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>>;
 }

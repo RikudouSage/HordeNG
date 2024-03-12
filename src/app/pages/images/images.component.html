@@ -1,0 +1,35 @@
+@if (loading()) {
+  <app-loader />
+} @else {
+  <div class="row">
+    <div class="col-md-12 text-center pagination">
+      @if (currentPage() > 1) {
+        <a routerLink="/images?page={{currentPage() - 1}}" (click)="goToPage(currentPage() - 1)">&lt;</a>
+      } @else {
+        <a [routerLink]="" class="disabled">&lt;</a>
+      }
+      @for (page of pages(); track page) {
+        @if (page === currentPage()) {
+          <a [routerLink]="" class="active">{{page}}</a>
+        } @else {
+          <a routerLink="/images?page={{page}}" (click)="goToPage(page)">{{page}}</a>
+        }
+      }
+      @if (currentPage() < lastPage()) {
+        <a routerLink="/images?page={{currentPage() + 1}}" (click)="goToPage(currentPage() + 1)">&gt;</a>
+      } @else {
+        <a [routerLink]="" class="disabled">&gt;</a>
+      }
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12 gallery">
+      @for (image of currentResults(); track image.id) {
+        <div>
+          <img src="{{image.link}}" alt="{{'app.generated_image.alt' | transloco}}" />
+        </div>
+      }
+    </div>
+  </div>
+}

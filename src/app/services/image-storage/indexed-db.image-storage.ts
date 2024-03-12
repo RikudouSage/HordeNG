@@ -3,7 +3,7 @@ import {Injectable} from "@angular/core";
 import {Credentials} from "../../types/credentials/credentials";
 import {TranslatorService} from "../translator.service";
 import {Resolvable} from "../../helper/resolvable";
-import {UnsavedStoredImage} from "../../types/db/stored-image";
+import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
 import {PaginatedResult} from "../../types/paginated-result";
 
@@ -17,14 +17,8 @@ export class IndexedDbImageStorage implements ImageStorage<Credentials> {
   ) {
   }
 
-  public async listImageIds(page: number, perPage: number): Promise<PaginatedResult<string>> {
-    const images = await this.database.getImages(page, perPage);
-
-    return {
-      page: page,
-      lastPage: images.lastPage,
-      rows: images.rows.map(image => image.id),
-    };
+  public loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
+    return this.database.getImages(page, perPage);
   }
 
   public get displayName(): Resolvable<string> {

@@ -1,0 +1,42 @@
+@use "sass:math";
+
+.pagination {
+  a {
+    text-decoration: none;
+    color: #e5eaf3;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 5px;
+
+    &.disabled {
+      color: #8d9095;
+      cursor: not-allowed;
+    }
+
+    &.active, &:hover {
+      color: #409eff;
+    }
+  }
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+
+  & > div {
+    flex: calc(math.div(100%, 6) - 4.5px) 0 0;
+    margin-right: 5px;
+    margin-top: 1px;
+    margin-bottom: 0;
+
+    &:nth-child(6n) {
+      margin-right: 0;
+    }
+
+    img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+  }
+}
