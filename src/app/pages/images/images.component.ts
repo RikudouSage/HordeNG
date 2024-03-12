@@ -22,7 +22,7 @@ interface StoredImageWithLink extends StoredImage {
   styleUrl: './images.component.scss'
 })
 export class ImagesComponent implements OnInit {
-  private readonly perPage: number = 30;
+  private readonly perPage: number = 24;
   private readonly isBrowser: boolean;
 
   public loading = signal(true);
