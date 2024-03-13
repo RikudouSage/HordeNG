@@ -92,6 +92,9 @@ export class DatabaseService {
       hiresFix: <boolean>valuesMap['hiresFix'] ?? false,
       faceFixerStrength: <number>valuesMap['faceFixerStrength'] ?? 0.75,
       nsfw: <boolean>valuesMap['nsfw'] ?? false,
+      trustedWorkers: <boolean>valuesMap['trustedWorkers'] ?? false,
+      censorNsfw: <boolean>valuesMap['censorNsfw'] ?? false,
+      slowWorkers: <boolean>valuesMap['slowWorkers'] ?? true,
     };
   }
 

@@ -54,7 +54,12 @@
                 <p>{{'app.generate.size' | transloco}}: <strong>{{image.width | formatNumber}}x{{image.height | formatNumber}} px</strong></p>
                 <p>{{'app.generate.steps' | transloco}}: <strong>{{image.steps | formatNumber}}</strong></p>
                 @if (image.postProcessors.length) {
-                  <p>{{'app.generate.post_processors' | transloco}}: <strong>{{image.postProcessors.join(', ')}}</strong></p>
+                  <p>
+                    {{'app.generate.post_processors' | transloco}}: <strong>{{image.postProcessors.join(', ')}}</strong>
+                    @if ($any(image.faceFixerStrength) !== undefined && (image.postProcessors.includes(PostProcessor.GFPGAN) || image.postProcessors.includes(PostProcessor.CodeFormers))) {
+                      {{'app.generate.face_fixer_strength' | transloco}}: <strong>{{image.faceFixerStrength | formatNumber}}</strong>
+                    }
+                  </p>
                 }
                 <p>{{'app.image.worker' | transloco}}: <strong>{{image.worker.name}} ({{image.worker.id}})</strong></p>
               </div>

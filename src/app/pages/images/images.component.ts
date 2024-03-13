@@ -19,6 +19,7 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {ImageStorage} from "../../services/image-storage/image-storage";
 import {DatabaseService} from "../../services/database.service";
+import {PostProcessor} from "../../types/horde/post-processor";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -38,6 +39,8 @@ interface StoredImageWithLink extends StoredImage {
   styleUrl: './images.component.scss'
 })
 export class ImagesComponent implements OnInit {
+  protected readonly PostProcessor = PostProcessor;
+
   private readonly perPage: number = 24;
   private readonly isBrowser: boolean;
 

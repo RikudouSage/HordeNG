@@ -122,6 +122,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       Validators.max(1),
     ]),
     nsfw: new FormControl<boolean>(false),
+    slowWorkers: new FormControl<boolean>(false),
+    censorNsfw: new FormControl<boolean>(false),
+    trustedWorkers: new FormControl<boolean>(false),
   });
   private readonly isBrowser: boolean;
 
@@ -263,6 +266,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       hiresFix: value.hiresFix ?? false,
       faceFixerStrength: value.faceFixerStrength ?? 0.75,
       nsfw: value.nsfw ?? false,
+      censorNsfw: value.censorNsfw ?? false,
+      slowWorkers: value.slowWorkers ?? true,
+      trustedWorkers: value.trustedWorkers ?? false,
     };
   }
 

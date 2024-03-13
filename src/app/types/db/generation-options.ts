@@ -17,4 +17,7 @@ export interface GenerationOptions {
   hiresFix: boolean;
   faceFixerStrength: number;
   nsfw: boolean;
+  slowWorkers: boolean;
+  censorNsfw: boolean;
+  trustedWorkers: boolean;
 }

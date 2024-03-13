@@ -59,6 +59,9 @@ export class AiHorde {
         facefixer_strength: options.faceFixerStrength,
       },
       nsfw: options.nsfw,
+      trusted_workers: options.trustedWorkers,
+      slow_workers: options.slowWorkers,
+      censor_nsfw: options.censorNsfw,
       models: [options.model],
     });
   }

@@ -99,5 +99,8 @@
   "app.send.txt2img": "Txt2img",
   "app.generate.hires_fix": "HiRes Fix",
   "app.generate.face_fixer_strength": "FaceFixer strength",
-  "app.generate.nsfw": "NSFW?"
+  "app.generate.nsfw": "NSFW?",
+  "app.generate.slow_workers": "Slow workers?",
+  "app.generate.censor_nsfw": "Censor NSFW?",
+  "app.generate.trusted_workers": "Trusted workers only"
 }
