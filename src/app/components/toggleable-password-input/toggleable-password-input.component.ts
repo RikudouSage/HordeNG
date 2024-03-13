@@ -2,6 +2,7 @@ import {Component, computed, effect, input, signal, WritableSignal} from '@angul
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, ReactiveFormsModule} from "@angular/forms";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
+import {OnChange, OnTouched} from "../../types/value-accessor";
 
 @Component({
   selector: 'app-toggleable-password-input',
@@ -22,8 +23,8 @@ import {faEye, faEyeSlash} from "@fortawesome/free-solid-svg-icons";
   ]
 })
 export class ToggleablePasswordInputComponent implements ControlValueAccessor {
-  private onChange: WritableSignal<((value: string) => void) | null> = signal(null);
-  private onTouched: WritableSignal<(() => void) | null> = signal(null);
+  private onChange: WritableSignal<OnChange<string> | null> = signal(null);
+  private onTouched: WritableSignal<OnTouched | null> = signal(null);
 
   private iconEyeOpen = signal(faEye);
   private iconEyeClosed = signal(faEyeSlash);
@@ -54,11 +55,11 @@ export class ToggleablePasswordInputComponent implements ControlValueAccessor {
     this.value.set(value);
   }
 
-  public registerOnChange(fn: any): void {
+  public registerOnChange(fn: OnChange<string>): void {
     this.onChange.set(fn);
   }
 
-  public registerOnTouched(fn: any): void {
+  public registerOnTouched(fn: OnTouched): void {
     this.onTouched.set(fn);
   }
 

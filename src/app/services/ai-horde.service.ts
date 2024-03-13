@@ -55,7 +55,10 @@ export class AiHorde {
         karras: options.karras,
         post_processing: options.postProcessors,
         seed: options.seed ?? undefined,
+        hires_fix: options.hiresFix,
+        facefixer_strength: options.faceFixerStrength,
       },
+      nsfw: options.nsfw,
       models: [options.model],
     });
   }

@@ -14,4 +14,7 @@ export interface GenerationOptions {
   model: string;
   karras: boolean;
   postProcessors: PostProcessor[];
+  hiresFix: boolean;
+  faceFixerStrength: number;
+  nsfw: boolean;
 }

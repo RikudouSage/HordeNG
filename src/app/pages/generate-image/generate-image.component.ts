@@ -27,6 +27,7 @@ import {UnsavedStoredImage} from "../../types/db/stored-image";
 import {ImageStorageManagerService} from "../../services/image-storage-manager.service";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {TomSelectDirective} from "../../directives/tom-select.directive";
+import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
 
 interface Result {
   width: number;
@@ -56,7 +57,8 @@ interface Result {
     BlobToUrlPipe,
     NgOptimizedImage,
     TranslocoMarkupComponent,
-    TomSelectDirective
+    TomSelectDirective,
+    ToggleCheckboxComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -113,6 +115,13 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     ]),
     postProcessors: new FormControl<string[]>([]),
     seed: new FormControl<string>(''),
+    karras: new FormControl<boolean>(false),
+    hiresFix: new FormControl<boolean>(false),
+    faceFixerStrength: new FormControl<number>(0, [
+      Validators.min(0),
+      Validators.max(1),
+    ]),
+    nsfw: new FormControl<boolean>(false),
   });
   private readonly isBrowser: boolean;
 
@@ -248,9 +257,12 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       width: value.width ?? 512,
       steps: value.steps ?? 30,
       model: value.model ?? '',
-      karras: true, // todo
+      karras: value.karras ?? true,
       postProcessors: value.postProcessors?.map(value => <PostProcessor>value) ?? [],
       seed: value.seed || null,
+      hiresFix: value.hiresFix ?? false,
+      faceFixerStrength: value.faceFixerStrength ?? 0.75,
+      nsfw: value.nsfw ?? false,
     };
   }
 

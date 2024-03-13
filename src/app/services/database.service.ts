@@ -89,6 +89,9 @@ export class DatabaseService {
       karras: <boolean>valuesMap['karras'] ?? true,
       postProcessors: <PostProcessor[]>valuesMap['postProcessors'] ?? [],
       seed: <string>valuesMap['seed'] ?? null,
+      hiresFix: <boolean>valuesMap['hiresFix'] ?? false,
+      faceFixerStrength: <number>valuesMap['faceFixerStrength'] ?? 0.75,
+      nsfw: <boolean>valuesMap['nsfw'] ?? false,
     };
   }
 

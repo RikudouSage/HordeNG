@@ -40,6 +40,13 @@
             }
           </select>
         </div>
+        @if (form.controls.postProcessors.value!.includes(PostProcessor.GFPGAN) || form.controls.postProcessors.value!.includes(PostProcessor.CodeFormers)) {
+          <div class="form-group">
+            <label for="inputFaceFixerStrength">{{ 'app.generate.face_fixer_strength' | transloco }}
+              ({{ form.controls.faceFixerStrength.value! | formatNumber }})</label>
+            <input type="range" min="0" max="1" step="0.01" formControlName="faceFixerStrength" class="form-control" id="inputFaceFixerStrength"/>
+          </div>
+        }
         <div class="form-group">
           <label for="inputWidth">{{ 'app.generate.width' | transloco }}</label>
           <input type="number" min="64" max="3072" step="64" formControlName="width" id="inputWidth"
@@ -66,6 +73,15 @@
           <label for="inputSteps">{{ 'app.generate.steps' | transloco }}
             ({{ form.controls.steps.value! | formatNumber }})</label>
           <input type="range" min="1" max="500" step="1" formControlName="steps" class="form-control" id="inputSteps"/>
+        </div>
+        <div class="form-group">
+          <app-toggle-checkbox [description]="'app.generate.karras' | transloco" formControlName="karras" />
+        </div>
+        <div class="form-group">
+          <app-toggle-checkbox [description]="'app.generate.hires_fix' | transloco" formControlName="hiresFix" />
+        </div>
+        <div class="form-group">
+          <app-toggle-checkbox [description]="'app.generate.nsfw' | transloco" formControlName="nsfw" />
         </div>
       </div>
       <div class="col-md-1"></div>

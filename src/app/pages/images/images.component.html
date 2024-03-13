@@ -43,7 +43,12 @@
                 <p>{{'app.image.seed' | transloco}}: <strong>{{image.seed}}</strong></p>
                 <p>{{'app.generate.model' | transloco}}: <strong>{{image.model}}</strong></p>
                 <p>{{'app.generate.sampler' | transloco}}: <strong>{{image.sampler}}</strong></p>
-                <p>{{'app.generate.karras' | transloco}}: <strong><app-yes-no [value]="image.karras" /></strong></p>
+                <p>
+                  {{'app.generate.karras' | transloco}}: <strong><app-yes-no [value]="image.karras" /></strong>
+                  @if ($any(image.hiresFix) !== undefined) {
+                    {{'app.generate.hires_fix' | transloco}}: <strong><app-yes-no [value]="image.hiresFix" /></strong>
+                  }
+                </p>
                 <p>{{'app.generate.cfg_scale' | transloco}}: <strong>{{image.cfgScale | formatNumber:1}}</strong></p>
                 <p>{{'app.generate.denoising_strength' | transloco}}: <strong>{{image.denoisingStrength | formatNumber:2}}</strong></p>
                 <p>{{'app.generate.size' | transloco}}: <strong>{{image.width | formatNumber}}x{{image.height | formatNumber}} px</strong></p>
