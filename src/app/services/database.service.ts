@@ -88,6 +88,7 @@ export class DatabaseService {
       model: <string>valuesMap['model'] ?? 'stable_diffusion',
       karras: <boolean>valuesMap['karras'] ?? true,
       postProcessors: <PostProcessor[]>valuesMap['postProcessors'] ?? [],
+      seed: <string>valuesMap['seed'] ?? null,
     };
   }
 

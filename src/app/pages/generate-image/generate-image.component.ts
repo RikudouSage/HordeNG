@@ -112,6 +112,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       Validators.required,
     ]),
     postProcessors: new FormControl<string[]>([]),
+    seed: new FormControl<string>(''),
   });
   private readonly isBrowser: boolean;
 
@@ -249,6 +250,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       model: value.model ?? '',
       karras: true, // todo
       postProcessors: value.postProcessors?.map(value => <PostProcessor>value) ?? [],
+      seed: value.seed || null,
     };
   }
 
@@ -282,7 +284,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     const storeData: UnsavedStoredImage = {
       id: generations[0].id,
       data: image,
-      seed: generations[0].seed,
       loras: [],
       worker: {
         id: generations[0].worker_id,
@@ -290,6 +291,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       },
       ...metadata,
       model: generations[0].model,
+      seed: generations[0].seed,
     };
     const storage = await this.imageStorage.currentStorage;
     await storage.storeImage(storeData);

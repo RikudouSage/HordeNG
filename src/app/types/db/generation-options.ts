@@ -4,6 +4,7 @@ import {PostProcessor} from "../horde/post-processor";
 export interface GenerationOptions {
   prompt: string;
   negativePrompt: string | null;
+  seed: string | null;
   sampler: Sampler;
   cfgScale: number;
   denoisingStrength: number;

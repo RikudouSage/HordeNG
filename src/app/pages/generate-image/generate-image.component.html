@@ -13,6 +13,10 @@
           <input type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt" autocomplete="off"/>
         </div>
         <div class="form-group">
+          <label for="inputSeed">{{'app.generate.seed' | transloco}}</label>
+          <input type="text" class="form-control" formControlName="seed" id="inputSeed" autocomplete="off" />
+        </div>
+        <div class="form-group">
           <label for="inputSampler">{{ 'app.generate.sampler' | transloco }}</label>
           <select id="inputSampler" class="form-control" formControlName="sampler" required>
             @for (enumCase of Sampler | keyvalue; track enumCase.key) {

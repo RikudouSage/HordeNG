@@ -54,6 +54,7 @@ export class AiHorde {
         steps: options.steps,
         karras: options.karras,
         post_processing: options.postProcessors,
+        seed: options.seed ?? undefined,
       },
       models: [options.model],
     });
