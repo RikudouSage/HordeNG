@@ -18,6 +18,7 @@ import {ModalService} from "../../services/modal.service";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {ImageStorage} from "../../services/image-storage/image-storage";
+import {DatabaseService} from "../../services/database.service";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -52,6 +53,7 @@ export class ImagesComponent implements OnInit {
     private readonly router: Router,
     private readonly modalService: ModalService,
     private readonly view: ViewContainerRef,
+    private readonly database: DatabaseService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -110,5 +112,10 @@ export class ImagesComponent implements OnInit {
 
     this.pages.set([...Array(images.lastPage).keys()].map(i => i + 1));
     this.lastPage.set(images.lastPage);
+  }
+
+  public async sendToTxt2Img(image: StoredImageWithLink): Promise<void> {
+    await this.database.storeGenerationOptions(image);
+    await this.router.navigateByUrl('/generate');
   }
 }

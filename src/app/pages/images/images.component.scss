@@ -59,4 +59,17 @@
       margin-bottom: 0;
     }
   }
+
+  .buttons {
+    button {
+      margin: 0 4px;
+
+      &:first-of-type {
+        margin-left: 0;
+      }
+      &:last-of-type {
+        margin-right: 0;
+      }
+    }
+  }
 }
