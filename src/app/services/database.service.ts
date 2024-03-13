@@ -28,6 +28,10 @@ export class DatabaseService {
     await this.setValue(this.ObjectStores.Images, image);
   }
 
+  public async deleteImage(image: StoredImage): Promise<void> {
+    await this.removeItem(this.ObjectStores.Images, image.id);
+  }
+
   public async getImages(page: number, limit: number, order: Order = Order.Asc): Promise<PaginatedResult<StoredImage>> {
     return this.getRows(this.ObjectStores.Images, page, limit, order);
   }

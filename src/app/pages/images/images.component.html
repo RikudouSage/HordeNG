@@ -53,6 +53,9 @@
                 }
                 <p>{{'app.image.worker' | transloco}}: <strong>{{image.worker.name}} ({{image.worker.id}})</strong></p>
               </div>
+              <div class="buttons">
+                <button class="btn btn-danger" (click)="deleteImage(image)">{{'app.delete' | transloco}}</button>
+              </div>
             </div>
           </ng-template>
         </div>

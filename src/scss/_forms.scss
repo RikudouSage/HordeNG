@@ -27,7 +27,6 @@
 }
 
 .btn {
-  background: #3375b9;
   border: none;
   color: white;
   font-weight: bold;
@@ -40,6 +39,14 @@
     cursor: not-allowed;
     color: #999;
   }
+}
+
+.btn-primary {
+  background: #3375b9;
+}
+
+.btn-danger {
+  background: red;
 }
 
 .btn-long {

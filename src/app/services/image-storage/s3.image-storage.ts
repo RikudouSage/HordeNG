@@ -18,6 +18,10 @@ export class S3ImageStorage implements ImageStorage<S3Credentials> {
   ) {
   }
 
+  deleteImage(image: StoredImage): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
   loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
     throw new Error("Method not implemented.");
   }

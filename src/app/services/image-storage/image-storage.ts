@@ -9,4 +9,5 @@ export interface ImageStorage<TCredentials extends Credentials> {
   validateCredentials(credentials: TCredentials): Promise<boolean | string>;
   storeImage(image: UnsavedStoredImage): Promise<void>;
   loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>>;
+  deleteImage(image: StoredImage): Promise<void>;
 }

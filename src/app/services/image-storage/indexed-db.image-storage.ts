@@ -18,6 +18,10 @@ export class IndexedDbImageStorage implements ImageStorage<Credentials> {
   ) {
   }
 
+  public async deleteImage(image: StoredImage): Promise<void> {
+    await this.database.deleteImage(image);
+  }
+
   public loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
     return this.database.getImages(page, perPage, Order.Desc);
   }

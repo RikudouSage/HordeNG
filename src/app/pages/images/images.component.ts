@@ -17,6 +17,7 @@ import {TranslocoPipe} from "@ngneat/transloco";
 import {ModalService} from "../../services/modal.service";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
+import {ImageStorage} from "../../services/image-storage/image-storage";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -67,17 +68,13 @@ export class ImagesComponent implements OnInit {
       this.cleanupObjectURLs();
 
       this.currentPage.set(params.has('page') ? Number(params.get('page')) : 1);
-      const images = await storage.loadImages(this.currentPage(), this.perPage);
-      this.currentResults.set(images.rows.map(image => ({link: URL.createObjectURL(image.data), ...image})));
-
-      this.pages.set([...Array(images.lastPage).keys()].map(i => i + 1));
-      this.lastPage.set(images.lastPage);
+      await this.loadData(storage);
 
       this.loading.set(false);
     });
   }
 
-  public async goToPage(page: number) {
+  public async goToPage(page: number): Promise<void> {
     await this.router.navigate([], {
       relativeTo: this.activatedRoute,
       queryParams: {page: page},
@@ -85,13 +82,33 @@ export class ImagesComponent implements OnInit {
     });
   }
 
-  private cleanupObjectURLs() {
+  private cleanupObjectURLs(): void {
     for (const image of this.currentResults()) {
       URL.revokeObjectURL(image.link);
     }
   }
 
-  public async openModal(modal: TemplateRef<Element>) {
+  public async openModal(modal: TemplateRef<Element>): Promise<void> {
     this.modalService.open(this.view, modal);
+  }
+
+  public async deleteImage(image: StoredImageWithLink): Promise<void> {
+    this.loading.set(true);
+
+    const storage = await this.storageManager.currentStorage;
+    await storage.deleteImage(image);
+    URL.revokeObjectURL(image.link);
+    await this.modalService.close();
+    await this.loadData(storage);
+
+    this.loading.set(false);
+  }
+
+  private async loadData(storage: ImageStorage<any>): Promise<void> {
+    const images = await storage.loadImages(this.currentPage(), this.perPage);
+    this.currentResults.set(images.rows.map(image => ({link: URL.createObjectURL(image.data), ...image})));
+
+    this.pages.set([...Array(images.lastPage).keys()].map(i => i + 1));
+    this.lastPage.set(images.lastPage);
   }
 }
