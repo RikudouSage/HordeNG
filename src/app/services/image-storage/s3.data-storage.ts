@@ -4,10 +4,10 @@ import {S3Credentials} from "../../types/credentials/s3.credentials";
 import {Resolvable} from "../../helper/resolvable";
 import {TranslatorService} from "../translator.service";
 import {
-  DeleteObjectCommand,
+  DeleteObjectCommand, GetBucketCorsCommand,
   GetObjectCommand,
   ListObjectsV2Command, ListObjectsV2CommandOutput,
-  NoSuchKey,
+  NoSuchKey, PutBucketCorsCommand,
   PutObjectCommand,
   S3Client
 } from "@aws-sdk/client-s3";
@@ -16,6 +16,7 @@ import {DatabaseService} from "../database.service";
 import {PaginatedResult} from "../../types/paginated-result";
 import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
+import _ from 'lodash';
 
 export const S3CorsConfig = [
   {
@@ -261,6 +262,49 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
       }
 
       return false;
+    }
+  }
+
+  public async checkCors(): Promise<boolean | null> {
+    const client = await this.getClient();
+    try {
+      const result = await client.send(new GetBucketCorsCommand({
+        Bucket: await this.getBucket(),
+      }));
+      for (const rule of result.CORSRules!) {
+        if (!rule.AllowedHeaders?.includes('*')) {
+          continue;
+        }
+        if (!_.isMatch(rule.AllowedMethods ?? {}, S3CorsConfig[0].AllowedMethods)) {
+          continue;
+        }
+        if (!rule.AllowedOrigins?.includes('*') && !rule.AllowedOrigins?.includes(window.location.origin)) {
+          continue;
+        }
+        if (!_.isMatch(rule.ExposeHeaders ?? {}, S3CorsConfig[0].ExposeHeaders)) {
+          continue;
+        }
+
+        return true;
+      }
+
+      try {
+        await client.send(new PutBucketCorsCommand({
+          Bucket: await this.getBucket(),
+          CORSConfiguration: {
+            CORSRules: S3CorsConfig,
+          },
+        }));
+        return true;
+      } catch (e) {
+        return false;
+      }
+    } catch (e) {
+      if (e instanceof TypeError && e.message.includes('NetworkError')) {
+        return false;
+      }
+
+      return null;
     }
   }
 

@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {Component, Inject, OnInit, PLATFORM_ID, Signal, signal, WritableSignal} from '@angular/core';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthManagerService} from "../../services/auth-manager.service";
@@ -9,7 +9,7 @@ import {LoaderComponent} from "../../components/loader/loader.component";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
 import {DataStorageManagerService} from "../../services/data-storage-manager.service";
-import {isPlatformBrowser, KeyValuePipe} from "@angular/common";
+import {isPlatformBrowser, JsonPipe, KeyValuePipe} from "@angular/common";
 import {AppValidators} from "../../helper/app-validators";
 import {
   ToggleablePasswordInputComponent
@@ -18,6 +18,8 @@ import {DataStorage} from "../../services/image-storage/data-storage";
 import {S3Credentials} from "../../types/credentials/s3.credentials";
 import {DatabaseService} from "../../services/database.service";
 import {Credentials} from "../../types/credentials/credentials";
+import {S3CorsConfig, S3DataStorage} from "../../services/image-storage/s3.data-storage";
+import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 
 @Component({
   selector: 'app-settings',
@@ -28,7 +30,9 @@ import {Credentials} from "../../types/credentials/credentials";
     FaIconComponent,
     LoaderComponent,
     KeyValuePipe,
-    ToggleablePasswordInputComponent
+    ToggleablePasswordInputComponent,
+    JsonPipe,
+    CopyButtonComponent
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
@@ -37,8 +41,10 @@ export class SettingsComponent implements OnInit {
   private readonly isBrowser: boolean;
 
   public storageNames: WritableSignal<{[key: string]: string}> = signal({});
-
   public loading = signal(true);
+
+  public s3CorsCheckResult = signal<undefined|null|boolean>(undefined);
+  public s3CorsConfig: Signal<any> = signal(S3CorsConfig);
 
   public form = new FormGroup({
     apiKey: new FormControl<string>(this.authManager.anonymousApiKey, [
@@ -92,6 +98,8 @@ export class SettingsComponent implements OnInit {
               s3_secretKey: (<S3Credentials>credentials.value).secretAccessKey,
               s3_accessKey: (<S3Credentials>credentials.value).accessKeyId,
             });
+            const storage = <S3DataStorage>(await this.storageManager.currentStorage);
+            this.s3CorsCheckResult.set(await storage.checkCors());
             break;
         }
       }
@@ -151,7 +159,7 @@ export class SettingsComponent implements OnInit {
   }
 
   private async validateS3Storage(): Promise<boolean> {
-    const storage: DataStorage<S3Credentials> = await this.storageManager.findByName(this.form.controls.storage.value!);
+    const storage = <S3DataStorage>(await this.storageManager.findByName(this.form.controls.storage.value!));
     const result = await storage.validateCredentials({
       accessKeyId: this.form.controls.s3_accessKey.value!,
       secretAccessKey: this.form.controls.s3_secretKey.value!,
@@ -162,6 +170,10 @@ export class SettingsComponent implements OnInit {
     if (typeof result === 'string') {
       await this.messageService.error(this.translator.get('app.error.aws_error', {error: result}));
       return false;
+    }
+
+    if (result) {
+      this.s3CorsCheckResult.set(await storage.checkCors());
     }
 
     return result;
