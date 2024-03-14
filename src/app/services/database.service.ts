@@ -9,6 +9,7 @@ import {StoredImage, UnsavedStoredImage} from "../types/db/stored-image";
 import {PostProcessor} from "../types/horde/post-processor";
 import {PaginatedResult} from "../types/paginated-result";
 import {Order} from "../types/order";
+import {PartialCacheItem} from "../types/cache-item";
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,20 @@ export class DatabaseService {
     GenerationOptions: 'generation_options',
     GenerationMetadata: 'generation_metadata',
     Settings: 'settings',
+    Cache: 'cache',
   };
+
+  public async getCacheItem<T>(key: string): Promise<PartialCacheItem<T> | undefined> {
+    return this.getValue(this.ObjectStores.Cache, key);
+  }
+
+  public async saveCacheItem(cacheItem: PartialCacheItem<any>): Promise<void> {
+    await this.setValue(this.ObjectStores.Cache, cacheItem);
+  }
+
+  public async removeCacheItem(key: string): Promise<void> {
+    await this.removeItem(this.ObjectStores.Cache, key);
+  }
 
   public async storeImage(image: UnsavedStoredImage): Promise<void> {
     await this.setValue(this.ObjectStores.Images, image);
@@ -214,7 +228,7 @@ export class DatabaseService {
     }
 
     return new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open("horde_ng", 1);
+      const request = indexedDB.open("horde_ng", 2);
       request.onsuccess = () => {
         this._database = request.result;
         resolve(request.result);
@@ -250,6 +264,12 @@ export class DatabaseService {
               });
               db.createObjectStore(this.ObjectStores.Settings, {
                 keyPath: 'setting',
+                autoIncrement: false,
+              });
+              break;
+            case 1:
+              db.createObjectStore(this.ObjectStores.Cache, {
+                keyPath: 'key',
                 autoIncrement: false,
               });
               break;

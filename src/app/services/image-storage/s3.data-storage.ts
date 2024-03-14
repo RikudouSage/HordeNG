@@ -17,6 +17,7 @@ import {PaginatedResult} from "../../types/paginated-result";
 import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
 import _ from 'lodash';
+import {CacheService} from "../cache.service";
 
 export const S3CorsConfig = [
   {
@@ -57,50 +58,45 @@ export const S3CorsConfig = [
   providedIn: 'root',
 })
 export class S3DataStorage implements DataStorage<S3Credentials> {
+  private readonly CacheKeys = {
+    Options: 's3.options',
+    Images: 's3.images',
+    CorsCheck: 's3.cors_check',
+  };
+
   constructor(
     private readonly translator: TranslatorService,
     private readonly database: DatabaseService,
+    private readonly cache: CacheService,
   ) {
   }
 
   getOption<T>(option: string, defaultValue: T): Promise<T>;
   getOption<T>(option: string): Promise<T | undefined>;
   public async getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {
-    const client = await this.getClient();
-    try {
-      const item = await client.send(new GetObjectCommand({
-        Bucket: await this.getBucket(),
-        Key: `${await this.getPrefix()}/options.json`,
-      }));
-      if (item.Body) {
-        const data = JSON.parse(await item.Body.transformToString());
-        return data[option] ?? defaultValue;
-      }
-
-      return defaultValue;
-    } catch (e) {
-      if (!(e instanceof NoSuchKey)) {
-        throw e;
-      }
-      return defaultValue;
+    const cacheItem = await this.cache.getItem<Record<string, any>>(this.CacheKeys.Options);
+    let options: Record<string, any> = {};
+    if (cacheItem.isHit) {
+      options = cacheItem.value!;
+    } else {
+      options = await this.getFreshOptions();
     }
+
+    cacheItem.value = options;
+    await this.cache.save(cacheItem);
+
+    return options[option] ?? defaultValue;
   }
 
   public async storeOption(option: string, value: any): Promise<void> {
     const client = await this.getClient();
-    let options: {[key: string]: any} = {};
-    try {
-      const item = await client.send(new GetObjectCommand({
-        Bucket: await this.getBucket(),
-        Key: `${await this.getPrefix()}/options.json`,
-      }));
-      if (item.Body) {
-        options = JSON.parse(await item.Body.transformToString());
-      }
-    } catch (e) {
-      if (!(e instanceof NoSuchKey)) {
-        throw e;
-      }
+
+    let options: Record<string, any> = {};
+    const cacheItem = await this.cache.getItem<Record<string, any>>(this.CacheKeys.Options);
+    if (cacheItem.isHit) {
+      options = cacheItem.value!;
+    } else {
+      options = await this.getFreshOptions();
     }
     options[option] = value;
 
@@ -110,6 +106,27 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
       Body: JSON.stringify(options),
       ContentType: "application/json",
     }));
+    cacheItem.value = options;
+    await this.cache.save(cacheItem);
+  }
+
+  private async getFreshOptions(): Promise<Record<string, any>> {
+    const client = await this.getClient();
+    try {
+      const item = await client.send(new GetObjectCommand({
+        Bucket: await this.getBucket(),
+        Key: `${await this.getPrefix()}/options.json`,
+      }));
+      if (item.Body) {
+        return JSON.parse(await item.Body.transformToString());
+      }
+    } catch (e) {
+      if (!(e instanceof NoSuchKey)) {
+        throw e;
+      }
+    }
+
+    return {};
   }
 
   public async deleteImage(image: StoredImage): Promise<void> {
@@ -119,55 +136,53 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
       Bucket: await this.getBucket(),
       Key: `${await this.getPrefix()}/${image.id}.webp`,
     }));
+
+    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
+    cacheItem.value ??= [];
+    cacheItem.value = cacheItem.value.filter(stored => stored.id !== image.id);
+    await this.cache.save(cacheItem);
   }
 
   public async loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
-    const client = await this.getClient();
-    const prefix = await this.getPrefix();
-    const bucket = await this.getBucket();
+    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
+    let images: StoredImage[];
+    if (cacheItem.isHit) {
+      images = cacheItem.value!;
+    } else {
+      const client = await this.getClient();
+      const prefix = await this.getPrefix();
+      const bucket = await this.getBucket();
 
-    const response = await client.send(new ListObjectsV2Command({
-      Bucket: bucket,
-      Prefix: prefix,
-    }));
-    const total = response.KeyCount!;
-    const lastPage = Math.ceil(total / perPage);
-
-    if (!response?.Contents) {
-      return {
-        page: page,
-        lastPage: lastPage,
-        rows: [],
-      };
-    }
-
-    const keys = response.Contents
-      .sort((a, b) => {
-        if (a.LastModified!.getTime() === b.LastModified!.getTime()) {
-          return 0;
-        }
-
-        return a.LastModified!.getTime() > b.LastModified!.getTime() ? -1 : 1;
-      })
-      .slice(0, perPage)
-      .filter(object => object.Key!.endsWith('.webp'))
-      .map(object => object.Key!)
-    ;
-
-    const images = await Promise.all(keys.map(key => {
-      return client.send(new GetObjectCommand({
+      const response = await client.send(new ListObjectsV2Command({
         Bucket: bucket,
-        Key: key,
+        Prefix: prefix,
       }));
-    }));
-    const bodies = await Promise.all(images.map(
-      image => image.Body!.transformToByteArray().then(body => new Blob([body])),
-    ));
 
-    return {
-      page: page,
-      lastPage: lastPage,
-      rows: images.map((image, index): StoredImage => {
+      response.Contents ??= [];
+
+      const keys = response.Contents
+        .sort((a, b) => {
+          if (a.LastModified!.getTime() === b.LastModified!.getTime()) {
+            return 0;
+          }
+
+          return a.LastModified!.getTime() > b.LastModified!.getTime() ? -1 : 1;
+        })
+        .filter(object => object.Key!.endsWith('.webp'))
+        .map(object => object.Key!)
+      ;
+
+      const imagesResult = await Promise.all(keys.map(key => {
+        return client.send(new GetObjectCommand({
+          Bucket: bucket,
+          Key: key,
+        }));
+      }));
+      const bodies = await Promise.all(imagesResult.map(
+        image => image.Body!.transformToByteArray().then(body => new Blob([body])),
+      ));
+
+      images = imagesResult.map((image, index): StoredImage => {
         const id = keys[index].substring(prefix.length + 1, keys[index].length - 5);
         return {
           id: id,
@@ -196,7 +211,18 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
           trustedWorkers: false,
           nsfw: false,
         }
-      }),
+      });
+      cacheItem.value = images;
+      await this.cache.save(cacheItem);
+    }
+
+    const total = images.length;
+    const lastPage = Math.ceil(total / perPage);
+
+    return {
+      page: page,
+      lastPage: lastPage,
+      rows: images,
     }
   }
 
@@ -210,6 +236,10 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
 
   public async storeImage(image: UnsavedStoredImage): Promise<void> {
     const client = await this.getClient();
+
+    if (!image.id) {
+      throw new Error("S3 storage requires providing IDs beforehand.");
+    }
 
     await client.send(new PutObjectCommand({
       Bucket: await this.getBucket(),
@@ -236,6 +266,11 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
       },
       ContentType: 'image/webp',
     }));
+
+    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
+    cacheItem.value ??= [];
+    cacheItem.value.unshift(<StoredImage>image);
+    await this.cache.save(cacheItem);
   }
 
   public async validateCredentials(credentials: S3Credentials): Promise<boolean | string> {
@@ -266,6 +301,12 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
   }
 
   public async checkCors(): Promise<boolean | null> {
+    const cacheItem = await this.cache.getItem<boolean | null>(this.CacheKeys.CorsCheck);
+    if (cacheItem.isHit) {
+      return cacheItem.value ?? null;
+    }
+    cacheItem.expiresAfter(60 * 60);
+
     const client = await this.getClient();
     try {
       const result = await client.send(new GetBucketCorsCommand({
@@ -285,6 +326,8 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
           continue;
         }
 
+        cacheItem.value = true;
+        await this.cache.save(cacheItem);
         return true;
       }
 
@@ -295,15 +338,25 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
             CORSRules: S3CorsConfig,
           },
         }));
+
+        cacheItem.value = true;
+        await this.cache.save(cacheItem);
         return true;
       } catch (e) {
+
+        cacheItem.value = false;
+        await this.cache.save(cacheItem);
         return false;
       }
     } catch (e) {
       if (e instanceof TypeError && e.message.includes('NetworkError')) {
+        cacheItem.value = false;
+        await this.cache.save(cacheItem);
         return false;
       }
 
+      cacheItem.value = null;
+      await this.cache.save(cacheItem);
       return null;
     }
   }
@@ -341,5 +394,14 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
 
   private async getBucket(): Promise<string> {
     return (await this.getCredentials()).bucket;
+  }
+
+  public async clearCache() {
+    const promises: Promise<any>[] = [];
+    for (const value of Object.values(this.CacheKeys)) {
+      promises.push(this.cache.remove(value));
+    }
+
+    await Promise.all(promises);
   }
 }

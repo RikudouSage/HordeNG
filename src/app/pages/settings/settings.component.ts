@@ -180,6 +180,7 @@ export class SettingsComponent implements OnInit {
 
   private async storeImageStorageSettings(): Promise<void> {
     const id = this.form.controls.storage.value!;
+    const storage = await this.storageManager.currentStorage;
     switch (id) {
       case 's3':
         await this.database.setSetting<S3Credentials>({
@@ -192,6 +193,7 @@ export class SettingsComponent implements OnInit {
             region: this.form.controls.s3_region.value!,
           },
         });
+        await (<S3DataStorage>storage).clearCache();
         break;
     }
   }
