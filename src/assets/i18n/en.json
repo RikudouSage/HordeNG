@@ -102,5 +102,11 @@
   "app.generate.nsfw": "NSFW?",
   "app.generate.slow_workers": "Slow workers?",
   "app.generate.censor_nsfw": "Censor NSFW?",
-  "app.generate.trusted_workers": "Trusted workers only"
+  "app.generate.trusted_workers": "Trusted workers only",
+  "app.transfer_kudos": "Transfer Kudos",
+  "app.transfer_kudos.target_user": "Recipient",
+  "app.transfer_kudos.target_user.description": "The username and ID of the person you want to send Kudos to. In the format [i]username#ID[/i], for example [b]{{example}}[/b]",
+  "app.transfer_kudos.amount": "Amount",
+  "app.transfer_kudos.transfer": "Transfer",
+  "app.transfer_kudos.success": "Kudos have been successfully transferred."
 }

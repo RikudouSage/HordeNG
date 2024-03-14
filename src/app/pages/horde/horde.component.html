@@ -145,4 +145,27 @@
       </app-box>
     </div>
   </div>
+  @if (!isAnonymous()) {
+    <div class="row mt-2">
+      <div class="col-md-12">
+        <app-box [collapsible]="true" [title]="'app.transfer_kudos' | transloco">
+          <form [formGroup]="transferKudosForm" (ngSubmit)="transferKudos()">
+            <div class="form-group">
+              <label for="inputTransferTargetUser">{{'app.transfer_kudos.target_user' | transloco}}</label>
+              <input class="form-control" type="text" id="inputTransferTargetUser" formControlName="targetUser" aria-describedby="inputTransferTargetUserDescription" />
+              <small id="inputTransferTargetUserDescription">
+                <transloco key="app.transfer_kudos.target_user.description" [params]="{example: currentUser()!.username}" />
+              </small>
+            </div>
+            <div class="form-group">
+              <label for="inputTransferAmount">{{'app.transfer_kudos.amount' | transloco}}</label>
+              <input class="form-control" type="number" id="inputTransferAmount" min="1" step="1" [max]="currentUser()?.kudos ?? 0" formControlName="amount" />
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]="!transferKudosForm.valid">{{'app.transfer_kudos.transfer' | transloco}}</button>
+          </form>
+        </app-box>
+      </div>
+    </div>
+  }
 }

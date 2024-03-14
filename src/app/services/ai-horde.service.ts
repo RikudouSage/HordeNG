@@ -78,6 +78,13 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Delete, `generate/status/${job.id}`);
   }
 
+  public transferKudos(recipient: string, amount: number): Observable<ApiResponse<any>> {
+    return this.sendRequest(HttpMethod.Post, `kudos/transfer`, {
+      username: recipient,
+      amount: amount,
+    });
+  }
+
   private sendRequest<T>(
     method: HttpMethod,
     endpoint: string,

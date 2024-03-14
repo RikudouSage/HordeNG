@@ -4,16 +4,14 @@ export class AppValidators {
   public static divisibleBy(number: number): ValidatorFn {
     return control => {
       if (typeof control.value !== 'number') {
-        return null;
+        return {divisibleBy: {[number]: 'nan'}};
       }
 
       if (control.value % number === 0) {
         return null;
       }
 
-      return {
-        divisibleBy: {[number]: false},
-      };
+      return {divisibleBy: {[number]: false}};
     };
   }
   public static requiredIf(callback: (group: FormGroup) => boolean, ...controlNames: string[]): (group: AbstractControl) => (ValidationErrors | null) {
@@ -41,6 +39,26 @@ export class AppValidators {
       }
 
       return hasErrors ? errors : null;
+    }
+  }
+
+  public static lazyMax(max: () => number): ValidatorFn {
+    return control => {
+      if (typeof control.value !== 'number') {
+        return {max: 'nan'};
+      }
+
+      return control.value <= max() ? null : {max: false};
+    };
+  }
+
+  public static regex(regex: RegExp): ValidatorFn {
+    return control => {
+      if (typeof control.value !== 'string') {
+        return {regex: 'not-string'};
+      }
+
+      return regex.test(control.value) ? null : {regex: 'not-matching'};
     }
   }
 }

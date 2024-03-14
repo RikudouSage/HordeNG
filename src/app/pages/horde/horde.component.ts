@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {Component, computed, Inject, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {AiHorde} from "../../services/ai-horde.service";
 import {UserDetails} from "../../types/horde/user-details";
@@ -19,6 +19,9 @@ import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {MathSqrtPipe} from "../../pipes/math-sqrt.pipe";
 import {WorkerType} from "../../types/horde/worker-type";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {AppValidators} from "../../helper/app-validators";
+import {AuthManagerService} from "../../services/auth-manager.service";
 
 @Component({
   selector: 'app-horde',
@@ -33,7 +36,8 @@ import {WorkerType} from "../../types/horde/worker-type";
     YesNoComponent,
     PrintSecondsPipe,
     AsyncPipe,
-    MathSqrtPipe
+    MathSqrtPipe,
+    ReactiveFormsModule
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
@@ -52,10 +56,25 @@ export class HordeComponent implements OnInit {
   public requestedIcon = signal(faImage);
   public generatedIcon = signal(faCrosshairs);
 
+  public isAnonymous = computed(() => this.authManager.apiKey() === this.authManager.anonymousApiKey);
+
+  public transferKudosForm = new FormGroup({
+    targetUser: new FormControl<string | null>(null, [
+      Validators.required,
+      AppValidators.regex(/.+#[0-9]+/),
+    ]),
+    amount: new FormControl<number | null>(null, [
+      Validators.required,
+      AppValidators.lazyMax(() => this.currentUser()?.kudos ?? 0),
+      Validators.min(1),
+    ]),
+  });
+
   constructor(
-    private readonly horde: AiHorde,
+    private readonly api: AiHorde,
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
+    private readonly authManager: AuthManagerService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -72,8 +91,8 @@ export class HordeComponent implements OnInit {
 
   private async loadData(): Promise<void> {
     const responses = await Promise.all([
-      toPromise(this.horde.currentUser()),
-      toPromise(this.horde.getPerformanceStatus()),
+      toPromise(this.api.currentUser()),
+      toPromise(this.api.getPerformanceStatus()),
     ]);
 
     for (const response of responses) {
@@ -88,7 +107,7 @@ export class HordeComponent implements OnInit {
     this.performanceStatus.set(responses[1].successResponse!);
 
     const workers = await Promise.all(this.currentUser()!.worker_ids.map(async workerId => {
-      const response = await toPromise(this.horde.getWorkerDetail(workerId));
+      const response = await toPromise(this.api.getWorkerDetail(workerId));
       if (!response.success) {
         return null;
       }
@@ -97,6 +116,30 @@ export class HordeComponent implements OnInit {
     }));
     this.workers.set(<WorkerDetails[]>workers.filter(worker => worker !== null && worker.type === WorkerType.image));
 
+    this.loading.set(false);
+  }
+
+  public async transferKudos(): Promise<void> {
+    if (!this.transferKudosForm.valid) {
+      await this.messageService.error(this.translator.get('app.error.form_invalid'));
+      return;
+    }
+    this.loading.set(true);
+    const response = await toPromise(this.api.transferKudos(
+      this.transferKudosForm.controls.targetUser.value!,
+      this.transferKudosForm.controls.amount.value!,
+    ));
+    if (!response.success) {
+      await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
+      this.loading.set(false);
+      return;
+    }
+
+    await this.messageService.success(this.translator.get('app.transfer_kudos.success'));
+    await this.loadData();
+    this.transferKudosForm.patchValue({
+      amount: null,
+    });
     this.loading.set(false);
   }
 }
