@@ -6,7 +6,7 @@ import {TranslatorService} from "../translator.service";
 import {
   DeleteObjectCommand,
   GetObjectCommand,
-  ListObjectsV2Command,
+  ListObjectsV2Command, ListObjectsV2CommandOutput,
   NoSuchKey,
   PutObjectCommand,
   S3Client
@@ -14,6 +14,43 @@ import {
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
 import {PaginatedResult} from "../../types/paginated-result";
+import {Sampler} from "../../types/horde/sampler";
+import {PostProcessor} from "../../types/horde/post-processor";
+
+export const S3CorsConfig = [
+  {
+    "AllowedHeaders": [
+      "*",
+    ],
+    "AllowedMethods": [
+      "PUT",
+      "POST",
+      "DELETE",
+      "GET",
+    ],
+    "AllowedOrigins": [
+      "*",
+    ],
+    "ExposeHeaders": [
+      "x-amz-meta-cfgscale",
+      "x-amz-meta-width",
+      "x-amz-meta-workername",
+      "x-amz-meta-postprocessors",
+      "x-amz-meta-sampler",
+      "x-amz-meta-steps",
+      "x-amz-meta-seed",
+      "x-amz-meta-workerid",
+      "x-amz-meta-karras",
+      "x-amz-meta-denoisingstrength",
+      "x-amz-meta-prompt",
+      "x-amz-meta-height",
+      "x-amz-meta-model",
+      "x-amz-meta-facefixerstrength",
+      "x-amz-meta-hiresfix",
+      "x-amz-meta-negativeprompt"
+    ],
+  },
+];
 
 @Injectable({
   providedIn: 'root',
@@ -83,8 +120,83 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     }));
   }
 
-  loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
-    throw new Error("Method not implemented.");
+  public async loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
+    const client = await this.getClient();
+    const prefix = await this.getPrefix();
+    const bucket = await this.getBucket();
+
+    const response = await client.send(new ListObjectsV2Command({
+      Bucket: bucket,
+      Prefix: prefix,
+    }));
+    const total = response.KeyCount!;
+    const lastPage = Math.ceil(total / perPage);
+
+    if (!response?.Contents) {
+      return {
+        page: page,
+        lastPage: lastPage,
+        rows: [],
+      };
+    }
+
+    const keys = response.Contents
+      .sort((a, b) => {
+        if (a.LastModified!.getTime() === b.LastModified!.getTime()) {
+          return 0;
+        }
+
+        return a.LastModified!.getTime() > b.LastModified!.getTime() ? -1 : 1;
+      })
+      .slice(0, perPage)
+      .filter(object => object.Key!.endsWith('.webp'))
+      .map(object => object.Key!)
+    ;
+
+    const images = await Promise.all(keys.map(key => {
+      return client.send(new GetObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      }));
+    }));
+    const bodies = await Promise.all(images.map(
+      image => image.Body!.transformToByteArray().then(body => new Blob([body])),
+    ));
+
+    return {
+      page: page,
+      lastPage: lastPage,
+      rows: images.map((image, index): StoredImage => {
+        const id = keys[index].substring(prefix.length + 1, keys[index].length - 5);
+        return {
+          id: id,
+          data: bodies[index],
+          sampler: <Sampler|undefined>image.Metadata!['sampler'] ?? Sampler.lcm,
+          seed: image.Metadata!['seed'],
+          model: image.Metadata!['model'],
+          faceFixerStrength: Number(image.Metadata!['facefixerstrength']),
+          postProcessors: <PostProcessor[]>image.Metadata!['postprocessors']?.split(',') ?? [],
+          worker: {
+            id: image.Metadata!['workerid'] ?? '',
+            name: image.Metadata!['workername'] ?? '',
+          },
+          karras: Boolean(Number(image.Metadata!['karras'] ?? 0)),
+          steps: Number(image.Metadata!['steps'] ?? 0),
+          height: Number(image.Metadata!['height'] ?? 0),
+          width: Number(image.Metadata!['width'] ?? 0),
+          hiresFix: Boolean(Number(image.Metadata!['hiresfix'] ?? 0)),
+          denoisingStrength: Number(image.Metadata!['denoisingstrength'] ?? 0),
+          cfgScale: Number(image.Metadata!['cfgscale'] ?? 0),
+          prompt: image.Metadata!['prompt'] ?? '',
+          negativePrompt: image.Metadata!['negativeprompt'],
+          loras: [],
+          censorNsfw: false,
+          slowWorkers: false,
+          trustedWorkers: false,
+          nsfw: false,
+        }
+      }),
+    }
   }
 
   public get displayName(): Resolvable<string> {
@@ -118,6 +230,8 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
         width: String(image.width),
         steps: String(image.steps),
         karras: String(Number(image.karras)),
+        faceFixerStrength: String(image.faceFixerStrength),
+        hiresFix: String(Number(image.hiresFix)),
       },
       ContentType: 'image/webp',
     }));
