@@ -21,7 +21,9 @@
           @if (s3CorsCheckResult() === null) {
             <p class="text-warning">{{'app.s3_cors_check.unknown' | transloco}}</p>
           } @else if (s3CorsCheckResult() === false) {
-            <p class="text-danger">{{'app.s3_cors_check.error' | transloco}}</p>
+            <p class="text-danger">
+              <transloco key="app.s3_cors_check.error" [params]="{url: 'https://s3.console.aws.amazon.com/s3/bucket/' + form.controls.s3_bucket.value + '/property/cors/edit?region=' + form.controls.s3_region.value}" />
+            </p>
             <div class="mb-2">
               <pre>{{s3CorsConfig() | json}}</pre>
               <app-copy-button class="mt-1 display-block" [text]="s3CorsConfig() | json">{{'app.copy_to_clipboard' | transloco}}</app-copy-button>

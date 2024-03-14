@@ -59,7 +59,18 @@ li {
 }
 
 .text-danger {
-  color: red;
+  $dangerColor: red;
+  color: $dangerColor;
+
+  a {
+    font-weight: bold;
+    text-decoration: underline;
+    color: $dangerColor;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
 
 .text-warning {

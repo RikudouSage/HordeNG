@@ -20,6 +20,7 @@ import {DatabaseService} from "../../services/database.service";
 import {Credentials} from "../../types/credentials/credentials";
 import {S3CorsConfig, S3DataStorage} from "../../services/image-storage/s3.data-storage";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
+import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 
 @Component({
   selector: 'app-settings',
@@ -32,7 +33,8 @@ import {CopyButtonComponent} from "../../components/copy-button/copy-button.comp
     KeyValuePipe,
     ToggleablePasswordInputComponent,
     JsonPipe,
-    CopyButtonComponent
+    CopyButtonComponent,
+    TranslocoMarkupComponent
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
@@ -167,13 +169,10 @@ export class SettingsComponent implements OnInit {
       prefix: this.form.controls.s3_prefix.value,
       region: this.form.controls.s3_region.value!,
     });
+    this.s3CorsCheckResult.set(await storage.checkCors());
     if (typeof result === 'string') {
       await this.messageService.error(this.translator.get('app.error.aws_error', {error: result}));
       return false;
-    }
-
-    if (result) {
-      this.s3CorsCheckResult.set(await storage.checkCors());
     }
 
     return result;
