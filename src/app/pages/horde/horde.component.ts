@@ -1,4 +1,14 @@
-import {Component, computed, Inject, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {
+  Component,
+  computed,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  signal,
+  TemplateRef,
+  ViewContainerRef,
+  WritableSignal
+} from '@angular/core';
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {AiHorde} from "../../services/ai-horde.service";
 import {UserDetails} from "../../types/horde/user-details";
@@ -26,6 +36,7 @@ import {DataStorageManagerService} from "../../services/data-storage-manager.ser
 import {DataStorage} from "../../services/image-storage/data-storage";
 import {SharedKey} from "../../types/horde/shared-key";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
+import {ModalService} from "../../services/modal.service";
 
 @Component({
   selector: 'app-horde',
@@ -51,8 +62,6 @@ export class HordeComponent implements OnInit {
   private readonly isBrowser: boolean;
   protected readonly WorkerType = WorkerType;
 
-  private dataStorage = signal<DataStorage<any> | null>(null);
-
   public loading = signal(true);
 
   public currentUser: WritableSignal<UserDetails | null> = signal(null);
@@ -64,7 +73,7 @@ export class HordeComponent implements OnInit {
   public generatedIcon = signal(faCrosshairs);
 
   public isAnonymous = computed(() => this.authManager.apiKey() === this.authManager.anonymousApiKey);
-  public sharedKeys = signal<string[]>([]);
+  public sharedKeys = computed(() => this.currentUser()?.sharedkey_ids ?? []);
   public sharedKeyDetails = signal<SharedKey[]>([]);
 
   public transferKudosForm = new FormGroup({
@@ -85,30 +94,35 @@ export class HordeComponent implements OnInit {
     private readonly translator: TranslatorService,
     private readonly authManager: AuthManagerService,
     private readonly storageManager: DataStorageManagerService,
+    private readonly modalService: ModalService,
+    private readonly view: ViewContainerRef,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
   public async ngOnInit(): Promise<void> {
-    if (this.isBrowser) {
-      this.dataStorage.set(await this.storageManager.currentStorage);
-      this.sharedKeys.set(await this.dataStorage()!.getOption('shared_keys', []));
-      this.api.getSharedKeys(this.sharedKeys()).subscribe(response => {
-        if (!response.success) {
-          this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
-          return;
-        }
-
-        this.sharedKeyDetails.set(response.successResponse!);
-      });
-    }
     await this.loadData();
     if (this.isBrowser) {
       interval(60_000).subscribe(() => {
         this.loadData();
       });
+      this.fetchSharedKeyDetails();
     }
+  }
+
+  private fetchSharedKeyDetails(): void {
+    this.api.getSharedKeys(this.sharedKeys()).subscribe(response => {
+      if (!response.success) {
+        this.messageService.error(this.translator.get('app.error.api_error', {
+          message: response.errorResponse!.message,
+          code: response.errorResponse!.rc
+        }));
+        return;
+      }
+
+      this.sharedKeyDetails.set(response.successResponse!);
+    });
   }
 
   private async loadData(): Promise<void> {
@@ -119,7 +133,10 @@ export class HordeComponent implements OnInit {
 
     for (const response of responses) {
       if (!response.success) {
-        await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
+        await this.messageService.error(this.translator.get('app.error.api_error', {
+          message: response.errorResponse!.message,
+          code: response.errorResponse!.rc
+        }));
         this.loading.set(false);
         return;
       }
@@ -152,7 +169,10 @@ export class HordeComponent implements OnInit {
       this.transferKudosForm.controls.amount.value!,
     ));
     if (!response.success) {
-      await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
+      await this.messageService.error(this.translator.get('app.error.api_error', {
+        message: response.errorResponse!.message,
+        code: response.errorResponse!.rc
+      }));
       this.loading.set(false);
       return;
     }
@@ -163,5 +183,9 @@ export class HordeComponent implements OnInit {
       amount: null,
     });
     this.loading.set(false);
+  }
+
+  public async openModal(createKeyModal: TemplateRef<any>): Promise<void> {
+    this.modalService.open(this.view, createKeyModal);
   }
 }

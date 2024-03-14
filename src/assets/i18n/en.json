@@ -117,5 +117,12 @@
   "app.shared_key.expires": "Expiration",
   "app.shared_key.max_image_pixels": "Max pixels",
   "app.shared_key.max_image_steps": "Max steps (image)",
-  "app.success.copied_to_clipboard": "Successfully copied to clipboard"
+  "app.success.copied_to_clipboard": "Successfully copied to clipboard",
+  "app.shared_keys.create": "Create new",
+  "app.shared_keys.import": "Import existing",
+  "app.shared_key.owner": "Owner",
+  "app.shared_key.owner.you": "you",
+  "app.shared_key.import.key": "Key to import",
+  "app.shared_key.import.import": "Import",
+  "app.shared_keys.no_key": "No shared key available"
 }

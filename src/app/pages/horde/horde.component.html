@@ -167,7 +167,7 @@
         </app-box>
       </div>
       <div class="col-md-6">
-        <app-box [collapsible]="true" [title]="'app.shared_keys' | transloco" class="position-relative" #box>
+        <app-box [collapsible]="true" [collapsedByDefault]="false" [title]="'app.shared_keys' | transloco" class="position-relative" #box>
           @if (sharedKeyDetails().length !== sharedKeys().length && !box.collapsed()) {
             <app-loader />
           } @else {
@@ -179,6 +179,17 @@
                     <td>
                       {{sharedKey.id}}
                       <app-copy-button class="ml-1" [text]="sharedKey.id" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>{{'app.shared_key.owner' | transloco}}</td>
+                    <td>
+                      {{sharedKey.username}}
+                      @if (sharedKey.username === currentUser()?.username) {
+                        <small>
+                          ({{'app.shared_key.owner.you' | transloco}})
+                        </small>
+                      }
                     </td>
                   </tr>
                   <tr>
@@ -247,10 +258,19 @@
 <!--                  </tr>-->
                 </table>
               </app-box>
+            } @empty {
+              <p>{{'app.shared_keys.no_key' | transloco}}</p>
             }
           }
+
+          <div class="row mt-1">
+            <button class="btn btn-primary mr-05" (click)="openModal(createKeyModal)">{{'app.shared_keys.create' | transloco}}</button>
+          </div>
         </app-box>
       </div>
     </div>
   }
 }
+
+<ng-template #createKeyModal></ng-template>
+

@@ -52,7 +52,6 @@ export class ModalService {
     options.animations.overlay.enter ??= 'fade-in 0.8s';
     options.animations.overlay.leave ??= 'fade-out 0.3s forwards';
     options.size ??= {};
-    options.size.width ??= '80vw';
 
     return options;
   }

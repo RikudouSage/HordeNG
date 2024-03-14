@@ -61,4 +61,14 @@ export class AppValidators {
       return regex.test(control.value) ? null : {regex: 'not-matching'};
     }
   }
+
+  public static uuid(control: AbstractControl): ValidationErrors | null {
+    if (typeof control.value !== 'string') {
+      return {uuid: 'not-a-string'};
+    }
+
+    return /[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/.test(control.value)
+      ? null
+      : {uuid: false};
+  }
 }
