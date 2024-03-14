@@ -3,7 +3,14 @@ import {Injectable} from "@angular/core";
 import {S3Credentials} from "../../types/credentials/s3.credentials";
 import {Resolvable} from "../../helper/resolvable";
 import {TranslatorService} from "../translator.service";
-import {ListObjectsV2Command, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  ListObjectsV2Command,
+  NoSuchKey,
+  PutObjectCommand,
+  S3Client
+} from "@aws-sdk/client-s3";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
 import {PaginatedResult} from "../../types/paginated-result";
@@ -20,16 +27,60 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
 
   getOption<T>(option: string, defaultValue: T): Promise<T>;
   getOption<T>(option: string): Promise<T | undefined>;
-  getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {
-      throw new Error("Method not implemented.");
+  public async getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {
+    const client = await this.getClient();
+    try {
+      const item = await client.send(new GetObjectCommand({
+        Bucket: await this.getBucket(),
+        Key: `${await this.getPrefix()}/options.json`,
+      }));
+      if (item.Body) {
+        const data = JSON.parse(await item.Body.transformToString());
+        return data[option] ?? defaultValue;
+      }
+
+      return defaultValue;
+    } catch (e) {
+      if (!(e instanceof NoSuchKey)) {
+        throw e;
+      }
+      return defaultValue;
+    }
   }
 
-  storeOption(option: string, value: any): Promise<void> {
-    throw new Error("Method not implemented.");
+  public async storeOption(option: string, value: any): Promise<void> {
+    const client = await this.getClient();
+    let options: {[key: string]: any} = {};
+    try {
+      const item = await client.send(new GetObjectCommand({
+        Bucket: await this.getBucket(),
+        Key: `${await this.getPrefix()}/options.json`,
+      }));
+      if (item.Body) {
+        options = JSON.parse(await item.Body.transformToString());
+      }
+    } catch (e) {
+      if (!(e instanceof NoSuchKey)) {
+        throw e;
+      }
+    }
+    options[option] = value;
+
+    await client.send(new PutObjectCommand({
+      Bucket: await this.getBucket(),
+      Key: `${await this.getPrefix()}/options.json`,
+      Body: JSON.stringify(options),
+      ContentType: "application/json",
+    }));
   }
 
-  deleteImage(image: StoredImage): Promise<void> {
-    throw new Error("Method not implemented.");
+  public async deleteImage(image: StoredImage): Promise<void> {
+    const client = await this.getClient();
+
+    await client.send(new DeleteObjectCommand({
+      Bucket: await this.getBucket(),
+      Key: `${await this.getPrefix()}/${image.id}.webp`,
+    }));
   }
 
   loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
@@ -46,15 +97,10 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
 
   public async storeImage(image: UnsavedStoredImage): Promise<void> {
     const client = await this.getClient();
-    const credentials = await this.getCredentials();
-    let prefix = credentials.prefix ?? '';
-    if (prefix && prefix.endsWith('/')) {
-      prefix = prefix.substring(0, prefix.length - 2);
-    }
 
     await client.send(new PutObjectCommand({
-      Bucket: credentials.bucket,
-      Key: `${prefix}/${image.id}.webp`,
+      Bucket: await this.getBucket(),
+      Key: `${await this.getPrefix()}/${image.id}.webp`,
       Body: image.data,
       Metadata: {
         workerId: image.worker.id,
@@ -123,5 +169,19 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     }
 
     return credentials.value;
+  }
+
+  private async getPrefix(): Promise<string> {
+    const credentials = await this.getCredentials();
+    let prefix = credentials.prefix ?? '';
+    if (prefix && prefix.endsWith('/')) {
+      prefix = prefix.substring(0, prefix.length - 1);
+    }
+
+    return prefix;
+  }
+
+  private async getBucket(): Promise<string> {
+    return (await this.getCredentials()).bucket;
   }
 }
