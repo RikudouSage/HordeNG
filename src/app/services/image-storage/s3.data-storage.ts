@@ -300,14 +300,14 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     }
   }
 
-  public async checkCors(): Promise<boolean | null> {
+  public async checkCors(credentials?: S3Credentials): Promise<boolean | null> {
     const cacheItem = await this.cache.getItem<boolean | null>(this.CacheKeys.CorsCheck);
     if (cacheItem.isHit) {
       return cacheItem.value ?? null;
     }
     cacheItem.expiresAfter(60 * 60);
 
-    const client = await this.getClient();
+    const client = await this.getClient(credentials);
     try {
       const result = await client.send(new GetBucketCorsCommand({
         Bucket: await this.getBucket(),
@@ -361,8 +361,8 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     }
   }
 
-  private async getClient(): Promise<S3Client> {
-    const credentials = await this.getCredentials();
+  private async getClient(credentials?: S3Credentials): Promise<S3Client> {
+    credentials ??= await this.getCredentials();
 
     return new S3Client({
       credentials: {

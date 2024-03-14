@@ -161,15 +161,17 @@ export class SettingsComponent implements OnInit {
   }
 
   private async validateS3Storage(): Promise<boolean> {
-    const storage = <S3DataStorage>(await this.storageManager.findByName(this.form.controls.storage.value!));
-    const result = await storage.validateCredentials({
+    const credentials = {
       accessKeyId: this.form.controls.s3_accessKey.value!,
       secretAccessKey: this.form.controls.s3_secretKey.value!,
       bucket: this.form.controls.s3_bucket.value!,
       prefix: this.form.controls.s3_prefix.value,
       region: this.form.controls.s3_region.value!,
-    });
-    this.s3CorsCheckResult.set(await storage.checkCors());
+    };
+    const storage = <S3DataStorage>(await this.storageManager.findByName(this.form.controls.storage.value!));
+    await storage.clearCache();
+    const result = await storage.validateCredentials(credentials);
+    this.s3CorsCheckResult.set(await storage.checkCors(credentials));
     if (typeof result === 'string') {
       await this.messageService.error(this.translator.get('app.error.aws_error', {error: result}));
       return false;
