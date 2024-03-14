@@ -3,7 +3,7 @@ import {
   computed,
   Inject,
   OnInit,
-  PLATFORM_ID,
+  PLATFORM_ID, Signal,
   signal,
   TemplateRef,
   ViewContainerRef,
@@ -18,7 +18,7 @@ import {TranslatorService} from "../../services/translator.service";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {SmallBoxComponent} from "../../components/small-box/small-box.component";
-import {faCoins, faCrosshairs, faImage} from "@fortawesome/free-solid-svg-icons";
+import {faCoins, faCrosshairs, faImage, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {BoxComponent} from "../../components/box/box.component";
 import {HordePerformance} from "../../types/horde/horde-performance";
@@ -32,12 +32,12 @@ import {WorkerType} from "../../types/horde/worker-type";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AppValidators} from "../../helper/app-validators";
 import {AuthManagerService} from "../../services/auth-manager.service";
-import {DataStorageManagerService} from "../../services/data-storage-manager.service";
-import {DataStorage} from "../../services/image-storage/data-storage";
 import {SharedKey} from "../../types/horde/shared-key";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 import {ModalService} from "../../services/modal.service";
 import {FormatDatetimePipe} from "../../pipes/format-date.pipe";
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
 
 @Component({
   selector: 'app-horde',
@@ -55,7 +55,8 @@ import {FormatDatetimePipe} from "../../pipes/format-date.pipe";
     MathSqrtPipe,
     ReactiveFormsModule,
     CopyButtonComponent,
-    FormatDatetimePipe
+    FormatDatetimePipe,
+    FaIconComponent
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
@@ -74,9 +75,20 @@ export class HordeComponent implements OnInit {
   public requestedIcon = signal(faImage);
   public generatedIcon = signal(faCrosshairs);
 
-  public isAnonymous = computed(() => this.authManager.apiKey() === this.authManager.anonymousApiKey);
+  public isAnonymous = this.authManager.isAnonymous;
+  public isSharedKey = computed(() => {
+    if (this.isAnonymous()) {
+      return false;
+    }
+    if (this.currentUser() === null) {
+      return false;
+    }
+    return this.currentUser()!.username.toLowerCase().includes('shared key:');
+  });
   public sharedKeys = computed(() => this.currentUser()?.sharedkey_ids ?? []);
   public sharedKeyDetails = signal<SharedKey[]>([]);
+
+  public removeIcon: Signal<IconDefinition> = signal(faTrash);
 
   public transferKudosForm = new FormGroup({
     targetUser: new FormControl<string | null>(null, [
@@ -163,15 +175,15 @@ export class HordeComponent implements OnInit {
 
   private fetchSharedKeyDetails(): void {
     this.api.getSharedKeys(this.sharedKeys()).subscribe(response => {
-      if (!response.success) {
-        this.messageService.error(this.translator.get('app.error.api_error', {
-          message: response.errorResponse!.message,
-          code: response.errorResponse!.rc
-        }));
-        return;
-      }
-
       this.sharedKeyDetails.set(response.successResponse!);
+      this.currentUser.update(value => {
+        if (value === null) {
+          return null;
+        }
+
+        value.sharedkey_ids = response.successResponse!.map(key => key.id);
+        return {...value};
+      });
     });
   }
 
@@ -193,17 +205,20 @@ export class HordeComponent implements OnInit {
     }
 
     this.currentUser.set(responses[0].successResponse!);
+    this.fetchSharedKeyDetails();
     this.performanceStatus.set(responses[1].successResponse!);
 
-    const workers = await Promise.all(this.currentUser()!.worker_ids.map(async workerId => {
-      const response = await toPromise(this.api.getWorkerDetail(workerId));
-      if (!response.success) {
-        return null;
-      }
+    if (this.currentUser()!.worker_ids) {
+      const workers = await Promise.all(this.currentUser()!.worker_ids!.map(async workerId => {
+        const response = await toPromise(this.api.getWorkerDetail(workerId));
+        if (!response.success) {
+          return null;
+        }
 
-      return response.successResponse!;
-    }));
-    this.workers.set(<WorkerDetails[]>workers.filter(worker => worker !== null && worker.type === WorkerType.image));
+        return response.successResponse!;
+      }));
+      this.workers.set(<WorkerDetails[]>workers.filter(worker => worker !== null && worker.type === WorkerType.image));
+    }
 
     this.loading.set(false);
   }
@@ -275,6 +290,29 @@ export class HordeComponent implements OnInit {
       return currentUser;
     });
     this.fetchSharedKeyDetails();
+    this.loading.set(false);
+  }
+
+  public async removeSharedKey(sharedKey: SharedKey): Promise<void> {
+    this.loading.set(true);
+    const response = await toPromise(this.api.removeSharedKey(sharedKey));
+    if (response.success) {
+      await this.messageService.success(this.translator.get('app.success.shared_key.remove'));
+      this.currentUser.update(value => {
+        if (value === null) {
+          return null;
+        }
+
+        value.sharedkey_ids = value.sharedkey_ids.filter(item => item !== sharedKey.id);
+        return {...value};
+      });
+      this.sharedKeyDetails.update(value => value.filter(key => key.id !== sharedKey.id));
+    } else {
+      await this.messageService.error(this.translator.get('app.error.api_error', {
+        message: response.errorResponse!.message,
+        code: response.errorResponse!.rc
+      }));
+    }
     this.loading.set(false);
   }
 }

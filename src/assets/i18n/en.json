@@ -132,5 +132,6 @@
   "app.shared_keys.create.max_image_pixels": "Max image pixels",
   "app.shared_keys.create.name": "Key name",
   "app.shared_keys.create.max_image_steps": "Max image steps",
-  "app.shared_key.create.success": "New shared key was successfully created."
+  "app.shared_key.create.success": "New shared key was successfully created.",
+  "app.success.shared_key.remove": "The shared key was successfully removed"
 }

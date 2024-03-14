@@ -92,15 +92,10 @@ export class AiHorde {
         const result: SharedKey[] = [];
         for (const response of responses) {
           if (!response.success) {
-            return {
-              success: false,
-              errorResponse: response.errorResponse,
-              statusCode: response.statusCode,
-            };
+            continue;
           }
           result.push(response.successResponse!);
         }
-
 
         return {success: true, statusCode: 200, successResponse: result};
       }),
@@ -110,6 +105,11 @@ export class AiHorde {
   public createSharedKey(key: UncreatedSharedKey): Observable<ApiResponse<SharedKey>> {
     // noinspection SpellCheckingInspection
     return this.sendRequest(HttpMethod.Put, `sharedkeys`, key);
+  }
+
+  public removeSharedKey(key: SharedKey): Observable<ApiResponse<any>> {
+    // noinspection SpellCheckingInspection
+    return this.sendRequest(HttpMethod.Delete, `sharedkeys/${key.id}`);
   }
 
   private sendRequest<T>(
