@@ -108,5 +108,14 @@
   "app.transfer_kudos.target_user.description": "The username and ID of the person you want to send Kudos to. In the format [i]username#ID[/i], for example [b]{{example}}[/b]",
   "app.transfer_kudos.amount": "Amount",
   "app.transfer_kudos.transfer": "Transfer",
-  "app.transfer_kudos.success": "Kudos have been successfully transferred."
+  "app.transfer_kudos.success": "Kudos have been successfully transferred.",
+  "app.shared_keys": "Shared keys",
+  "app.shared_key.key": "Key",
+  "app.shared_key.kudos_budget": "Kudos budget",
+  "app.shared_key.kudos_remaining": "- remaining",
+  "app.shared_key.kudos_used": "- used",
+  "app.shared_key.expires": "Expiration",
+  "app.shared_key.max_image_pixels": "Max pixels",
+  "app.shared_key.max_image_steps": "Max steps (image)",
+  "app.success.copied_to_clipboard": "Successfully copied to clipboard"
 }

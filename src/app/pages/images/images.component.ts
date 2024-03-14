@@ -8,7 +8,7 @@ import {
   ViewContainerRef,
   WritableSignal
 } from '@angular/core';
-import {ImageStorageManagerService} from "../../services/image-storage-manager.service";
+import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {isPlatformBrowser} from "@angular/common";
 import {LoaderComponent} from "../../components/loader/loader.component";
@@ -17,7 +17,7 @@ import {TranslocoPipe} from "@ngneat/transloco";
 import {ModalService} from "../../services/modal.service";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
-import {ImageStorage} from "../../services/image-storage/image-storage";
+import {DataStorage} from "../../services/image-storage/data-storage";
 import {DatabaseService} from "../../services/database.service";
 import {PostProcessor} from "../../types/horde/post-processor";
 
@@ -51,7 +51,7 @@ export class ImagesComponent implements OnInit {
   public currentResults: WritableSignal<StoredImageWithLink[]> = signal([]);
 
   constructor(
-    private readonly storageManager: ImageStorageManagerService,
+    private readonly storageManager: DataStorageManagerService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
     private readonly modalService: ModalService,
@@ -109,7 +109,7 @@ export class ImagesComponent implements OnInit {
     this.loading.set(false);
   }
 
-  private async loadData(storage: ImageStorage<any>): Promise<void> {
+  private async loadData(storage: DataStorage<any>): Promise<void> {
     const images = await storage.loadImages(this.currentPage(), this.perPage);
     this.currentResults.set(images.rows.map(image => ({link: URL.createObjectURL(image.data), ...image})));
 

@@ -1,4 +1,4 @@
-import {ImageStorage} from "./image-storage";
+import {DataStorage} from "./data-storage";
 import {Injectable} from "@angular/core";
 import {S3Credentials} from "../../types/credentials/s3.credentials";
 import {Resolvable} from "../../helper/resolvable";
@@ -11,11 +11,21 @@ import {PaginatedResult} from "../../types/paginated-result";
 @Injectable({
   providedIn: 'root',
 })
-export class S3ImageStorage implements ImageStorage<S3Credentials> {
+export class S3DataStorage implements DataStorage<S3Credentials> {
   constructor(
     private readonly translator: TranslatorService,
     private readonly database: DatabaseService,
   ) {
+  }
+
+  getOption<T>(option: string, defaultValue: T): Promise<T>;
+  getOption<T>(option: string): Promise<T | undefined>;
+  getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {
+      throw new Error("Method not implemented.");
+  }
+
+  storeOption(option: string, value: any): Promise<void> {
+    throw new Error("Method not implemented.");
   }
 
   deleteImage(image: StoredImage): Promise<void> {

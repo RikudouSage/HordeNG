@@ -1,4 +1,4 @@
-import {ImageStorage} from "./image-storage";
+import {DataStorage} from "./data-storage";
 import {Injectable} from "@angular/core";
 import {Credentials} from "../../types/credentials/credentials";
 import {TranslatorService} from "../translator.service";
@@ -11,11 +11,29 @@ import {Order} from "../../types/order";
 @Injectable({
   providedIn: 'root',
 })
-export class IndexedDbImageStorage implements ImageStorage<Credentials> {
+export class IndexedDbDataStorage implements DataStorage<Credentials> {
   constructor(
     private readonly translator: TranslatorService,
     private readonly database: DatabaseService,
   ) {
+  }
+
+  public getOption<T>(option: string, defaultValue: T): Promise<T>;
+  public getOption<T>(option: string): Promise<T | undefined>;
+  public async getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {
+    const value = await this.database.getSetting<T>(option);
+    if (value === undefined) {
+      return defaultValue;
+    }
+
+    return value.value;
+  }
+
+  public async storeOption(option: string, value: any): Promise<void> {
+    return await this.database.setSetting({
+      setting: option,
+      value: value,
+    });
   }
 
   public async deleteImage(image: StoredImage): Promise<void> {

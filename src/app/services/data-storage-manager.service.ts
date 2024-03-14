@@ -1,21 +1,21 @@
 import {Inject, Injectable} from '@angular/core';
-import {ImageStorage} from "./image-storage/image-storage";
+import {DataStorage} from "./image-storage/data-storage";
 import {Credentials} from "../types/credentials/credentials";
-import {IMAGE_STORAGE} from "../app.config";
+import {DATA_STORAGE} from "../app.config";
 import {DatabaseService} from "./database.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ImageStorageManagerService {
+export class DataStorageManagerService {
   constructor(
-    @Inject(IMAGE_STORAGE)
-    private readonly storages: ImageStorage<Credentials>[],
+    @Inject(DATA_STORAGE)
+    private readonly storages: DataStorage<Credentials>[],
     private readonly database: DatabaseService,
   ) {}
 
-  public get currentStorage(): Promise<ImageStorage<Credentials>> {
-    return new Promise<ImageStorage<Credentials>>((resolve, reject) => {
+  public get currentStorage(): Promise<DataStorage<Credentials>> {
+    return new Promise<DataStorage<Credentials>>((resolve, reject) => {
       this.database.getSetting<string>('image_storage').then(setting => {
         setting ??= {
           setting: 'image_storage',
@@ -28,11 +28,11 @@ export class ImageStorageManagerService {
     });
   }
 
-  public get allStorages(): ImageStorage<Credentials>[] {
+  public get allStorages(): DataStorage<Credentials>[] {
     return this.storages;
   }
 
-  public async findByName(name: string): Promise<ImageStorage<Credentials>> {
+  public async findByName(name: string): Promise<DataStorage<Credentials>> {
     for (const storage of this.storages) {
       if (storage.name === name) {
         return storage;

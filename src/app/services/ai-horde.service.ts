@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {HttpMethod} from "../types/http-method";
-import {catchError, map, Observable, of} from "rxjs";
+import {catchError, forkJoin, map, Observable, of} from "rxjs";
 import {ApiResponse} from "../types/api-response";
 import {environment} from "../../environments/environment";
 import {ErrorResponse} from "../types/error-response";
@@ -15,6 +15,7 @@ import {AsyncGenerationResponse} from "../types/horde/async-generation-response"
 import {JobInProgress} from "../types/db/job-in-progress";
 import {RequestStatusCheck} from "../types/horde/request-status-check";
 import {RequestStatusFull} from "../types/horde/request-status-full";
+import {SharedKey} from "../types/horde/shared-key";
 
 @Injectable({
   providedIn: 'root'
@@ -83,6 +84,27 @@ export class AiHorde {
       username: recipient,
       amount: amount,
     });
+  }
+
+  public getSharedKeys(ids: string[]): Observable<ApiResponse<SharedKey[]>> {
+    return forkJoin(ids.map(id => this.sendRequest<SharedKey>(HttpMethod.Get, `sharedkeys/${id}`))).pipe(
+      map ((responses): ApiResponse<SharedKey[]> => {
+        const result: SharedKey[] = [];
+        for (const response of responses) {
+          if (!response.success) {
+            return {
+              success: false,
+              errorResponse: response.errorResponse,
+              statusCode: response.statusCode,
+            };
+          }
+          result.push(response.successResponse!);
+        }
+
+
+        return {success: true, statusCode: 200, successResponse: result};
+      }),
+    );
   }
 
   private sendRequest<T>(

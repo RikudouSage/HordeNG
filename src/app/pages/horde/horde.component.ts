@@ -22,6 +22,10 @@ import {WorkerType} from "../../types/horde/worker-type";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AppValidators} from "../../helper/app-validators";
 import {AuthManagerService} from "../../services/auth-manager.service";
+import {DataStorageManagerService} from "../../services/data-storage-manager.service";
+import {DataStorage} from "../../services/image-storage/data-storage";
+import {SharedKey} from "../../types/horde/shared-key";
+import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 
 @Component({
   selector: 'app-horde',
@@ -37,7 +41,8 @@ import {AuthManagerService} from "../../services/auth-manager.service";
     PrintSecondsPipe,
     AsyncPipe,
     MathSqrtPipe,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CopyButtonComponent
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
@@ -45,6 +50,8 @@ import {AuthManagerService} from "../../services/auth-manager.service";
 export class HordeComponent implements OnInit {
   private readonly isBrowser: boolean;
   protected readonly WorkerType = WorkerType;
+
+  private dataStorage = signal<DataStorage<any> | null>(null);
 
   public loading = signal(true);
 
@@ -57,6 +64,8 @@ export class HordeComponent implements OnInit {
   public generatedIcon = signal(faCrosshairs);
 
   public isAnonymous = computed(() => this.authManager.apiKey() === this.authManager.anonymousApiKey);
+  public sharedKeys = signal<string[]>([]);
+  public sharedKeyDetails = signal<SharedKey[]>([]);
 
   public transferKudosForm = new FormGroup({
     targetUser: new FormControl<string | null>(null, [
@@ -75,12 +84,25 @@ export class HordeComponent implements OnInit {
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
     private readonly authManager: AuthManagerService,
+    private readonly storageManager: DataStorageManagerService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
   public async ngOnInit(): Promise<void> {
+    if (this.isBrowser) {
+      this.dataStorage.set(await this.storageManager.currentStorage);
+      this.sharedKeys.set(await this.dataStorage()!.getOption('shared_keys', []));
+      this.api.getSharedKeys(this.sharedKeys()).subscribe(response => {
+        if (!response.success) {
+          this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
+          return;
+        }
+
+        this.sharedKeyDetails.set(response.successResponse!);
+      });
+    }
     await this.loadData();
     if (this.isBrowser) {
       interval(60_000).subscribe(() => {

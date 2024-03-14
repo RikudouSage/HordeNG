@@ -24,7 +24,7 @@ import {JobMetadata} from "../../types/job-metadata";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {RequestStatusFull} from "../../types/horde/request-status-full";
 import {UnsavedStoredImage} from "../../types/db/stored-image";
-import {ImageStorageManagerService} from "../../services/image-storage-manager.service";
+import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {TomSelectDirective} from "../../directives/tom-select.directive";
 import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
@@ -135,7 +135,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
     private readonly httpClient: HttpClient,
-    private readonly imageStorage: ImageStorageManagerService,
+    private readonly imageStorage: DataStorageManagerService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);

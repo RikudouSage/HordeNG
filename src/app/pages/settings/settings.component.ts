@@ -8,13 +8,13 @@ import {toPromise} from "../../helper/resolvable";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
-import {ImageStorageManagerService} from "../../services/image-storage-manager.service";
+import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {isPlatformBrowser, KeyValuePipe} from "@angular/common";
 import {AppValidators} from "../../helper/app-validators";
 import {
   ToggleablePasswordInputComponent
 } from "../../components/toggleable-password-input/toggleable-password-input.component";
-import {ImageStorage} from "../../services/image-storage/image-storage";
+import {DataStorage} from "../../services/image-storage/data-storage";
 import {S3Credentials} from "../../types/credentials/s3.credentials";
 import {DatabaseService} from "../../services/database.service";
 import {Credentials} from "../../types/credentials/credentials";
@@ -67,7 +67,7 @@ export class SettingsComponent implements OnInit {
     private readonly horde: AiHorde,
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
-    private readonly storageManager: ImageStorageManagerService,
+    private readonly storageManager: DataStorageManagerService,
     private readonly database: DatabaseService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
@@ -151,7 +151,7 @@ export class SettingsComponent implements OnInit {
   }
 
   private async validateS3Storage(): Promise<boolean> {
-    const storage: ImageStorage<S3Credentials> = await this.storageManager.findByName(this.form.controls.storage.value!);
+    const storage: DataStorage<S3Credentials> = await this.storageManager.findByName(this.form.controls.storage.value!);
     const result = await storage.validateCredentials({
       accessKeyId: this.form.controls.s3_accessKey.value!,
       secretAccessKey: this.form.controls.s3_secretKey.value!,

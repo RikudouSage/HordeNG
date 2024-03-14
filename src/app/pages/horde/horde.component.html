@@ -147,7 +147,7 @@
   </div>
   @if (!isAnonymous()) {
     <div class="row mt-2">
-      <div class="col-md-12">
+      <div class="col-md-6 mr-1">
         <app-box [collapsible]="true" [title]="'app.transfer_kudos' | transloco">
           <form [formGroup]="transferKudosForm" (ngSubmit)="transferKudos()">
             <div class="form-group">
@@ -164,6 +164,91 @@
 
             <button class="btn btn-primary" type="submit" [disabled]="!transferKudosForm.valid">{{'app.transfer_kudos.transfer' | transloco}}</button>
           </form>
+        </app-box>
+      </div>
+      <div class="col-md-6">
+        <app-box [collapsible]="true" [title]="'app.shared_keys' | transloco" class="position-relative" #box>
+          @if (sharedKeyDetails().length !== sharedKeys().length && !box.collapsed()) {
+            <app-loader />
+          } @else {
+            @for (sharedKey of sharedKeyDetails(); track sharedKey.id) {
+              <app-box [collapsible]="true" [title]="sharedKey.name">
+                <table class="table key-value">
+                  <tr>
+                    <td>{{'app.shared_key.key' | transloco}}</td>
+                    <td>
+                      {{sharedKey.id}}
+                      <app-copy-button class="ml-1" [text]="sharedKey.id" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>{{'app.shared_key.kudos_budget' | transloco}}</td>
+                    <td>
+                      {{sharedKey.kudos + sharedKey.utilized | formatNumber}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-normal">{{'app.shared_key.kudos_remaining' | transloco}}</td>
+                    <td>
+                      {{sharedKey.kudos | formatNumber}}
+                      <small>
+                        ({{(sharedKey.kudos / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
+                      </small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-normal">{{'app.shared_key.kudos_used' | transloco}}</td>
+                    <td>
+                      {{sharedKey.utilized | formatNumber}}
+                      <small>
+                        ({{(sharedKey.utilized / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
+                      </small>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>{{'app.shared_key.expires' | transloco}}</td>
+                    <td>
+                      @if (sharedKey.expiry === undefined) {
+                        <code>{{'app.not_applicable' | transloco}}</code>
+                      } @else {
+                        {{sharedKey.expiry}}
+                      }
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>{{'app.shared_key.max_image_pixels' | transloco}}</td>
+                    <td>
+                      @if (sharedKey.max_image_pixels >= 0) {
+                        {{sharedKey.max_image_pixels | formatNumber}}
+                      } @else {
+                        <code>{{'app.not_applicable' | transloco}}</code>
+                      }
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>{{'app.shared_key.max_image_steps' | transloco}}</td>
+                    <td>
+                      @if (sharedKey.max_image_steps >= 0) {
+                        {{sharedKey.max_image_steps | formatNumber}}
+                      } @else {
+                        <code>{{'app.not_applicable' | transloco}}</code>
+                      }
+                    </td>
+                  </tr>
+<!--                  <tr>-->
+<!--                    <td>{{'app.shared_key.max_text_tokens' | transloco}}</td>-->
+<!--                    <td>-->
+<!--                      @if (sharedKey.max_text_tokens >= 0) {-->
+<!--                        {{sharedKey.max_text_tokens | formatNumber}}-->
+<!--                      } @else {-->
+<!--                        <code>{{'app.not_applicable' | transloco}}</code>-->
+<!--                      }-->
+<!--                    </td>-->
+<!--                  </tr>-->
+                </table>
+              </app-box>
+            }
+          }
         </app-box>
       </div>
     </div>
