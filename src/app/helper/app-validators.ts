@@ -71,4 +71,29 @@ export class AppValidators {
       ? null
       : {uuid: false};
   }
+
+  public static notEqualTo(value: any): ValidatorFn {
+    return control => control.value === value ? {notEqualTo: false} : null;
+  }
+
+  public static equalTo(value: any): ValidatorFn {
+    return control => control.value === value ? null : {equalTo: false};
+  }
+
+  public static or (...validators: ValidatorFn[]): ValidatorFn {
+    return control => {
+      const errors: ValidationErrors = {};
+      for (const validator of validators) {
+        const result = validator(control);
+        if (result === null) {
+          return null;
+        }
+        for (const key of Object.keys(result)) {
+          errors[key] = result[key];
+        }
+      }
+
+      return errors;
+    };
+  }
 }

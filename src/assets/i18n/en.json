@@ -124,5 +124,13 @@
   "app.shared_key.owner.you": "you",
   "app.shared_key.import.key": "Key to import",
   "app.shared_key.import.import": "Import",
-  "app.shared_keys.no_key": "No shared key available"
+  "app.shared_keys.no_key": "No shared key available",
+  "app.shared_keys.create.kudos_limit": "Kudos limit",
+  "app.shared_keys.create.minus_one_unlimited": "You can use -1 which means unlimited.",
+  "app.shared_keys.create.create": "Create",
+  "app.shared_keys.create.expiry": "Expiry (in days)",
+  "app.shared_keys.create.max_image_pixels": "Max image pixels",
+  "app.shared_keys.create.name": "Key name",
+  "app.shared_keys.create.max_image_steps": "Max image steps",
+  "app.shared_key.create.success": "New shared key was successfully created."
 }

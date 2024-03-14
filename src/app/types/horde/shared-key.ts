@@ -1,3 +1,12 @@
+export interface UncreatedSharedKey {
+  name: string;
+  kudos: number;
+  expiry: number;
+  max_image_pixels: number;
+  max_image_steps: number;
+  max_text_tokens: number;
+}
+
 export interface SharedKey {
   id: string;
   username: string;

@@ -37,6 +37,7 @@ import {DataStorage} from "../../services/image-storage/data-storage";
 import {SharedKey} from "../../types/horde/shared-key";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 import {ModalService} from "../../services/modal.service";
+import {FormatDatetimePipe} from "../../pipes/format-date.pipe";
 
 @Component({
   selector: 'app-horde',
@@ -53,7 +54,8 @@ import {ModalService} from "../../services/modal.service";
     AsyncPipe,
     MathSqrtPipe,
     ReactiveFormsModule,
-    CopyButtonComponent
+    CopyButtonComponent,
+    FormatDatetimePipe
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
@@ -87,13 +89,52 @@ export class HordeComponent implements OnInit {
       Validators.min(1),
     ]),
   });
+  public createSharedKeyForm = new FormGroup({
+    kudosLimit: new FormControl<number>(5_000, [
+      Validators.min(-1),
+      Validators.max(50_000_000),
+      AppValidators.notEqualTo(0),
+      Validators.required,
+    ]),
+    expiry: new FormControl<number>(-1, [
+      Validators.min(-1),
+      AppValidators.notEqualTo(0),
+      Validators.required,
+    ]),
+    name: new FormControl<string>('', [
+      Validators.required,
+      Validators.maxLength(255),
+      Validators.minLength(3),
+    ]),
+    maxImagePixels: new FormControl<number>(-1, [
+      Validators.required,
+      Validators.min(-1),
+      AppValidators.notEqualTo(0),
+      Validators.max(4_194_304),
+      AppValidators.or(
+        AppValidators.equalTo(-1),
+        AppValidators.divisibleBy(64),
+      ),
+    ]),
+    maxImageSteps: new FormControl<number>(-1, [
+      Validators.required,
+      Validators.min(-1),
+      AppValidators.notEqualTo(0),
+      Validators.max(500),
+    ]),
+    maxTextTokens: new FormControl<number>(-1, [
+      Validators.required,
+      Validators.min(-1),
+      AppValidators.notEqualTo(0),
+      Validators.max(500),
+    ]),
+  });
 
   constructor(
     private readonly api: AiHorde,
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
     private readonly authManager: AuthManagerService,
-    private readonly storageManager: DataStorageManagerService,
     private readonly modalService: ModalService,
     private readonly view: ViewContainerRef,
     @Inject(PLATFORM_ID) platformId: string,
@@ -103,6 +144,15 @@ export class HordeComponent implements OnInit {
 
   public async ngOnInit(): Promise<void> {
     await this.loadData();
+    this.createSharedKeyForm.controls.maxImagePixels.valueChanges.subscribe(value => {
+      if (value === null) {
+        return;
+      }
+
+      if (value < -1) {
+        this.createSharedKeyForm.patchValue({maxImagePixels: -1});
+      }
+    });
     if (this.isBrowser) {
       interval(60_000).subscribe(() => {
         this.loadData();
@@ -187,5 +237,44 @@ export class HordeComponent implements OnInit {
 
   public async openModal(createKeyModal: TemplateRef<any>): Promise<void> {
     this.modalService.open(this.view, createKeyModal);
+  }
+
+  public async createSharedKey(): Promise<void> {
+    if (!this.createSharedKeyForm.valid) {
+      await this.messageService.error(this.translator.get('app.error.form_invalid'));
+      return;
+    }
+    await this.modalService.close();
+
+    const form = this.createSharedKeyForm.value;
+    this.loading.set(true);
+    const response = await toPromise(this.api.createSharedKey({
+      name: form.name!,
+      expiry: form.expiry!,
+      kudos: form.kudosLimit!,
+      max_image_pixels: form.maxImagePixels!,
+      max_image_steps: form.maxImageSteps!,
+      max_text_tokens: form.maxTextTokens!,
+    }));
+    if (!response.success) {
+      await this.messageService.error(this.translator.get('app.error.api_error', {
+        message: response.errorResponse!.message,
+        code: response.errorResponse!.rc
+      }));
+      this.loading.set(false);
+      return;
+    }
+
+    await this.messageService.success(this.translator.get('app.shared_key.create.success'));
+    this.currentUser.update(currentUser => {
+      if (currentUser === null) {
+        return null;
+      }
+
+      currentUser.sharedkey_ids.push(response.successResponse!.id);
+      return currentUser;
+    });
+    this.fetchSharedKeyDetails();
+    this.loading.set(false);
   }
 }

@@ -172,7 +172,7 @@
             <app-loader />
           } @else {
             @for (sharedKey of sharedKeyDetails(); track sharedKey.id) {
-              <app-box [collapsible]="true" [title]="sharedKey.name">
+              <app-box [collapsible]="true" [title]="sharedKey.name" class="shared-key-box">
                 <table class="table key-value">
                   <tr>
                     <td>{{'app.shared_key.key' | transloco}}</td>
@@ -195,34 +195,40 @@
                   <tr>
                     <td>{{'app.shared_key.kudos_budget' | transloco}}</td>
                     <td>
-                      {{sharedKey.kudos + sharedKey.utilized | formatNumber}}
+                      @if (sharedKey.kudos + sharedKey.utilized > -1) {
+                        {{sharedKey.kudos + sharedKey.utilized | formatNumber}}
+                      } @else {
+                        <code>{{'app.not_applicable' | transloco}}</code>
+                      }
                     </td>
                   </tr>
-                  <tr>
-                    <td class="font-weight-normal">{{'app.shared_key.kudos_remaining' | transloco}}</td>
-                    <td>
-                      {{sharedKey.kudos | formatNumber}}
-                      <small>
-                        ({{(sharedKey.kudos / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
-                      </small>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="font-weight-normal">{{'app.shared_key.kudos_used' | transloco}}</td>
-                    <td>
-                      {{sharedKey.utilized | formatNumber}}
-                      <small>
-                        ({{(sharedKey.utilized / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
-                      </small>
-                    </td>
-                  </tr>
+                  @if (sharedKey.kudos + sharedKey.utilized > -1) {
+                    <tr>
+                      <td class="font-weight-normal">{{'app.shared_key.kudos_remaining' | transloco}}</td>
+                      <td>
+                        {{sharedKey.kudos | formatNumber}}
+                        <small>
+                          ({{(sharedKey.kudos / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
+                        </small>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="font-weight-normal">{{'app.shared_key.kudos_used' | transloco}}</td>
+                      <td>
+                        {{sharedKey.utilized | formatNumber}}
+                        <small>
+                          ({{(sharedKey.utilized / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
+                        </small>
+                      </td>
+                    </tr>
+                  }
                   <tr>
                     <td>{{'app.shared_key.expires' | transloco}}</td>
                     <td>
                       @if (sharedKey.expiry === undefined) {
                         <code>{{'app.not_applicable' | transloco}}</code>
                       } @else {
-                        {{sharedKey.expiry}}
+                        {{sharedKey.expiry | formatDatetime}}
                       }
                     </td>
                   </tr>
@@ -272,5 +278,38 @@
   }
 }
 
-<ng-template #createKeyModal></ng-template>
+<ng-template #createKeyModal>
+  <div class="row create-key-row">
+    <div class="col-md-12">
+      <form [formGroup]="createSharedKeyForm" (ngSubmit)="createSharedKey()">
+        <div class="form-group">
+          <label for="inputSharedKeyName">{{'app.shared_keys.create.name' | transloco}}</label>
+          <input type="text" class="form-control" formControlName="name" id="inputSharedKeyName" />
+        </div>
+        <div class="form-group">
+          <label for="inputSharedKeyKudosLimit">{{'app.shared_keys.create.kudos_limit' | transloco}}</label>
+          <input type="number" min="-1" class="form-control" formControlName="kudosLimit" id="inputSharedKeyKudosLimit" />
+          <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
+        </div>
+        <div class="form-group">
+          <label for="inputSharedKeyExpiry">{{'app.shared_keys.create.expiry' | transloco}}</label>
+          <input type="number" min="-1" class="form-control" formControlName="expiry" id="inputSharedKeyExpiry" />
+          <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
+        </div>
+        <div class="form-group">
+          <label for="inputSharedKeyMaxImagePixels">{{'app.shared_keys.create.max_image_pixels' | transloco}}</label>
+          <input type="number" [step]="createSharedKeyForm.controls.maxImagePixels.value! < 0 ? 1 : 64" max="4194304" class="form-control" formControlName="maxImagePixels" id="inputSharedKeyMaxImagePixels" />
+          <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
+        </div>
+        <div class="form-group">
+          <label for="inputSharedKeyMaxImageSteps">{{'app.shared_keys.create.max_image_steps' | transloco}}</label>
+          <input type="number" min="-1" max="500" class="form-control" formControlName="expiry" id="inputSharedKeyMaxImageSteps" />
+          <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="!createSharedKeyForm.valid">{{'app.shared_keys.create.create' | transloco}}</button>
+      </form>
+    </div>
+  </div>
+</ng-template>
 

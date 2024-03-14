@@ -15,7 +15,7 @@ import {AsyncGenerationResponse} from "../types/horde/async-generation-response"
 import {JobInProgress} from "../types/db/job-in-progress";
 import {RequestStatusCheck} from "../types/horde/request-status-check";
 import {RequestStatusFull} from "../types/horde/request-status-full";
-import {SharedKey} from "../types/horde/shared-key";
+import {SharedKey, UncreatedSharedKey} from "../types/horde/shared-key";
 
 @Injectable({
   providedIn: 'root'
@@ -105,6 +105,11 @@ export class AiHorde {
         return {success: true, statusCode: 200, successResponse: result};
       }),
     );
+  }
+
+  public createSharedKey(key: UncreatedSharedKey): Observable<ApiResponse<SharedKey>> {
+    // noinspection SpellCheckingInspection
+    return this.sendRequest(HttpMethod.Put, `sharedkeys`, key);
   }
 
   private sendRequest<T>(
