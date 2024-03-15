@@ -113,7 +113,7 @@
                   <td><app-yes-no [value]="worker.lora" /></td>
                 </tr>
                 <tr>
-                  <td>{{'app.worker.models' | transloco}}</td>
+                  <td>{{'app.worker.models' | transloco}} ({{worker.models.length | formatNumber}})</td>
                   <td>
                     <ul>
                       @for (model of worker.models; track model) {
