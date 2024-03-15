@@ -44,7 +44,9 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Get, `status/models`);
   }
 
-  public generateImage<TDryRun extends boolean>(options: GenerationOptions, dryRun: TDryRun): Observable<ApiResponse<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>> {
+  public generateImage(options: GenerationOptions): Observable<ApiResponse<AsyncGenerationResponse>>;
+  public generateImage<TDryRun extends boolean>(options: GenerationOptions, dryRun: TDryRun): Observable<ApiResponse<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>>;
+  public generateImage<TDryRun extends boolean>(options: GenerationOptions, dryRun: TDryRun = <TDryRun>false): Observable<ApiResponse<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>> {
     return this.sendRequest(HttpMethod.Post, `generate/async`, {
       prompt: options.negativePrompt ? `${options.prompt} ### ${options.negativePrompt}` : options.prompt,
       params: {

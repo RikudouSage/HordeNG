@@ -240,7 +240,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(this.result()!.source);
     }
     this.result.set(null);
-    const response = await toPromise(this.api.generateImage(this.formAsOptions, false));
+    const response = await toPromise(this.api.generateImage(this.formAsOptions));
     if (!response.success) {
       await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
       this.loading.set(false);
