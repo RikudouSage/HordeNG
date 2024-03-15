@@ -104,7 +104,11 @@
         <div class="row">
           <div class="col-md-12">
             <button [disabled]="!form.valid || inProgress()" type="submit" class="btn btn-primary btn-long">
-              {{ 'app.generate.do_generate' | transloco:{kudos: kudosCost() | formatNumber:2} }}
+              @if (kudosCost() === null) {
+                {{ 'app.generate.do_generate.calculating' | transloco }}
+              } @else {
+                {{ 'app.generate.do_generate' | transloco:{kudos: (kudosCost() ?? 0) | formatNumber} }}
+              }
             </button>
           </div>
         </div>

@@ -10,7 +10,7 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {KudosCostCalculator} from "../../services/kudos-cost-calculator.service";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
-import {interval, map, Subscription} from "rxjs";
+import {debounceTime, interval, map, Subscription} from "rxjs";
 import {WorkerType} from "../../types/horde/worker-type";
 import {JobInProgress} from "../../types/db/job-in-progress";
 import {MessageService} from "../../services/message.service";
@@ -70,7 +70,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   private checkInterval: Subscription | null = null;
 
   public loading = signal(true);
-  public kudosCost = signal(0);
+  public kudosCost = signal<number | null>(null);
   public availableModels: WritableSignal<string[]> = signal([]);
   public inProgress: WritableSignal<JobInProgress | null> = signal(null);
   public result: WritableSignal<Result | null> = signal(null);
@@ -147,10 +147,18 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     }
     this.form.patchValue(await this.database.getGenerationOptions());
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
-    this.kudosCost.set(this.costCalculator.calculate(await this.database.getGenerationOptions()));
+    this.kudosCost.set(await this.costCalculator.calculate(await this.database.getGenerationOptions()));
     this.form.valueChanges.subscribe(async changes => {
       await this.database.storeGenerationOptions(this.formAsOptions);
-      this.kudosCost.set(this.costCalculator.calculate(await this.database.getGenerationOptions()));
+      this.kudosCost.set(null);
+    });
+    this.form.valueChanges.pipe(
+      debounceTime(400),
+    ).subscribe(async changes => {
+      this.kudosCost.set(await this.costCalculator.calculate(await this.database.getGenerationOptions()));
+      if (this.kudosCost() === null) {
+        await this.messageService.error(this.translator.get('app.error.kudos_calculation'));
+      }
     });
     this.availableModels.set(await toPromise(this.api.getModels().pipe(
       map (response => {

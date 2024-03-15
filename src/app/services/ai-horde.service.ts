@@ -43,7 +43,7 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Get, `status/models`);
   }
 
-  public generateImage(options: GenerationOptions): Observable<ApiResponse<AsyncGenerationResponse>> {
+  public generateImage(options: GenerationOptions, dryRun: boolean = false): Observable<ApiResponse<AsyncGenerationResponse>> {
     return this.sendRequest(HttpMethod.Post, `generate/async`, {
       prompt: options.negativePrompt ? `${options.prompt} ### ${options.negativePrompt}` : options.prompt,
       params: {
@@ -64,6 +64,7 @@ export class AiHorde {
       slow_workers: options.slowWorkers,
       censor_nsfw: options.censorNsfw,
       models: [options.model],
+      dry_run: dryRun,
     });
   }
 

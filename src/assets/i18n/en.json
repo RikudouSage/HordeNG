@@ -137,5 +137,7 @@
   "app.s3_cors_check.error": "It seems the CORS configuration for your S3 bucket is incorrect and cannot be changed automatically by us. Please include the CORS settings below [link:url]in your bucket[/link]:",
   "app.copy_to_clipboard": "Copy to clipboard",
   "app.s3_cors_check.unknown": "Warning: We cannot fetch the CORS settings for your bucket, please ensure they expose all necessary headers, or grant the access key permission to get and update CORS policies for your bucket.",
-  "app.images.size": "Size: {{size}} {{unit}}"
+  "app.images.size": "Size: {{size}} {{unit}}",
+  "app.error.kudos_calculation": "Calculating the cost of the image generation failed, please try again.",
+  "app.generate.do_generate.calculating": "Generate (calculating cost...)"
 }
