@@ -148,6 +148,10 @@ export class SettingsComponent implements OnInit {
     }
 
     this.loading.set(false);
+    const storage = await this.storageManager.currentStorage;
+    if (storage instanceof S3DataStorage) {
+      await storage.checkCors();
+    }
   }
 
   private async validateImageStorage(): Promise<boolean> {
@@ -171,7 +175,6 @@ export class SettingsComponent implements OnInit {
     const storage = <S3DataStorage>(await this.storageManager.findByName(this.form.controls.storage.value!));
     await storage.clearCache();
     const result = await storage.validateCredentials(credentials);
-    this.s3CorsCheckResult.set(await storage.checkCors(credentials));
     if (typeof result === 'string') {
       await this.messageService.error(this.translator.get('app.error.aws_error', {error: result}));
       return false;
