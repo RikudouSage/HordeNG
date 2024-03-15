@@ -1,4 +1,4 @@
-$green: #56c080;
+@import "../../../scss/colors";
 
 .toggle {
   cursor: pointer;
@@ -19,9 +19,9 @@ $green: #56c080;
   }
   &:before {
     display: block;
-    background: linear-gradient(to bottom, #fff 0%,#eee 100%);
+    background: linear-gradient(to bottom, $mainTextColor 0%, lighten($mainTextColor, 10%) 100%);
     border-radius: 50%;
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+    box-shadow: 0 0 0 1px rgba(red($shadowColor), green($shadowColor), blue($shadowColor), 0.25);
     width: 24px;
     height: 24px;
     position: absolute;
@@ -30,11 +30,11 @@ $green: #56c080;
     transition: left 0.25s;
   }
   .toggle:hover &:before {
-    background: linear-gradient(to bottom, #fff 0%,#fff 100%);
-    box-shadow: 0 0 0 1px rgba(0,0,0,0.5);
+    background: linear-gradient(to bottom, $mainTextColor 0%, $mainTextColor 100%);
+    box-shadow: 0 0 0 1px $shadowColor;
   }
   .toggle-checkbox:checked + & {
-    background: $green;
+    background: $successColor;
     &:before {
       left: 30px;
     }

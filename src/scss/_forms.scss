@@ -1,3 +1,5 @@
+@import "colors";
+
 .form-group {
   margin-bottom: 30px;
 
@@ -12,41 +14,41 @@
 
 .form-control {
   width: 100%;
-  color: #cfd3dc;
+  color: $mainTextColor;
   height: 40px;
   line-height: 40px;
-  background: #1c1b22;
+  background: $bodyBackground;
   padding: 5px 15px;
-  border: 1px solid #4c4d4f;
+  border: 1px solid $borderColor;
   border-radius: 5px;
   transition: border-color 0.2s ease-in-out;
 
   &:hover, &:focus {
-    border-color: #409eff;
+    border-color: $primaryColor;
   }
 }
 
 .btn {
   border: none;
-  color: white;
+  color: $mainTextColor;
   font-weight: bold;
   padding: 5px 15px;
   border-radius: 2px;
   cursor: pointer;
 
   &[disabled] {
-    background: #4c4d4f;
+    background: $borderColor;
     cursor: not-allowed;
     color: #999;
   }
 }
 
 .btn-primary {
-  background: #3375b9;
+  background: $primaryColor;
 }
 
 .btn-danger {
-  background: red;
+  background: $dangerColor;
 }
 
 .btn-long {
@@ -58,6 +60,6 @@ label:has(+ [required]), label.required {
   &:after {
     padding-left: 3px;
     content: '*';
-    color: red;
+    color: $dangerColor;
   }
 }

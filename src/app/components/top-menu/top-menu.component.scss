@@ -1,8 +1,10 @@
+@import "../../../scss/colors";
+
 ul {
   list-style-type: none;
   display: flex;
 
-  border-bottom: 1px solid #4c4d4f;
+  border-bottom: 1px solid $borderColor;
 }
 
 li {
@@ -11,7 +13,7 @@ li {
 }
 
 a {
-  color: white;
+  color: $mainTextColor;
   text-decoration: none;
   height: 100%;
   padding: 0 10px;
@@ -20,8 +22,8 @@ a {
   align-items: center;
 
   &:hover {
-    background: #18222c;
-    color: #409eff;
+    background: $primaryDarkColor;
+    color: $primaryColor;
   }
 
   span {

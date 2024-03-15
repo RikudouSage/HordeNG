@@ -1,6 +1,8 @@
 @import 'ngx-toastr/toastr';
 @import 'tom-select/dist/scss/tom-select.default.scss';
 
+@import "scss/colors";
+
 @import "scss/forms";
 @import "scss/cols";
 @import "scss/table";
@@ -13,8 +15,8 @@
 }
 
 body {
-  background: #1c1b22;
-  color: rgb(251, 251, 254);
+  background: $bodyBackground;
+  color: $mainTextColor;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-variation-settings: "slnt" 0;
@@ -26,7 +28,7 @@ p {
 }
 
 a {
-  color: #409eff;
+  color: $primaryColor;
   text-decoration: none;
 
   &:hover {
@@ -59,7 +61,6 @@ li {
 }
 
 .text-danger {
-  $dangerColor: red;
   color: $dangerColor;
 
   a {
@@ -74,7 +75,7 @@ li {
 }
 
 .text-warning {
-  color: orange;
+  color: $warningColor;
 }
 
 .display-block {

@@ -1,20 +1,21 @@
 @use "sass:math";
+@import "../../../scss/colors";
 
 .pagination {
   a {
     text-decoration: none;
-    color: #e5eaf3;
+    color: $mainTextColor;
     cursor: pointer;
     display: inline-block;
     margin: 0 5px;
 
     &.disabled {
-      color: #8d9095;
+      color: $mainTextDisabledColor;
       cursor: not-allowed;
     }
 
     &.active, &:hover {
-      color: #409eff;
+      color: $primaryColor;
     }
   }
 }
