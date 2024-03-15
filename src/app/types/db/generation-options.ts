@@ -20,4 +20,5 @@ export interface GenerationOptions {
   slowWorkers: boolean;
   censorNsfw: boolean;
   trustedWorkers: boolean;
+  allowDowngrade: boolean;
 }

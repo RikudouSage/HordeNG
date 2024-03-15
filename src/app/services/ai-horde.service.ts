@@ -68,6 +68,7 @@ export class AiHorde {
       censor_nsfw: options.censorNsfw,
       models: [options.model],
       dry_run: dryRun,
+      allow_downgrade: options.allowDowngrade,
     });
   }
 

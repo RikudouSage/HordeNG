@@ -109,6 +109,7 @@ export class DatabaseService {
       trustedWorkers: <boolean>valuesMap['trustedWorkers'] ?? false,
       censorNsfw: <boolean>valuesMap['censorNsfw'] ?? false,
       slowWorkers: <boolean>valuesMap['slowWorkers'] ?? true,
+      allowDowngrade: <boolean>valuesMap['allowDowngrade'] ?? false,
     };
   }
 

@@ -49,7 +49,12 @@ export const S3CorsConfig = [
       "x-amz-meta-model",
       "x-amz-meta-facefixerstrength",
       "x-amz-meta-hiresfix",
-      "x-amz-meta-negativeprompt"
+      "x-amz-meta-negativeprompt",
+      "x-amz-meta-allowdowngrade",
+      "x-amz-meta-censornsfw",
+      "x-amz-meta-slowworkers",
+      "x-amz-meta-trustedworkers",
+      "x-amz-meta-nsfw",
     ],
   },
 ];
@@ -234,10 +239,11 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
           prompt: image.Metadata!['prompt'] ?? '',
           negativePrompt: image.Metadata!['negativeprompt'],
           loras: [],
-          censorNsfw: false,
-          slowWorkers: false,
-          trustedWorkers: false,
-          nsfw: false,
+          censorNsfw: Boolean(Number(image.Metadata!['censornsfw'] ?? 0)),
+          slowWorkers: Boolean(Number(image.Metadata!['slowworkers'] ?? 0)),
+          trustedWorkers: Boolean(Number(image.Metadata!['trustedworkers'] ?? 0)),
+          nsfw: Boolean(Number(image.Metadata!['nsfw'] ?? 0)),
+          allowDowngrade: Boolean(Number(image.Metadata!['allowdowngrade'] ?? 0)),
         }
       });
       cacheItem.value = images;
@@ -291,6 +297,11 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
         karras: String(Number(image.karras)),
         faceFixerStrength: String(image.faceFixerStrength),
         hiresFix: String(Number(image.hiresFix)),
+        allowDowngrade: String(Number(image.allowDowngrade)),
+        censorNsfw: String(Number(image.censorNsfw)),
+        slowWorkers: String(Number(image.slowWorkers)),
+        trustedWorkers: String(Number(image.trustedWorkers)),
+        nsfw: String(Number(image.nsfw)),
       },
       ContentType: 'image/webp',
     }));
