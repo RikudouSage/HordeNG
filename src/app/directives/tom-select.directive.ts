@@ -8,6 +8,7 @@ import TomSelect from "tom-select";
 export class TomSelectDirective implements AfterViewInit {
   public maxItems = input<number | null>(null);
   public create = input(false);
+  public maxOptions = input<number|null>(50);
 
   constructor(
     private readonly element: ElementRef<HTMLSelectElement>,
@@ -18,6 +19,7 @@ export class TomSelectDirective implements AfterViewInit {
     new TomSelect(this.element.nativeElement, {
       create: this.create(),
       maxItems: this.maxItems(),
+      maxOptions: <any>this.maxOptions(),
     });
   }
 }

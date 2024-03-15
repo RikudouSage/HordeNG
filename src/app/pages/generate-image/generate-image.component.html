@@ -26,7 +26,7 @@
         </div>
         <div class="form-group">
           <label for="inputModel">{{ 'app.generate.model' | transloco }}</label>
-          <select id="inputModel" formControlName="model" required tom-select [maxItems]="1">
+          <select id="inputModel" formControlName="model" required tom-select [maxItems]="1" [maxOptions]="null">
             @for (model of availableModels(); track model) {
               <option [value]="model">{{ model }}</option>
             }
