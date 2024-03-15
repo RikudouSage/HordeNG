@@ -168,6 +168,7 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     cacheItem.value ??= [];
     cacheItem.value = cacheItem.value.filter(stored => stored.id !== image.id);
     await this.cache.save(cacheItem);
+    await this.updateSize(-image.data.size);
   }
 
   public async loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
