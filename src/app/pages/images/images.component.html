@@ -2,7 +2,8 @@
   <app-loader />
 } @else {
   <div class="row">
-    <div class="col-md-12 text-center pagination">
+    <div class="col-md-1"></div>
+    <div class="col-md-10 text-center pagination">
       @if (currentPage() > 1) {
         <a routerLink="/images?page={{currentPage() - 1}}" (click)="goToPage(currentPage() - 1)">&lt;</a>
       } @else {
@@ -19,6 +20,11 @@
         <a routerLink="/images?page={{currentPage() + 1}}" (click)="goToPage(currentPage() + 1)">&gt;</a>
       } @else {
         <a [routerLink]="" class="disabled">&gt;</a>
+      }
+    </div>
+    <div class="col-md-1 text-right">
+      @if (imagesSize()) {
+        <small>{{'app.images.size' | transloco:{size: imagesSize()! | formatNumber:2, unit: imagesSizeUnit()!} }}</small>
       }
     </div>
   </div>

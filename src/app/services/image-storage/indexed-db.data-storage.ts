@@ -7,6 +7,7 @@ import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
 import {PaginatedResult} from "../../types/paginated-result";
 import {Order} from "../../types/order";
+import {CacheService} from "../cache.service";
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,24 @@ export class IndexedDbDataStorage implements DataStorage<Credentials> {
   constructor(
     private readonly translator: TranslatorService,
     private readonly database: DatabaseService,
+    private readonly cache: CacheService,
   ) {
+  }
+
+  public async getSize(): Promise<number> {
+    const cacheItem = await this.cache.getItem<number>('indexed_db.image_size');
+    if (cacheItem.isHit) {
+      return cacheItem.value!;
+    }
+    let result = 0;
+    const images = await this.loadImages(1, 100_000);
+    for (const image of images.rows) {
+      result += image.data.size;
+    }
+    cacheItem.value = result;
+    await this.cache.save(cacheItem);
+
+    return result;
   }
 
   public getOption<T>(option: string, defaultValue: T): Promise<T>;

@@ -13,4 +13,5 @@ export interface DataStorage<TCredentials extends Credentials> {
   storeOption(option: string, value: any): Promise<void>;
   getOption<T>(option: string, defaultValue: T): Promise<T>;
   getOption<T>(option: string): Promise<T | undefined>;
+  getSize(): Promise<number | null>;
 }

@@ -71,6 +71,22 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
   ) {
   }
 
+  public async getSize(): Promise<number> {
+    const cacheItem = await this.cache.getItem<number>('s3.image_size');
+    if (cacheItem.isHit) {
+      return cacheItem.value!;
+    }
+    let result = 0;
+    const images = await this.loadImages(1, 1_000);
+    for (const image of images.rows) {
+      result += image.data.size;
+    }
+    cacheItem.value = result;
+    await this.cache.save(cacheItem);
+
+    return result;
+  }
+
   getOption<T>(option: string, defaultValue: T): Promise<T>;
   getOption<T>(option: string): Promise<T | undefined>;
   public async getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {

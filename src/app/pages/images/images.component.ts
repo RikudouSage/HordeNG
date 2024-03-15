@@ -1,5 +1,5 @@
 import {
-  Component,
+  Component, computed,
   Inject,
   OnInit,
   PLATFORM_ID,
@@ -43,12 +43,40 @@ export class ImagesComponent implements OnInit {
 
   private readonly perPage: number = 24;
   private readonly isBrowser: boolean;
+  private imagesSizeBytes = signal<number | null>(null);
 
   public loading = signal(true);
   public pages: WritableSignal<number[]> = signal([]);
   public currentPage = signal(1);
   public lastPage = signal(1);
   public currentResults: WritableSignal<StoredImageWithLink[]> = signal([]);
+  public imagesSize = computed(() => {
+    let result = this.imagesSizeBytes();
+    if (result === null) {
+      return null;
+    }
+
+    while (result > 1024) {
+      result /= 1024;
+    }
+
+    return result;
+  });
+  public imagesSizeUnit = computed(() => {
+    let result = this.imagesSizeBytes();
+    if (result === null) {
+      return null;
+    }
+
+    let index = 0;
+    const map = ['B', 'kB', 'MB', 'GB', 'TB', 'EB', 'PB'];
+    while (result > 1024) {
+      result /= 1024;
+      ++index;
+    }
+
+    return map[index];
+  });
 
   constructor(
     private readonly storageManager: DataStorageManagerService,
@@ -115,6 +143,7 @@ export class ImagesComponent implements OnInit {
 
     this.pages.set([...Array(images.lastPage).keys()].map(i => i + 1));
     this.lastPage.set(images.lastPage);
+    this.imagesSizeBytes.set(await storage.getSize());
   }
 
   public async sendToTxt2Img(image: StoredImageWithLink): Promise<void> {
