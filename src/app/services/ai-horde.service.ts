@@ -16,6 +16,7 @@ import {JobInProgress} from "../types/db/job-in-progress";
 import {RequestStatusCheck} from "../types/horde/request-status-check";
 import {RequestStatusFull} from "../types/horde/request-status-full";
 import {SharedKey, UncreatedSharedKey} from "../types/horde/shared-key";
+import {KudosCostResponse} from "../types/horde/kudos-cost-response";
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +44,7 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Get, `status/models`);
   }
 
-  public generateImage(options: GenerationOptions, dryRun: boolean = false): Observable<ApiResponse<AsyncGenerationResponse>> {
+  public generateImage<TDryRun extends boolean>(options: GenerationOptions, dryRun: TDryRun): Observable<ApiResponse<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>> {
     return this.sendRequest(HttpMethod.Post, `generate/async`, {
       prompt: options.negativePrompt ? `${options.prompt} ### ${options.negativePrompt}` : options.prompt,
       params: {
