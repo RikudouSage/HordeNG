@@ -62,6 +62,7 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     Options: 's3.options',
     Images: 's3.images',
     CorsCheck: 's3.cors_check',
+    ImageSize: 's3.image_size',
   };
 
   constructor(
@@ -72,7 +73,7 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
   }
 
   public async getSize(): Promise<number> {
-    const cacheItem = await this.cache.getItem<number>('s3.image_size');
+    const cacheItem = await this.cache.getItem<number>(this.CacheKeys.ImageSize);
     if (cacheItem.isHit) {
       return cacheItem.value!;
     }
@@ -85,6 +86,16 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     await this.cache.save(cacheItem);
 
     return result;
+  }
+
+  private async updateSize(size: number): Promise<void> {
+    const cacheItem = await this.cache.getItem<number>(this.CacheKeys.ImageSize);
+    if (!cacheItem.isHit) {
+      return;
+    }
+
+    cacheItem.value! += size;
+    await this.cache.save(cacheItem);
   }
 
   getOption<T>(option: string, defaultValue: T): Promise<T>;
@@ -287,6 +298,7 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     cacheItem.value ??= [];
     cacheItem.value.unshift(<StoredImage>image);
     await this.cache.save(cacheItem);
+    await this.updateSize(image.data.size);
   }
 
   public async validateCredentials(credentials: S3Credentials): Promise<boolean | string> {
