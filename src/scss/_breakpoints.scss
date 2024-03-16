@@ -1,3 +1,5 @@
+$topMenuBreakpoint: 880px;
+
 @mixin mediaMin($minWidth) {
   @media screen and (min-width: $minWidth) {
     @content
