@@ -1,23 +1,24 @@
-import {DataStorage} from "./data-storage";
 import {Injectable} from "@angular/core";
 import {S3Credentials} from "../../types/credentials/s3.credentials";
 import {Resolvable} from "../../helper/resolvable";
 import {TranslatorService} from "../translator.service";
 import {
-  DeleteObjectCommand, GetBucketCorsCommand,
+  DeleteObjectCommand,
+  GetBucketCorsCommand,
   GetObjectCommand,
-  ListObjectsV2Command, ListObjectsV2CommandOutput,
-  NoSuchKey, PutBucketCorsCommand,
+  ListObjectsV2Command,
+  NoSuchKey,
+  PutBucketCorsCommand,
   PutObjectCommand,
   S3Client
 } from "@aws-sdk/client-s3";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
-import {PaginatedResult} from "../../types/paginated-result";
 import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
 import _ from 'lodash';
 import {CacheService} from "../cache.service";
+import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
 
 export const S3CorsConfig = [
   {
@@ -62,87 +63,30 @@ export const S3CorsConfig = [
 @Injectable({
   providedIn: 'root',
 })
-export class S3DataStorage implements DataStorage<S3Credentials> {
+export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
   private readonly CacheKeys = {
-    Options: 's3.options',
-    Images: 's3.images',
     CorsCheck: 's3.cors_check',
-    ImageSize: 's3.image_size',
   };
 
   constructor(
     private readonly translator: TranslatorService,
     private readonly database: DatabaseService,
-    private readonly cache: CacheService,
+    protected readonly cache: CacheService,
   ) {
+    super();
   }
 
-  public async getSize(): Promise<number> {
-    const cacheItem = await this.cache.getItem<number>(this.CacheKeys.ImageSize);
-    if (cacheItem.isHit) {
-      return cacheItem.value!;
-    }
-    let result = 0;
-    const images = await this.loadImages(1, 1_000);
-    for (const image of images.rows) {
-      result += image.data.size;
-    }
-    cacheItem.value = result;
-    await this.cache.save(cacheItem);
-
-    return result;
-  }
-
-  private async updateSize(size: number): Promise<void> {
-    const cacheItem = await this.cache.getItem<number>(this.CacheKeys.ImageSize);
-    if (!cacheItem.isHit) {
-      return;
-    }
-
-    cacheItem.value! += size;
-    await this.cache.save(cacheItem);
-  }
-
-  getOption<T>(option: string, defaultValue: T): Promise<T>;
-  getOption<T>(option: string): Promise<T | undefined>;
-  public async getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {
-    const cacheItem = await this.cache.getItem<Record<string, any>>(this.CacheKeys.Options);
-    let options: Record<string, any> = {};
-    if (cacheItem.isHit) {
-      options = cacheItem.value!;
-    } else {
-      options = await this.getFreshOptions();
-    }
-
-    cacheItem.value = options;
-    await this.cache.save(cacheItem);
-
-    return options[option] ?? defaultValue;
-  }
-
-  public async storeOption(option: string, value: any): Promise<void> {
+  protected override async uploadOptions(options: Record<string, any>): Promise<void> {
     const client = await this.getClient();
-
-    let options: Record<string, any> = {};
-    const cacheItem = await this.cache.getItem<Record<string, any>>(this.CacheKeys.Options);
-    if (cacheItem.isHit) {
-      options = cacheItem.value!;
-    } else {
-      options = await this.getFreshOptions();
-    }
-    options[option] = value;
-
     await client.send(new PutObjectCommand({
       Bucket: await this.getBucket(),
       Key: `${await this.getPrefix()}/options.json`,
       Body: JSON.stringify(options),
       ContentType: "application/json",
     }));
-    cacheItem.value = options;
-    await this.cache.save(cacheItem);
   }
 
-  private async getFreshOptions(): Promise<Record<string, any>> {
+  protected override async getFreshOptions(): Promise<Record<string, any>> {
     const client = await this.getClient();
     try {
       const item = await client.send(new GetObjectCommand({
@@ -161,103 +105,80 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     return {};
   }
 
-  public async deleteImage(image: StoredImage): Promise<void> {
+  protected override async doDeleteImage(image: StoredImage): Promise<void> {
     const client = await this.getClient();
 
     await client.send(new DeleteObjectCommand({
       Bucket: await this.getBucket(),
       Key: `${await this.getPrefix()}/${image.id}.webp`,
     }));
-
-    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
-    cacheItem.value ??= [];
-    cacheItem.value = cacheItem.value.filter(stored => stored.id !== image.id);
-    await this.cache.save(cacheItem);
-    await this.updateSize(-image.data.size);
   }
 
-  public async loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
-    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
-    let images: StoredImage[];
-    if (cacheItem.isHit) {
-      images = cacheItem.value!;
-    } else {
-      const client = await this.getClient();
-      const prefix = await this.getPrefix();
-      const bucket = await this.getBucket();
+  protected override async getFreshImages(): Promise<StoredImage[]> {
+    const client = await this.getClient();
+    const prefix = await this.getPrefix();
+    const bucket = await this.getBucket();
 
-      const response = await client.send(new ListObjectsV2Command({
-        Bucket: bucket,
-        Prefix: prefix,
-      }));
+    const response = await client.send(new ListObjectsV2Command({
+      Bucket: bucket,
+      Prefix: prefix,
+    }));
 
-      response.Contents ??= [];
+    response.Contents ??= [];
 
-      const keys = response.Contents
-        .sort((a, b) => {
-          if (a.LastModified!.getTime() === b.LastModified!.getTime()) {
-            return 0;
-          }
-
-          return a.LastModified!.getTime() > b.LastModified!.getTime() ? -1 : 1;
-        })
-        .filter(object => object.Key!.endsWith('.webp'))
-        .map(object => object.Key!)
-      ;
-
-      const imagesResult = await Promise.all(keys.map(key => {
-        return client.send(new GetObjectCommand({
-          Bucket: bucket,
-          Key: key,
-        }));
-      }));
-      const bodies = await Promise.all(imagesResult.map(
-        image => image.Body!.transformToByteArray().then(body => new Blob([body])),
-      ));
-
-      images = imagesResult.map((image, index): StoredImage => {
-        const id = keys[index].substring(prefix.length + 1, keys[index].length - 5);
-        return {
-          id: id,
-          data: bodies[index],
-          sampler: <Sampler|undefined>image.Metadata!['sampler'] ?? Sampler.lcm,
-          seed: image.Metadata!['seed'],
-          model: image.Metadata!['model'],
-          faceFixerStrength: Number(image.Metadata!['facefixerstrength']),
-          postProcessors: <PostProcessor[]>image.Metadata!['postprocessors']?.split(',') ?? [],
-          worker: {
-            id: image.Metadata!['workerid'] ?? '',
-            name: image.Metadata!['workername'] ?? '',
-          },
-          karras: Boolean(Number(image.Metadata!['karras'] ?? 0)),
-          steps: Number(image.Metadata!['steps'] ?? 0),
-          height: Number(image.Metadata!['height'] ?? 0),
-          width: Number(image.Metadata!['width'] ?? 0),
-          hiresFix: Boolean(Number(image.Metadata!['hiresfix'] ?? 0)),
-          denoisingStrength: Number(image.Metadata!['denoisingstrength'] ?? 0),
-          cfgScale: Number(image.Metadata!['cfgscale'] ?? 0),
-          prompt: image.Metadata!['prompt'] ?? '',
-          negativePrompt: image.Metadata!['negativeprompt'],
-          loras: [],
-          censorNsfw: Boolean(Number(image.Metadata!['censornsfw'] ?? 0)),
-          slowWorkers: Boolean(Number(image.Metadata!['slowworkers'] ?? 0)),
-          trustedWorkers: Boolean(Number(image.Metadata!['trustedworkers'] ?? 0)),
-          nsfw: Boolean(Number(image.Metadata!['nsfw'] ?? 0)),
-          allowDowngrade: Boolean(Number(image.Metadata!['allowdowngrade'] ?? 0)),
+    const keys = response.Contents
+      .sort((a, b) => {
+        if (a.LastModified!.getTime() === b.LastModified!.getTime()) {
+          return 0;
         }
-      });
-      cacheItem.value = images;
-      await this.cache.save(cacheItem);
-    }
 
-    const total = images.length;
-    const lastPage = Math.ceil(total / perPage);
+        return a.LastModified!.getTime() > b.LastModified!.getTime() ? -1 : 1;
+      })
+      .filter(object => object.Key!.endsWith('.webp'))
+      .map(object => object.Key!)
+    ;
 
-    return {
-      page: page,
-      lastPage: lastPage,
-      rows: images.slice((page - 1) * perPage, page * perPage),
-    }
+    const imagesResult = await Promise.all(keys.map(key => {
+      return client.send(new GetObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      }));
+    }));
+    const bodies = await Promise.all(imagesResult.map(
+      image => image.Body!.transformToByteArray().then(body => new Blob([body])),
+    ));
+
+    return imagesResult.map((image, index): StoredImage => {
+      const id = keys[index].substring(prefix.length + 1, keys[index].length - 5);
+      return {
+        id: id,
+        data: bodies[index],
+        sampler: <Sampler|undefined>image.Metadata!['sampler'] ?? Sampler.lcm,
+        seed: image.Metadata!['seed'],
+        model: image.Metadata!['model'],
+        faceFixerStrength: Number(image.Metadata!['facefixerstrength']),
+        postProcessors: <PostProcessor[]>image.Metadata!['postprocessors']?.split(',') ?? [],
+        worker: {
+          id: image.Metadata!['workerid'] ?? '',
+          name: image.Metadata!['workername'] ?? '',
+        },
+        karras: Boolean(Number(image.Metadata!['karras'] ?? 0)),
+        steps: Number(image.Metadata!['steps'] ?? 0),
+        height: Number(image.Metadata!['height'] ?? 0),
+        width: Number(image.Metadata!['width'] ?? 0),
+        hiresFix: Boolean(Number(image.Metadata!['hiresfix'] ?? 0)),
+        denoisingStrength: Number(image.Metadata!['denoisingstrength'] ?? 0),
+        cfgScale: Number(image.Metadata!['cfgscale'] ?? 0),
+        prompt: image.Metadata!['prompt'] ?? '',
+        negativePrompt: image.Metadata!['negativeprompt'],
+        loras: [],
+        censorNsfw: Boolean(Number(image.Metadata!['censornsfw'] ?? 0)),
+        slowWorkers: Boolean(Number(image.Metadata!['slowworkers'] ?? 0)),
+        trustedWorkers: Boolean(Number(image.Metadata!['trustedworkers'] ?? 0)),
+        nsfw: Boolean(Number(image.Metadata!['nsfw'] ?? 0)),
+        allowDowngrade: Boolean(Number(image.Metadata!['allowdowngrade'] ?? 0)),
+      }
+    });
   }
 
   public get displayName(): Resolvable<string> {
@@ -268,7 +189,7 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     return 's3';
   }
 
-  public async storeImage(image: UnsavedStoredImage): Promise<void> {
+  protected override async doStoreImage(image: UnsavedStoredImage): Promise<void> {
     const client = await this.getClient();
 
     if (!image.id) {
@@ -305,12 +226,6 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
       },
       ContentType: 'image/webp',
     }));
-
-    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
-    cacheItem.value ??= [];
-    cacheItem.value.unshift(<StoredImage>image);
-    await this.cache.save(cacheItem);
-    await this.updateSize(image.data.size);
   }
 
   public async validateCredentials(credentials: S3Credentials): Promise<boolean | string> {
@@ -436,7 +351,7 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     return (await this.getCredentials()).bucket;
   }
 
-  public async clearCache() {
+  protected override async doClearCache() {
     const promises: Promise<any>[] = [];
     for (const value of Object.values(this.CacheKeys)) {
       promises.push(this.cache.remove(value));

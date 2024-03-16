@@ -1,27 +1,24 @@
-import {DataStorage} from "./data-storage";
 import {GoogleDriveCredentials, PartialGoogleDriveCredentials} from "../../types/credentials/google-drive.credentials";
 import {Resolvable} from "../../helper/resolvable";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
-import {PaginatedResult} from "../../types/paginated-result";
 import {DatabaseService} from "../database.service";
 import {Injectable} from "@angular/core";
-import TokenResponse = google.accounts.oauth2.TokenResponse;
 import {UploadFileResponse} from "../../types/google-drive/upload-file-response";
 import {CacheService} from "../cache.service";
 import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
+import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
+import TokenResponse = google.accounts.oauth2.TokenResponse;
+import {PutObjectCommand} from "@aws-sdk/client-s3";
 
 @Injectable({
   providedIn: 'root',
 })
-export class GoogleDriveDataStorage implements DataStorage<GoogleDriveCredentials> {
+export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDriveCredentials> {
   private readonly DirectoryMimeType = 'application/vnd.google-apps.folder';
   private readonly CacheKeys = {
     PrefixDirectoryId: 'google_drive.prefix_directory.id',
     OptionsFileId: 'google_drive.options_file.id',
-    Images: 'google_drive.images',
-    Options: 'google_drive.options',
-    ImageSize: 'google_drive.image_size',
   };
 
   private initialized = false;
@@ -37,8 +34,9 @@ export class GoogleDriveDataStorage implements DataStorage<GoogleDriveCredential
 
   constructor(
     private readonly database: DatabaseService,
-    private readonly cache: CacheService,
+    protected readonly cache: CacheService,
   ) {
+    super();
   }
 
   public get name(): string {
@@ -76,7 +74,7 @@ export class GoogleDriveDataStorage implements DataStorage<GoogleDriveCredential
     return true;
   }
 
-  public async storeImage(image: UnsavedStoredImage): Promise<void> {
+  protected override async doStoreImage(image: UnsavedStoredImage): Promise<void> {
     const result = await this.uploadFile({
       mime: 'image/webp',
       name: `${image.id!}.webp`,
@@ -109,97 +107,74 @@ export class GoogleDriveDataStorage implements DataStorage<GoogleDriveCredential
       nsfw: String(Number(image.nsfw)),
       googleApiId: result.id,
     });
-
-    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
-    cacheItem.value ??= [];
-    cacheItem.value.unshift(<StoredImage>image);
-    await this.cache.save(cacheItem);
-    await this.updateSize(image.data.size);
   }
 
-  public async loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
-    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
-    let images: StoredImage[];
-    if (cacheItem.isHit) {
-      images = cacheItem.value!;
-    } else {
-      const gapi = await this.getGapi();
-      let files: gapi.client.drive.File[] = [];
-      let nextPageToken: string | undefined = undefined;
+  protected override async getFreshImages(): Promise<StoredImage[]> {
+    const gapi = await this.getGapi();
+    let files: gapi.client.drive.File[] = [];
+    let nextPageToken: string | undefined = undefined;
 
-      do {
-        const response = (await gapi.drive.files.list({
-          orderBy: 'createdTime desc',
-          pageToken: nextPageToken,
-        })).result;
-        nextPageToken = <string|undefined>response.nextPageToken;
-        files = [...files, ...(response.files ?? []).filter(file => file.name?.endsWith('.webp') ?? false)];
-      } while (nextPageToken);
+    do {
+      const response = (await gapi.drive.files.list({
+        orderBy: 'createdTime desc',
+        pageToken: nextPageToken,
+      })).result;
+      nextPageToken = <string|undefined>response.nextPageToken;
+      files = [...files, ...(response.files ?? []).filter(file => file.name?.endsWith('.webp') ?? false)];
+    } while (nextPageToken);
 
-      const bodies = await Promise.all(files.map(
-        file =>
-          gapi.drive.files.get({
-            fileId: file.id!,
-            alt: 'media'
-          })
-            .then(response => response.body)
-            .then(raw => raw.split('').map(char => char.charCodeAt(0)))
-            .then(bytes => new Uint8Array(bytes))
-            .then(bytes => new Blob([bytes], {type: 'image/webp'})),
-      ));
+    const bodies = await Promise.all(files.map(
+      file =>
+        gapi.drive.files.get({
+          fileId: file.id!,
+          alt: 'media'
+        })
+          .then(response => response.body)
+          .then(raw => raw.split('').map(char => char.charCodeAt(0)))
+          .then(bytes => new Uint8Array(bytes))
+          .then(bytes => new Blob([bytes], {type: 'image/webp'})),
+    ));
 
-      images = await Promise.all(files.map(async (file, index): Promise<StoredImage> => {
-        const id = file.name!.substring(0, file.name!.length - 5);
-        const metadata = await this.getOption<Record<string, string>>(`image.metadata.${id}`);
-        if (metadata === undefined) {
-          throw new Error(`Image without metadata: ${file.name}`);
-        }
+    return await Promise.all(files.map(async (file, index): Promise<StoredImage> => {
+      const id = file.name!.substring(0, file.name!.length - 5);
+      const metadata = await this.getOption<Record<string, string>>(`image.metadata.${id}`);
+      if (metadata === undefined) {
+        throw new Error(`Image without metadata: ${file.name}`);
+      }
 
 
-        return {
-          id: id,
-          data: bodies[index],
-          sampler: <Sampler|undefined>metadata['sampler'] ?? Sampler.lcm,
-          seed: metadata['seed'],
-          model: metadata['model'],
-          faceFixerStrength: Number(metadata['faceFixerStrength']),
-          postProcessors: <PostProcessor[]>metadata['postProcessors']?.split(',') ?? [],
-          worker: {
-            id: metadata['workerId'] ?? '',
-            name: metadata['workerName'] ?? '',
-          },
-          karras: Boolean(Number(metadata['karras'] ?? 0)),
-          steps: Number(metadata['steps'] ?? 0),
-          height: Number(metadata['height'] ?? 0),
-          width: Number(metadata['width'] ?? 0),
-          hiresFix: Boolean(Number(metadata['hiresFix'] ?? 0)),
-          denoisingStrength: Number(metadata['denoisingStrength'] ?? 0),
-          cfgScale: Number(metadata['cfgScale'] ?? 0),
-          prompt: metadata['prompt'] ?? '',
-          negativePrompt: metadata['negativePrompt'],
-          loras: [],
-          censorNsfw: Boolean(Number(metadata['censorNsfw'] ?? 0)),
-          slowWorkers: Boolean(Number(metadata['slowWorkers'] ?? 0)),
-          trustedWorkers: Boolean(Number(metadata['trustedWorkers'] ?? 0)),
-          nsfw: Boolean(Number(metadata['nsfw'] ?? 0)),
-          allowDowngrade: Boolean(Number(metadata['allowDowngrade'] ?? 0)),
-        }
-      }));
-      cacheItem.value = images;
-      await this.cache.save(cacheItem);
-    }
-
-    const total = images.length;
-    const lastPage = Math.ceil(total / perPage);
-
-    return {
-      page: page,
-      lastPage: lastPage,
-      rows: images.slice((page - 1) * perPage, page * perPage),
-    }
+      return {
+        id: id,
+        data: bodies[index],
+        sampler: <Sampler|undefined>metadata['sampler'] ?? Sampler.lcm,
+        seed: metadata['seed'],
+        model: metadata['model'],
+        faceFixerStrength: Number(metadata['faceFixerStrength']),
+        postProcessors: <PostProcessor[]>metadata['postProcessors']?.split(',') ?? [],
+        worker: {
+          id: metadata['workerId'] ?? '',
+          name: metadata['workerName'] ?? '',
+        },
+        karras: Boolean(Number(metadata['karras'] ?? 0)),
+        steps: Number(metadata['steps'] ?? 0),
+        height: Number(metadata['height'] ?? 0),
+        width: Number(metadata['width'] ?? 0),
+        hiresFix: Boolean(Number(metadata['hiresFix'] ?? 0)),
+        denoisingStrength: Number(metadata['denoisingStrength'] ?? 0),
+        cfgScale: Number(metadata['cfgScale'] ?? 0),
+        prompt: metadata['prompt'] ?? '',
+        negativePrompt: metadata['negativePrompt'],
+        loras: [],
+        censorNsfw: Boolean(Number(metadata['censorNsfw'] ?? 0)),
+        slowWorkers: Boolean(Number(metadata['slowWorkers'] ?? 0)),
+        trustedWorkers: Boolean(Number(metadata['trustedWorkers'] ?? 0)),
+        nsfw: Boolean(Number(metadata['nsfw'] ?? 0)),
+        allowDowngrade: Boolean(Number(metadata['allowDowngrade'] ?? 0)),
+      }
+    }));
   }
 
-  public async deleteImage(image: StoredImage): Promise<void> {
+  protected override async doDeleteImage(image: StoredImage): Promise<void> {
     const metadata = await this.getOption<Record<string, string>>(`image.metadata.${image.id}`);
     const fileId = metadata!['googleApiId'];
 
@@ -207,34 +182,17 @@ export class GoogleDriveDataStorage implements DataStorage<GoogleDriveCredential
     await client.drive.files.delete({
       fileId: fileId,
     });
-
-    const cacheItem = await this.cache.getItem<StoredImage[]>(this.CacheKeys.Images);
-    cacheItem.value ??= [];
-    cacheItem.value = cacheItem.value.filter(stored => stored.id !== image.id);
-    await this.cache.save(cacheItem);
-    await this.updateSize(-image.data.size);
   }
 
-  public async storeOption(option: string, value: any): Promise<void> {
-    let options: Record<string, any> = {};
-    const cacheItem = await this.cache.getItem<Record<string, any>>(this.CacheKeys.Options);
-    if (cacheItem.isHit) {
-      options = cacheItem.value!;
-    } else {
-      options = await this.getFreshOptions();
-    }
-    options[option] = value;
-
+  protected override async uploadOptions(options: Record<string, any>): Promise<void> {
     await this.uploadFile({
       mime: 'application/json',
       content: new Blob([JSON.stringify(options)], {type: 'application/json'}),
       id: await this.getOptionsFileId(),
     });
-    cacheItem.value = options;
-    await this.cache.save(cacheItem);
   }
 
-  private async getFreshOptions(): Promise<Record<string, any>> {
+  protected override async getFreshOptions(): Promise<Record<string, any>> {
     const gapi = await this.getGapi();
     const fileId = await this.getOptionsFileId();
     const file = await gapi.drive.files.get({
@@ -299,49 +257,6 @@ export class GoogleDriveDataStorage implements DataStorage<GoogleDriveCredential
     });
 
     return await response.json();
-  }
-
-  public getOption<T>(option: string, defaultValue: T): Promise<T>;
-  public getOption<T>(option: string): Promise<T | undefined>;
-  public async getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {
-    const cacheItem = await this.cache.getItem<Record<string, any>>(this.CacheKeys.Options);
-    let options: Record<string, any> = {};
-    if (cacheItem.isHit) {
-      options = cacheItem.value!;
-    } else {
-      options = await this.getFreshOptions();
-    }
-
-    cacheItem.value = options;
-    await this.cache.save(cacheItem);
-
-    return options[option] ?? defaultValue;
-  }
-
-  public async getSize(): Promise<number | null> {
-    const cacheItem = await this.cache.getItem<number>(this.CacheKeys.ImageSize);
-    if (cacheItem.isHit) {
-      return cacheItem.value!;
-    }
-    let result = 0;
-    const images = await this.loadImages(1, 1_000);
-    for (const image of images.rows) {
-      result += image.data.size;
-    }
-    cacheItem.value = result;
-    await this.cache.save(cacheItem);
-
-    return result;
-  }
-
-  private async updateSize(size: number): Promise<void> {
-    const cacheItem = await this.cache.getItem<number>(this.CacheKeys.ImageSize);
-    if (!cacheItem.isHit) {
-      return;
-    }
-
-    cacheItem.value! += size;
-    await this.cache.save(cacheItem);
   }
 
   private async initializeClient(credentials?: PartialGoogleDriveCredentials): Promise<void> {
@@ -414,7 +329,7 @@ export class GoogleDriveDataStorage implements DataStorage<GoogleDriveCredential
     }
   }
 
-  public async clearCache(): Promise<void> {
+  protected override async doClearCache(): Promise<void> {
     const promises: Promise<any>[] = [];
     for (const value of Object.values(this.CacheKeys)) {
       promises.push(this.cache.remove(value));
