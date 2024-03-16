@@ -1,4 +1,5 @@
 $topMenuBreakpoint: 880px;
+$small: 576px;
 
 @mixin mediaMin($minWidth) {
   @media screen and (min-width: $minWidth) {
@@ -37,13 +38,13 @@ $topMenuBreakpoint: 880px;
 }
 
 @mixin small {
-  @include mediaMin(576px) {
+  @include mediaMin($small) {
     @content
   }
 }
 
 @mixin extraSmall {
-  @include mediaMax(575px) {
+  @include mediaMax($small - 1) {
     @content
   }
 }

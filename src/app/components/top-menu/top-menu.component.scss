@@ -18,7 +18,6 @@ ul {
   border-bottom: 1px solid $borderColor;
 
   @include mediaMax($topMenuBreakpoint) {
-    border-bottom: none;
     justify-content: center;
     width: 100%;
   }
@@ -44,7 +43,7 @@ a {
   align-items: center;
 
   @include mediaMax($topMenuBreakpoint) {
-    padding: 0 5px;
+    //padding: 0 5px;
   }
 
   &:hover {
@@ -55,10 +54,6 @@ a {
   span {
     font-variant: small-caps;
     font-size: 18px;
-
-    @include mediaMax($topMenuBreakpoint) {
-      font-size: 15px;
-    }
   }
 
   & > * {
@@ -87,7 +82,7 @@ a {
     font-size: 30px;
 
     @include mediaMax($topMenuBreakpoint) {
-      font-size: 15px;
+      font-size: 24px;
     }
   }
 }
