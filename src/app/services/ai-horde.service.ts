@@ -61,6 +61,7 @@ export class AiHorde {
         seed: options.seed ?? undefined,
         hires_fix: options.hiresFix,
         facefixer_strength: options.faceFixerStrength,
+        clip_skip: options.clipSkip,
       },
       nsfw: options.nsfw,
       trusted_workers: options.trustedWorkers,

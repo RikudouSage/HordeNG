@@ -74,6 +74,11 @@
             ({{ form.controls.steps.value! | formatNumber }})</label>
           <input type="range" min="1" max="500" step="1" formControlName="steps" class="form-control" id="inputSteps"/>
         </div>
+        <div class="form-group">
+          <label for="inputClipSkip">{{ 'app.generate.clip_skip' | transloco }}
+            ({{ form.controls.clipSkip.value! | formatNumber }})</label>
+          <input type="range" min="1" max="12" step="1" formControlName="clipSkip" class="form-control" id="inputClipSkip"/>
+        </div>
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">

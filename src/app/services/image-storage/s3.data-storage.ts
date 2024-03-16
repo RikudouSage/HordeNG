@@ -56,6 +56,7 @@ export const S3CorsConfig = [
       "x-amz-meta-slowworkers",
       "x-amz-meta-trustedworkers",
       "x-amz-meta-nsfw",
+      "x-amz-meta-clipskip",
     ],
   },
 ];
@@ -177,6 +178,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         trustedWorkers: Boolean(Number(image.Metadata!['trustedworkers'] ?? 0)),
         nsfw: Boolean(Number(image.Metadata!['nsfw'] ?? 0)),
         allowDowngrade: Boolean(Number(image.Metadata!['allowdowngrade'] ?? 0)),
+        clipSkip: Number(image.Metadata!['clipskip'] ?? 1),
       }
     });
   }
