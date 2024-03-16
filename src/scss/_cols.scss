@@ -74,6 +74,128 @@
   }
 }
 
+.col-sm-1 {
+  @include mediaMin($small) {
+    @include col(1);
+  }
+}
+.col-sm-2 {
+  @include mediaMin($small) {
+    @include col(2);
+  }
+}
+.col-sm-3 {
+  @include mediaMin($small) {
+    @include col(3);
+  }
+}
+.col-sm-4 {
+  @include mediaMin($small) {
+    @include col(4);
+  }
+}
+.col-sm-5 {
+  @include mediaMin($small) {
+    @include col(5);
+  }
+}
+.col-sm-6 {
+  @include mediaMin($small) {
+    @include col(6);
+  }
+}
+.col-sm-7 {
+  @include mediaMin($small) {
+    @include col(7);
+  }
+}
+.col-sm-8 {
+  @include mediaMin($small) {
+    @include col(8);
+  }
+}
+.col-sm-9 {
+  @include mediaMin($small) {
+    @include col(9);
+  }
+}
+.col-sm-10 {
+  @include mediaMin($small) {
+    @include col(10);
+  }
+}
+.col-sm-11 {
+  @include mediaMin($small) {
+    @include col(11);
+  }
+}
+.col-sm-12 {
+  @include mediaMin($small) {
+    @include col(12);
+  }
+}
+
+.col-xs-1 {
+  @include mediaMin($extraSmall) {
+    @include col(1);
+  }
+}
+.col-xs-2 {
+  @include mediaMin($extraSmall) {
+    @include col(2);
+  }
+}
+.col-xs-3 {
+  @include mediaMin($extraSmall) {
+    @include col(3);
+  }
+}
+.col-xs-4 {
+  @include mediaMin($extraSmall) {
+    @include col(4);
+  }
+}
+.col-xs-5 {
+  @include mediaMin($extraSmall) {
+    @include col(5);
+  }
+}
+.col-xs-6 {
+  @include mediaMin($extraSmall) {
+    @include col(6);
+  }
+}
+.col-xs-7 {
+  @include mediaMin($extraSmall) {
+    @include col(7);
+  }
+}
+.col-xs-8 {
+  @include mediaMin($extraSmall) {
+    @include col(8);
+  }
+}
+.col-xs-9 {
+  @include mediaMin($extraSmall) {
+    @include col(9);
+  }
+}
+.col-xs-10 {
+  @include mediaMin($extraSmall) {
+    @include col(10);
+  }
+}
+.col-xs-11 {
+  @include mediaMin($extraSmall) {
+    @include col(11);
+  }
+}
+.col-xs-12 {
+  @include mediaMin($extraSmall) {
+    @include col(12);
+  }
+}
+
 .flex-grow {
   flex-grow: 1;
 }
