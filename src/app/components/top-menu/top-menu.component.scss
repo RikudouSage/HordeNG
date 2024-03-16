@@ -10,6 +10,12 @@
     z-index: 100;
     width: 100%;
   }
+
+  @include mediaMax($small) {
+    bottom: 0;
+    top: unset;
+    background: darken($bodyBackground, 3%);
+  }
 }
 
 ul {
@@ -30,6 +36,23 @@ li {
   @include mediaMax($topMenuBreakpoint) {
     height: auto;
     padding: 10px 0;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+  }
+
+  @include mediaMax($topMenuBreakpoint2) {
+    margin-left: 5px;
+  }
+
+  @include mediaMax($topMenuBreakpoint3) {
+    margin-left: 0;
+  }
+
+  @include mediaMax($topMenuBreakpoint4) {
+    //margin-left: 15px;
+    margin: 8px 0 8px 15px;
   }
 }
 
@@ -42,10 +65,6 @@ a {
   display: flex;
   align-items: center;
 
-  @include mediaMax($topMenuBreakpoint) {
-    //padding: 0 5px;
-  }
-
   &:hover {
     background: $primaryDarkColor;
     color: $primaryColor;
@@ -54,6 +73,14 @@ a {
   span {
     font-variant: small-caps;
     font-size: 18px;
+
+    @include mediaMax($small) {
+      font-size: 15px;
+    }
+
+    @include mediaMax($topMenuBreakpoint4) {
+      display: none;
+    }
   }
 
   & > * {
@@ -66,6 +93,11 @@ a {
 
   @include mediaMax($topMenuBreakpoint) {
     padding-right: 10px;
+  }
+
+  @include mediaMax($small) {
+    padding-right: 0;
+    padding-left: 0;
   }
 
   img {
@@ -84,6 +116,14 @@ a {
     @include mediaMax($topMenuBreakpoint) {
       font-size: 24px;
     }
+
+    @include mediaMax($topMenuBreakpoint3) {
+      font-size: 18px;
+    }
+
+    @include mediaMax($small) {
+      display: none;
+    }
   }
 }
 
@@ -96,6 +136,16 @@ fa-icon {
     width: 16px;
     height: 16px;
   }
+
+  @include mediaMax($small) {
+    margin-right: 5px;
+  }
+
+  @include mediaMax($topMenuBreakpoint4) {
+    margin-right: 0;
+    width: 32px;
+    height: 32px;
+  }
 }
 
 :host ::ng-deep {
@@ -106,6 +156,11 @@ fa-icon {
     @include mediaMax($topMenuBreakpoint) {
       width: 16px;
       height: 16px;
+    }
+
+    @include mediaMax($topMenuBreakpoint4) {
+      width: 32px;
+      height: 32px;
     }
   }
 }

@@ -1,4 +1,8 @@
 $topMenuBreakpoint: 880px;
+$topMenuBreakpoint2: 684px;
+$topMenuBreakpoint3: 640px;
+$topMenuBreakpoint4: 430px;
+
 $small: 576px;
 $medium: 768px;
 $large: 992px;
@@ -12,7 +16,7 @@ $extraExtraLarge: 1400px;
 }
 
 @mixin mediaMax($maxWidth) {
-  @media screen and (max-width: $maxWidth - 1) {
+  @media screen and (max-width: $maxWidth) {
     @content
   }
 }
