@@ -14,62 +14,62 @@
 }
 
 .col-md-1 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(1);
   }
 }
 .col-md-2 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(2);
   }
 }
 .col-md-3 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(3);
   }
 }
 .col-md-4 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(4);
   }
 }
 .col-md-5 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(5);
   }
 }
 .col-md-6 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(6);
   }
 }
 .col-md-7 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(7);
   }
 }
 .col-md-8 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(8);
   }
 }
 .col-md-9 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(9);
   }
 }
 .col-md-10 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(10);
   }
 }
 .col-md-11 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(11);
   }
 }
 .col-md-12 {
-  @include medium() {
+  @include mediaMin($medium) {
     @include col(12);
   }
 }
