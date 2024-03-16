@@ -256,7 +256,7 @@ export class S3DataStorage implements DataStorage<S3Credentials> {
     return {
       page: page,
       lastPage: lastPage,
-      rows: images,
+      rows: images.slice((page - 1) * perPage, page * perPage),
     }
   }
 
