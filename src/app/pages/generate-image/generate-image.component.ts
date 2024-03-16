@@ -183,6 +183,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       const response = await toPromise(this.api.checkGenerationStatus(this.inProgress()!));
       if (!response.success) {
         await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
+        await this.database.deleteInProgressJob(this.inProgress()!);
+        this.inProgress.set(null);
         return;
       }
 

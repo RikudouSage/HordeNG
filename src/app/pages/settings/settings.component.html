@@ -50,6 +50,31 @@
             <label for="inputS3Prefix">{{'app.settings.s3.prefix' | transloco}}</label>
             <input type="text" formControlName="s3_prefix" class="form-control" id="inputS3Prefix" />
           </div>
+        } @else if (form.controls.storage.value === 'google_drive') {
+          <div class="form-group">
+            <label for="inputGoogleDriveClientId">{{'app.settings.google_drive.client_id' | transloco}}</label>
+            <input type="text" formControlName="google_drive_client_id" class="form-control" id="inputGoogleDriveClientId" />
+          </div>
+          <div class="form-group">
+            <!--suppress XmlInvalidId -->
+            <label for="inputGoogleDriveApiKey">{{'app.settings.google_drive.api_key' | transloco}}</label>
+            <app-toggleable-password-input formControlName="google_drive_api_key" inputId="inputGoogleDriveApiKey" />
+          </div>
+          <div class="form-group">
+            <label for="inputGoogleDriveDirectory">{{'app.settings.google_drive.directory' | transloco}}</label>
+            <input type="text" formControlName="google_drive_directory" class="form-control" id="inputGoogleDriveDirectory" />
+          </div>
+
+          @if (!form.value.google_drive_access_key) {
+            <div class="form-group">
+              <button
+                (click)="authorizeInGoogle()"
+                class="btn btn-primary"
+                type="button"
+                [disabled]="!form.value.google_drive_api_key || !form.value.google_drive_client_id"
+              >{{'app.settings.google_drive.authorize' | transloco}}</button>
+            </div>
+          }
         }
 
         <button class="btn btn-primary" type="submit" [disabled]="!form.valid">{{'app.save' | transloco}}</button>

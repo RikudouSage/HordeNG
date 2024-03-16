@@ -140,5 +140,9 @@
   "app.images.size": "Size: {{size}} {{unit}}",
   "app.error.kudos_calculation": "Calculating the cost of the image generation failed, please try again.",
   "app.generate.do_generate.calculating": "Generate (calculating cost...)",
-  "app.generate.allow_downgrade": "Allow downgrade"
+  "app.generate.allow_downgrade": "Allow downgrade",
+  "app.settings.google_drive.client_id": "OAuth client ID",
+  "app.settings.google_drive.api_key": "API key",
+  "app.settings.google_drive.authorize": "Authorize in Google",
+  "app.settings.google_drive.directory": "Directory"
 }

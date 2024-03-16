@@ -21,6 +21,8 @@ import {Credentials} from "../../types/credentials/credentials";
 import {S3CorsConfig, S3DataStorage} from "../../services/image-storage/s3.data-storage";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
+import {GoogleDriveDataStorage} from "../../services/image-storage/google-drive.data-storage";
+import {GoogleDriveCredentials} from "../../types/credentials/google-drive.credentials";
 
 @Component({
   selector: 'app-settings',
@@ -60,6 +62,11 @@ export class SettingsComponent implements OnInit {
     s3_bucket: new FormControl<string>(''),
     s3_region: new FormControl<string>(''),
     s3_prefix: new FormControl<string | null>(null),
+    google_drive_client_id: new FormControl<string>(''),
+    google_drive_api_key: new FormControl<string>(''),
+    google_drive_access_key: new FormControl<string>(''),
+    google_drive_expires_at: new FormControl<Date | null>(null),
+    google_drive_directory: new FormControl<string>(''),
   }, [
     AppValidators.requiredIf(
       group => group.controls['storage'].value === 's3',
@@ -67,7 +74,15 @@ export class SettingsComponent implements OnInit {
       's3_secretKey',
       's3_bucket',
       's3_region',
-    )
+    ),
+    AppValidators.requiredIf(
+      group => group.controls['storage'].value === 'google_drive',
+      'google_drive_client_id',
+      'google_drive_api_key',
+      'google_drive_access_key',
+      'google_drive_expires_at',
+      'google_drive_directory',
+    ),
   ]);
 
   constructor(
@@ -89,6 +104,7 @@ export class SettingsComponent implements OnInit {
 
     if (this.isBrowser) {
       const storage = (await this.database.getSetting('image_storage', 'indexed_db'))!.value;
+      // const gapi = await (<GoogleDriveDataStorage>(await this.storageManager.currentStorage)).getGapi();
       const credentials = await this.database.getSetting<Credentials>('credentials');
       if (credentials !== undefined) {
         switch (storage) {
@@ -102,6 +118,15 @@ export class SettingsComponent implements OnInit {
             });
             const storage = <S3DataStorage>(await this.storageManager.currentStorage);
             this.s3CorsCheckResult.set(await storage.checkCors());
+            break;
+          case 'google_drive':
+            this.form.patchValue({
+              google_drive_client_id: (<GoogleDriveCredentials>credentials.value).clientId,
+              google_drive_access_key: (<GoogleDriveCredentials>credentials.value).accessToken,
+              google_drive_expires_at: (<GoogleDriveCredentials>credentials.value).expiresAt,
+              google_drive_api_key: (<GoogleDriveCredentials>credentials.value).apiKey,
+              google_drive_directory: (<GoogleDriveCredentials>credentials.value).directory,
+            });
             break;
         }
       }
@@ -200,6 +225,34 @@ export class SettingsComponent implements OnInit {
         });
         await (<S3DataStorage>storage).clearCache();
         break;
+      case 'google_drive':
+        await this.database.setSetting<GoogleDriveCredentials>({
+          setting: 'credentials',
+          value: {
+            clientId: this.form.value.google_drive_client_id!,
+            expiresAt: this.form.value.google_drive_expires_at!,
+            apiKey: this.form.value.google_drive_api_key!,
+            accessToken: this.form.value.google_drive_access_key!,
+            directory: this.form.value.google_drive_directory!,
+          },
+        });
+        await (<GoogleDriveDataStorage>storage).clearCache();
+        break;
     }
+  }
+
+  public async authorizeInGoogle() {
+    const storage = <GoogleDriveDataStorage>(await this.storageManager.findByName('google_drive'));
+    const credentials = await storage.requestCredentials({
+      clientId: this.form.value.google_drive_client_id!,
+      apiKey: this.form.value.google_drive_api_key!,
+      directory: this.form.value.google_drive_directory!,
+    });
+    this.form.patchValue({
+      google_drive_api_key: credentials.apiKey,
+      google_drive_client_id: credentials.clientId,
+      google_drive_access_key: credentials.accessToken,
+      google_drive_expires_at: credentials.expiresAt,
+    });
   }
 }

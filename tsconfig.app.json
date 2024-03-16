@@ -4,7 +4,10 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "types": [
-      "node"
+      "node",
+      "@types/gapi",
+      "@types/google.accounts",
+      "@types/gapi.client.drive-v3"
     ]
   },
   "files": [

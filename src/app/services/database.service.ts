@@ -125,13 +125,6 @@ export class DatabaseService {
     await this.removeItem(this.ObjectStores.GenerationMetadata, metadata.requestId);
   }
 
-  public async storeCredentials<T extends Credentials>(credentials: T): Promise<void> {
-    await this.setValue(this.ObjectStores.Settings, {
-      setting: 'credentials',
-      ...credentials,
-    });
-  }
-
   private async getAll<T>(storeName: string): Promise<T[]> {
     const db = await this.getDatabase();
     const transaction = db.transaction(storeName, "readonly");
