@@ -110,6 +110,7 @@ export class DatabaseService {
       censorNsfw: <boolean>valuesMap['censorNsfw'] ?? false,
       slowWorkers: <boolean>valuesMap['slowWorkers'] ?? true,
       allowDowngrade: <boolean>valuesMap['allowDowngrade'] ?? false,
+      clipSkip: <number>valuesMap['clipSkip'] ?? 1,
     };
   }
 

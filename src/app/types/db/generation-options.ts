@@ -21,4 +21,5 @@ export interface GenerationOptions {
   censorNsfw: boolean;
   trustedWorkers: boolean;
   allowDowngrade: boolean;
+  clipSkip: number;
 }

@@ -170,6 +170,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
         trustedWorkers: Boolean(Number(metadata['trustedWorkers'] ?? 0)),
         nsfw: Boolean(Number(metadata['nsfw'] ?? 0)),
         allowDowngrade: Boolean(Number(metadata['allowDowngrade'] ?? 0)),
+        clipSkip: Number(metadata['clipSkip'] ?? 0),
       }
     }));
   }

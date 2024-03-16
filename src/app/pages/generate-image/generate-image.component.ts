@@ -126,6 +126,11 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     censorNsfw: new FormControl<boolean>(false),
     trustedWorkers: new FormControl<boolean>(false),
     allowDowngrade: new FormControl<boolean>(false),
+    clipSkip: new FormControl<number>(1, [
+      Validators.required,
+      Validators.min(1),
+      Validators.max(12),
+    ]),
   });
   private readonly isBrowser: boolean;
 
@@ -281,6 +286,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       slowWorkers: value.slowWorkers ?? true,
       trustedWorkers: value.trustedWorkers ?? false,
       allowDowngrade: value.allowDowngrade ?? false,
+      clipSkip: value.clipSkip ?? 1,
     };
   }
 

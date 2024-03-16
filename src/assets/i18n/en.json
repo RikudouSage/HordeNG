@@ -145,5 +145,6 @@
   "app.settings.google_drive.api_key": "API key",
   "app.settings.google_drive.authorize": "Authorize in Google",
   "app.settings.google_drive.directory": "Directory",
-  "app.settings.s3.endpoint": "Custom S3 endpoint"
+  "app.settings.s3.endpoint": "Custom S3 endpoint",
+  "app.generate.clip_skip": "CLIP skip"
 }
