@@ -14,7 +14,6 @@ import {AppValidators} from "../../helper/app-validators";
 import {
   ToggleablePasswordInputComponent
 } from "../../components/toggleable-password-input/toggleable-password-input.component";
-import {DataStorage} from "../../services/image-storage/data-storage";
 import {S3Credentials} from "../../types/credentials/s3.credentials";
 import {DatabaseService} from "../../services/database.service";
 import {Credentials} from "../../types/credentials/credentials";
@@ -62,6 +61,7 @@ export class SettingsComponent implements OnInit {
     s3_bucket: new FormControl<string>(''),
     s3_region: new FormControl<string>(''),
     s3_prefix: new FormControl<string | null>(null),
+    s3_endpoint: new FormControl<string | null>(null),
     google_drive_client_id: new FormControl<string>(''),
     google_drive_api_key: new FormControl<string>(''),
     google_drive_access_key: new FormControl<string>(''),
@@ -115,6 +115,7 @@ export class SettingsComponent implements OnInit {
               s3_prefix: (<S3Credentials>credentials.value).prefix,
               s3_secretKey: (<S3Credentials>credentials.value).secretAccessKey,
               s3_accessKey: (<S3Credentials>credentials.value).accessKeyId,
+              s3_endpoint: (<S3Credentials>credentials.value).endpoint,
             });
             const storage = <S3DataStorage>(await this.storageManager.currentStorage);
             this.s3CorsCheckResult.set(await storage.checkCors());
@@ -190,12 +191,13 @@ export class SettingsComponent implements OnInit {
   }
 
   private async validateS3Storage(): Promise<boolean> {
-    const credentials = {
+    const credentials: S3Credentials = {
       accessKeyId: this.form.controls.s3_accessKey.value!,
       secretAccessKey: this.form.controls.s3_secretKey.value!,
       bucket: this.form.controls.s3_bucket.value!,
       prefix: this.form.controls.s3_prefix.value,
       region: this.form.controls.s3_region.value!,
+      endpoint: this.form.controls.s3_endpoint.value || undefined,
     };
     const storage = <S3DataStorage>(await this.storageManager.findByName(this.form.controls.storage.value!));
     await storage.clearCache();
@@ -221,6 +223,7 @@ export class SettingsComponent implements OnInit {
             bucket: this.form.controls.s3_bucket.value!,
             prefix: this.form.controls.s3_prefix.value,
             region: this.form.controls.s3_region.value!,
+            endpoint: this.form.controls.s3_endpoint.value || undefined,
           },
         });
         await (<S3DataStorage>storage).clearCache();

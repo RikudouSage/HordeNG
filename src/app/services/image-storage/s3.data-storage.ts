@@ -235,6 +235,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         secretAccessKey: credentials.secretAccessKey,
       },
       region: credentials.region,
+      endpoint: credentials.endpoint,
     });
     try {
       await client.send(new ListObjectsV2Command({
@@ -325,6 +326,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         secretAccessKey: credentials.secretAccessKey,
       },
       region: credentials.region,
+      endpoint: credentials.endpoint,
     });
   }
 

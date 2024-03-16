@@ -144,5 +144,6 @@
   "app.settings.google_drive.client_id": "OAuth client ID",
   "app.settings.google_drive.api_key": "API key",
   "app.settings.google_drive.authorize": "Authorize in Google",
-  "app.settings.google_drive.directory": "Directory"
+  "app.settings.google_drive.directory": "Directory",
+  "app.settings.s3.endpoint": "Custom S3 endpoint"
 }

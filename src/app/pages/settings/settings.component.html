@@ -50,6 +50,10 @@
             <label for="inputS3Prefix">{{'app.settings.s3.prefix' | transloco}}</label>
             <input type="text" formControlName="s3_prefix" class="form-control" id="inputS3Prefix" />
           </div>
+          <div class="form-group">
+            <label for="inputS3Endpoint">{{'app.settings.s3.endpoint' | transloco}}</label>
+            <input type="text" formControlName="s3_endpoint" class="form-control" id="inputS3Endpoint" />
+          </div>
         } @else if (form.controls.storage.value === 'google_drive') {
           <div class="form-group">
             <label for="inputGoogleDriveClientId">{{'app.settings.google_drive.client_id' | transloco}}</label>

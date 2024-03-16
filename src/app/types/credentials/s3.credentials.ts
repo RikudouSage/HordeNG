@@ -6,4 +6,5 @@ export interface S3Credentials extends Credentials {
   bucket: string;
   region: string;
   prefix?: string | null;
+  endpoint?: string;
 }
