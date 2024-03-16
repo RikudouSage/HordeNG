@@ -15,7 +15,13 @@ export class KudosCostCalculator {
   }
 
   public async calculate(options: GenerationOptions): Promise<number | null> {
-    const response = await toPromise(this.api.generateImage(options, true));
+    if (!options.prompt) {
+      return 0;
+    }
+    let response = await toPromise(this.api.generateImage(options, true));
+    if (!response.success) {
+      response = await toPromise(this.api.generateImage({...options, allowDowngrade: true}, true));
+    }
     if (!response.success) {
       return null;
     }
