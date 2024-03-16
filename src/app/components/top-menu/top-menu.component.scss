@@ -1,15 +1,36 @@
 @import "../../../scss/colors";
+@import "../../../scss/breakpoints";
+
+:host {
+  @include mediaMax(880px) {
+    position: fixed;
+    //bottom: 0;
+    background: $bodyBackground;
+    z-index: 100;
+    width: calc(100% - 6vw);
+  }
+}
 
 ul {
   list-style-type: none;
   display: flex;
-
   border-bottom: 1px solid $borderColor;
+
+  @include mediaMax(880px) {
+    border-bottom: none;
+    justify-content: center;
+    width: 100%;
+  }
 }
 
 li {
   height: 72px;
   display: block;
+
+  @include mediaMax(880px) {
+    height: auto;
+    padding: 10px 0;
+  }
 }
 
 a {
@@ -39,12 +60,26 @@ a {
 .logo {
   padding-right: 20px;
 
+  @include mediaMax(880px) {
+    padding-right: 0;
+  }
+
   img {
     margin-right: 20px;
+
+    @include mediaMax(880px) {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
   }
 
   span {
     font-size: 30px;
+
+    @include mediaMax(880px) {
+      font-size: 15px;
+    }
   }
 }
 

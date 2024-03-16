@@ -1,0 +1,47 @@
+@mixin mediaMin($minWidth) {
+  @media screen and (min-width: $minWidth) {
+    @content
+  }
+}
+
+@mixin mediaMax($maxWidth) {
+  @media screen and (max-width: $maxWidth) {
+    @content
+  }
+}
+
+@mixin extraExtraLarge {
+  @include mediaMin(1400px) {
+    @content
+  }
+}
+
+@mixin extraLarge {
+  @include mediaMin(1200px) {
+    @content
+  }
+}
+
+@mixin large {
+  @include mediaMin(992px) {
+    @content
+  }
+}
+
+@mixin medium {
+  @include mediaMin(768px) {
+    @content
+  }
+}
+
+@mixin small {
+  @include mediaMin(576px) {
+    @content
+  }
+}
+
+@mixin extraSmall {
+  @include mediaMax(575px) {
+    @content
+  }
+}
