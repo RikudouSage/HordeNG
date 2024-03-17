@@ -157,5 +157,12 @@
   "app.model.tags": "Tags",
   "app.model.trigger": "Trigger phrase",
   "app.model.style": "Style",
-  "app.model.nsfw": "NSFW?"
+  "app.model.nsfw": "NSFW?",
+  "app.generate.validation.errors": "Your generation parameters do not conform to what the model expects. You can still send the request, but the result is unlikely to be good. The errors reported:",
+  "app.generation.validation.clip_skip": "Clip skip must be equal to {{expected}}",
+  "app.generation.validation.karras": "Karras must be enabled",
+  "app.generation.validation.samplers": "Sampler must be one of: {{expected}}",
+  "app.generation.validation.steps": "Steps must be between {{min}} and {{max}}",
+  "app.generation.validation.model_not_found": "The requested model was not found",
+  "app.generation.validation.cfg_scale": "CFG scale must be {{expected}}"
 }

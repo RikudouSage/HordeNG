@@ -1,5 +1,5 @@
 import {Component, computed, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
-import {FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
 import {LoaderComponent} from "../../components/loader/loader.component";
@@ -31,6 +31,10 @@ import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-c
 import {ModelConfiguration, ModelConfigurations} from "../../types/sd-repo/model-configuration";
 import {HordeRepoDataService} from "../../services/horde-repo-data.service";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
+import {
+  GenerationOptionsValidatorService, OptionsValidationError,
+  OptionsValidationErrors
+} from "../../services/generation-options-validator.service";
 
 interface Result {
   width: number;
@@ -74,6 +78,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
   private checkInterval: Subscription | null = null;
 
+  private currentModelName: WritableSignal<string> = signal('');
+
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
   public availableModels: WritableSignal<ModelConfigurations> = signal({});
@@ -90,6 +96,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
     return result;
   });
+  public validationErrors: WritableSignal<OptionsValidationErrors> = signal([]);
+  public currentModelDetail = computed(() => this.availableModels()[this.currentModelName()]);
 
   public form = new FormGroup({
     prompt: new FormControl<string>('', [
@@ -158,6 +166,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     private readonly httpClient: HttpClient,
     private readonly imageStorage: DataStorageManagerService,
     private readonly hordeRepoData: HordeRepoDataService,
+    private readonly generationOptionsValidator: GenerationOptionsValidatorService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -173,6 +182,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.form.valueChanges.subscribe(async changes => {
       await this.database.storeGenerationOptions(this.formAsOptions);
       this.kudosCost.set(null);
+      if (changes.model) {
+        this.currentModelName.set(changes.model);
+        this.validationErrors.set(await this.generationOptionsValidator.getModelValidationStatus(this.formAsOptions, changes.model));
+      }
     });
     this.form.valueChanges.pipe(
       debounceTime(400),
@@ -368,4 +381,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.inProgress.set(null);
     await toPromise(this.api.cancelJob(job));
   }
+
+  protected readonly OptionsValidationError = OptionsValidationError;
 }

@@ -41,6 +41,28 @@
               </optgroup>
             }
           </select>
+          @if (validationErrors().length) {
+            <p class="text-warning">{{'app.generate.validation.errors' | transloco}}</p>
+            <ul class="text-warning">
+              @for (error of validationErrors(); track error) {
+                <li>
+                  @if (error === OptionsValidationError.ClipSkip) {
+                    {{'app.generation.validation.clip_skip' | transloco:{expected: currentModelDetail().requirements!.clip_skip!} }}
+                  } @else if (error === OptionsValidationError.Karras) {
+                    {{'app.generation.validation.karras' | transloco}}
+                  } @else if (error === OptionsValidationError.Sampler) {
+                    {{'app.generation.validation.samplers' | transloco:{expected: currentModelDetail().requirements!.samplers!.join(', ')} }}
+                  } @else if (error === OptionsValidationError.Steps) {
+                    {{'app.generation.validation.steps' | transloco:{min: currentModelDetail().requirements!.min_steps, max: currentModelDetail()!.requirements!.max_steps} }}
+                  } @else if (error === OptionsValidationError.ModelNotFound) {
+                    {{'app.generation.validation.model_not_found' | transloco }}
+                  } @else if (error === OptionsValidationError.CfgScale) {
+                    {{'app.generation.validation.cfg_scale' | transloco:{expected: currentModelDetail()!.requirements!.cfg_scale!} }}
+                  }
+                </li>
+              }
+            </ul>
+          }
           @if (form.value.model) {
             <small>
               <strong>{{'app.model.baseline' | transloco}}</strong>: {{availableModels()[form.value.model].baseline}}<br>
