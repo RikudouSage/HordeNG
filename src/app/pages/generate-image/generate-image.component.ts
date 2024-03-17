@@ -333,4 +333,15 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     await storage.storeImage(storeData);
     await this.database.removeJobMetadata(metadata);
   }
+
+  public async cancelGeneration(): Promise<void> {
+    const job = this.inProgress();
+    if (!job) {
+      return;
+    }
+
+    await this.database.deleteInProgressJob(job);
+    this.inProgress.set(null);
+    await toPromise(this.api.cancelJob(job));
+  }
 }

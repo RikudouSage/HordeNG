@@ -110,13 +110,18 @@
       <div class="col-md-1"></div>
       <div class="col-md-6">
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-11 mr-05">
             <button [disabled]="!form.valid || inProgress()" type="submit" class="btn btn-primary btn-long">
               @if (kudosCost() === null) {
                 {{ 'app.generate.do_generate.calculating' | transloco }}
               } @else {
                 {{ 'app.generate.do_generate' | transloco:{kudos: (kudosCost() ?? 0) | formatNumber} }}
               }
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button [disabled]="inProgress() === null" type="button" class="btn btn-danger btn-long" (click)="cancelGeneration()">
+              {{'app.generate.cancel' | transloco}}
             </button>
           </div>
         </div>
