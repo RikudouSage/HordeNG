@@ -155,5 +155,7 @@
   "app.model.examples": "Examples",
   "app.model.example_number": "Example #{{number}}",
   "app.model.tags": "Tags",
-  "app.model.trigger": "Trigger phrase"
+  "app.model.trigger": "Trigger phrase",
+  "app.model.style": "Style",
+  "app.model.nsfw": "NSFW?"
 }
