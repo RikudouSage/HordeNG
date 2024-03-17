@@ -1,0 +1,39 @@
+@if (loading()) {
+  <app-loader/>
+} @else {
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>{{ 'app.prompt_style.choose' | transloco }}</h2>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-xs-12">
+      @for (category of categories(); track category) {
+        <app-box [collapsible]="true" [title]="category">
+          @for (style of stylesByCategory()[category]; track style.name) {
+            <div class="prompt-style">
+              <div class="card mb-1" [class.collapsed]="collapsed()[style.name] ?? true">
+                <div class="card-header cursor-pointer" (click)="toggleCollapsed(style)">
+                  <div class="prompt-style-name">{{ style.name }}</div>
+                  <div class="prompt-style-model">{{ 'app.generate.model' | transloco }}: {{ style.model }}</div>
+                </div>
+                <div class="card-body">
+                  <strong>{{'app.generate.prompt' | transloco}}</strong>:
+                  <app-prompt-style-text [originalPrompt]="originalPrompt()" [stylePrompt]="style.prompt" />
+                  <br>
+
+                  <strong>{{'app.generate.negative_prompt' | transloco}}</strong>:
+                  <app-prompt-style-text [originalPrompt]="originalNegativePrompt() ?? ''" [stylePrompt]="style.prompt" [negative]="true" />
+                  <br>
+
+                  <button class="btn btn-primary mt-1" (click)="useStyle(style)">{{'app.prompt_style.use' | transloco}}</button>
+                </div>
+              </div>
+            </div>
+          }
+        </app-box>
+        <div class="mb-1"></div>
+      }
+    </div>
+  </div>
+}

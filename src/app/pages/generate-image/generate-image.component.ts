@@ -1,4 +1,14 @@
-import {Component, computed, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {
+  Component,
+  computed,
+  Inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+  signal,
+  TemplateRef, ViewContainerRef,
+  WritableSignal
+} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
@@ -35,6 +45,9 @@ import {
   GenerationOptionsValidatorService, OptionsValidationError,
   OptionsValidationErrors
 } from "../../services/generation-options-validator.service";
+import {PromptStyleModalComponent} from "../../components/prompt-style-modal/prompt-style-modal.component";
+import {ModalService} from "../../services/modal.service";
+import {EnrichedPromptStyle} from "../../types/sd-repo/prompt-style";
 
 interface Result {
   width: number;
@@ -67,7 +80,8 @@ interface Result {
     TomSelectDirective,
     ToggleCheckboxComponent,
     JsonPipe,
-    YesNoComponent
+    YesNoComponent,
+    PromptStyleModalComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -75,6 +89,7 @@ interface Result {
 export class GenerateImageComponent implements OnInit, OnDestroy {
   protected readonly Sampler = Sampler;
   protected readonly PostProcessor = PostProcessor;
+  protected readonly OptionsValidationError = OptionsValidationError;
 
   private checkInterval: Subscription | null = null;
 
@@ -167,6 +182,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     private readonly imageStorage: DataStorageManagerService,
     private readonly hordeRepoData: HordeRepoDataService,
     private readonly generationOptionsValidator: GenerationOptionsValidatorService,
+    private readonly modalService: ModalService,
+    private readonly view: ViewContainerRef,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -382,5 +399,38 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     await toPromise(this.api.cancelJob(job));
   }
 
-  protected readonly OptionsValidationError = OptionsValidationError;
+  public async openModal(modal: TemplateRef<any>) {
+    this.modalService.open(this.view, modal);
+  }
+
+  public async onStyleUsed(style: EnrichedPromptStyle): Promise<void> {
+    let promptParts = style.prompt.split('###');
+    if (promptParts.length === 1) {
+      promptParts = style.prompt.split('{np}');
+      promptParts[1] = `{np}${promptParts[1]}`;
+    }
+
+    const patch: Partial<GenerationOptions> = {
+      prompt: promptParts[0].replace('{p}', this.form.value.prompt!),
+      negativePrompt: promptParts[1].replace('{np}', this.form.value.negativePrompt ?? ''),
+      model: style.model,
+    };
+    if (style.height) {
+      patch.height = style.height;
+    }
+    if (style.width) {
+      patch.width = style.width;
+    }
+    if (style.cfg_scale) {
+      patch.cfgScale = style.cfg_scale;
+    }
+    if (style.sampler_name) {
+      patch.sampler = style.sampler_name;
+    }
+    if (style.steps) {
+      patch.steps = style.steps;
+    }
+
+    this.form.patchValue(patch);
+  }
 }

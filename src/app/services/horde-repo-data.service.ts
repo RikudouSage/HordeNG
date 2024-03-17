@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {CacheService} from "./cache.service";
 import {HttpClient} from "@angular/common/http";
-import {from, Observable, of, switchMap, tap} from "rxjs";
+import {from, map, Observable, of, switchMap, tap} from "rxjs";
 import {ModelConfigurations} from "../types/sd-repo/model-configuration";
+import {CategoriesResponse, EnrichedPromptStyle, PromptStyles} from "../types/sd-repo/prompt-style";
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ import {ModelConfigurations} from "../types/sd-repo/model-configuration";
 export class HordeRepoDataService {
   private readonly CacheKeys = {
     ModelsConfig: 'repo.models_config',
+    PromptStyles: 'repo.prompt_styles',
   };
 
   constructor(
@@ -34,5 +36,50 @@ export class HordeRepoDataService {
         );
       }),
     );
+  }
+
+  public getStyles(): Observable<EnrichedPromptStyle[]> {
+    return from(this.cache.getItem<EnrichedPromptStyle[]>(this.CacheKeys.PromptStyles)).pipe(
+      switchMap(cacheItem => {
+        if (cacheItem.isHit) {
+          return of(cacheItem.value!);
+        }
+
+        return this.httpClient.get<CategoriesResponse>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-Styles/main/categories.json').pipe(
+          switchMap(categories => {
+            return this.httpClient.get<PromptStyles>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-Styles/main/styles.json').pipe(
+              map (styles => {
+                let result: EnrichedPromptStyle[] = [];
+                for (const styleName of Object.keys(styles)) {
+                  const style = styles[styleName];
+                  result.push({
+                    ...style,
+                    name: styleName,
+                    category: this.getCategory(styleName, categories),
+                  });
+                }
+
+                cacheItem.value = result;
+                cacheItem.expiresAfter(24 * 60 * 60);
+                this.cache.save(cacheItem);
+
+                return result;
+              })
+            );
+          }),
+        );
+      })
+    );
+  }
+
+  private getCategory(style: string, categories: CategoriesResponse): string {
+    for (const categoryName of Object.keys(categories)) {
+      const list = categories[categoryName];
+      if (list.includes(style)) {
+        return categoryName;
+      }
+    }
+
+    return 'no category';
   }
 }

@@ -1,0 +1,37 @@
+@import "colors";
+
+.card {
+  background: $cardBackground;
+  box-shadow: $shadowColor 0 0 12px 0;
+  border-radius: 4px;
+  border: 1px solid $borderColor;
+  overflow: hidden;
+  height: auto;
+
+  &.collapsed {
+    height: 47px;
+  }
+
+  p {
+    margin-bottom: 8px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.card-header {
+  font-weight: bold;
+  font-size: 15px;
+  line-height: 15px;
+  padding: 15px;
+  border-bottom: 1px solid $borderColor;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.card-body {
+  padding: 15px;
+}

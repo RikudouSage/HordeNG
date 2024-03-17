@@ -30,7 +30,7 @@
 
 .btn {
   border: none;
-  color: $mainTextColor;
+  color: $bodyBackground;
   font-weight: bold;
   padding: 5px 15px;
   border-radius: 2px;
@@ -39,16 +39,18 @@
   &[disabled] {
     background: $borderColor;
     cursor: not-allowed;
-    color: #999;
+    color: $mainTextDisabledColor;
   }
 }
 
 .btn-primary {
   background: $primaryColor;
+  color: $mainTextColor;
 }
 
 .btn-danger {
   background: $dangerColor;
+  color: $mainTextColor;
 }
 
 .btn-long {

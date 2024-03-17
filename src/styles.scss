@@ -8,6 +8,7 @@
 @import "scss/table";
 @import "scss/animations";
 @import "scss/breakpoints";
+@import "scss/card";
 
 * {
   padding: 0;
@@ -81,6 +82,10 @@ li {
 
 .text-warning {
   color: $warningColor;
+}
+
+.text-primary {
+  color: $primaryColor;
 }
 
 .display-block {
