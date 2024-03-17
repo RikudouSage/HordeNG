@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {Component, computed, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
@@ -28,6 +28,8 @@ import {DataStorageManagerService} from "../../services/data-storage-manager.ser
 import {PostProcessor} from "../../types/horde/post-processor";
 import {TomSelectDirective} from "../../directives/tom-select.directive";
 import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
+import {ModelConfiguration} from "../../types/sd-repo/model-configuration";
+import {HordeRepoDataService} from "../../services/horde-repo-data.service";
 
 interface Result {
   width: number;
@@ -71,10 +73,20 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
-  public availableModels: WritableSignal<string[]> = signal([]);
+  public availableModels: WritableSignal<ModelConfiguration[]> = signal([]);
+  public liveModelDetails: WritableSignal<Record<string, number>> = signal({});
   public inProgress: WritableSignal<JobInProgress | null> = signal(null);
   public result: WritableSignal<Result | null> = signal(null);
   public requestStatus: WritableSignal<RequestStatusCheck | null> = signal(null);
+  public groupedModels = computed(() => {
+    const result: {[group: string]: ModelConfiguration[]} = {};
+    for (const model of this.availableModels()) {
+      result[model.style] ??= [];
+      result[model.style].push(model);
+    }
+
+    return result;
+  });
 
   public form = new FormGroup({
     prompt: new FormControl<string>('', [
@@ -142,6 +154,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     private readonly translator: TranslatorService,
     private readonly httpClient: HttpClient,
     private readonly imageStorage: DataStorageManagerService,
+    private readonly hordeRepoData: HordeRepoDataService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -166,16 +179,24 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
         await this.messageService.error(this.translator.get('app.error.kudos_calculation'));
       }
     });
-    this.availableModels.set(await toPromise(this.api.getModels().pipe(
+    this.availableModels.set(Object.values(await toPromise(this.hordeRepoData.getModelsConfig())));
+    this.liveModelDetails.set(await toPromise(this.api.getModels().pipe(
       map (response => {
         if (!response.success) {
           this.messageService.error(this.translator.get('app.error.models_fetching_failed'));
           throw new Error("Failed fetching list of models");
         }
 
-        return response.successResponse!
+        const models = response.successResponse!
           .filter(model => model.type === WorkerType.image)
-          .map(model => model.name);
+
+        const results: Record<string, number> = {};
+
+        for (const model of models) {
+          results[model.name] = model.count;
+        }
+
+        return results;
       }),
     )));
     this.loading.set(false);

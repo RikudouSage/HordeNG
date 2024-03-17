@@ -27,8 +27,12 @@
         <div class="form-group">
           <label for="inputModel">{{ 'app.generate.model' | transloco }}</label>
           <select id="inputModel" formControlName="model" required tom-select [maxItems]="1" [maxOptions]="null">
-            @for (model of availableModels(); track model) {
-              <option [value]="model">{{ model }}</option>
+            @for (item of groupedModels() | keyvalue; track item.key) {
+              <optgroup [label]="item.key">
+                @for (model of item.value; track model.name) {
+                  <option [value]="model.name">{{ model.name }} ({{liveModelDetails()[model.name]}})</option>
+                }
+              </optgroup>
             }
           </select>
         </div>
