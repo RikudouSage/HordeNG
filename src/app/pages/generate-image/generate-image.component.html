@@ -30,11 +30,38 @@
             @for (item of groupedModels() | keyvalue; track item.key) {
               <optgroup [label]="item.key">
                 @for (model of item.value; track model.name) {
-                  <option [value]="model.name">{{ model.name }} ({{liveModelDetails()[model.name]}})</option>
+                  <option [value]="model.name">
+                    {{ model.name }}
+                    @if (model.tags) {
+                      ({{'app.generate.tags' | transloco}}: {{model.tags.join(', ')}})
+                    }
+                    ({{'app.generate.workers_count' | transloco}}: {{liveModelDetails()[model.name]}})
+                  </option>
                 }
               </optgroup>
             }
           </select>
+          @if (form.value.model) {
+            <small>
+              <strong>{{'app.model.baseline' | transloco}}</strong>: {{availableModels()[form.value.model].baseline}}<br>
+              <strong>{{'app.model.description' | transloco}}</strong>: {{availableModels()[form.value.model].description}}<br>
+              @if (availableModels()[form.value.model].showcases) {
+                <strong>{{'app.model.examples' | transloco}}</strong>:
+                @for (showcase of availableModels()[form.value.model].showcases; track showcase) {
+                  <a href="{{showcase}}" target="_blank">{{'app.model.example_number' | transloco:{number: $index + 1} }}</a>,
+                }
+                <br>
+              }
+              <strong>{{'app.model.style' | transloco}}</strong>: {{availableModels()[form.value.model].style}}<br>
+              <strong>{{'app.model.nsfw' | transloco}}</strong>: <app-yes-no [value]="availableModels()[form.value.model].nsfw" /><br>
+              @if (availableModels()[form.value.model].tags) {
+                <strong>{{'app.model.tags' | transloco}}</strong>: {{availableModels()[form.value.model].tags!.join(', ')}}<br>
+              }
+              @if (availableModels()[form.value.model].trigger) {
+                <strong>{{'app.model.trigger' | transloco}}</strong>: {{availableModels()[form.value.model].trigger}}<br>
+              }
+            </small>
+          }
         </div>
         <div class="form-group">
           <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>

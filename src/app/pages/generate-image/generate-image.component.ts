@@ -4,7 +4,7 @@ import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {TranslocoPipe} from "@ngneat/transloco";
-import {AsyncPipe, isPlatformBrowser, KeyValuePipe, NgOptimizedImage} from "@angular/common";
+import {AsyncPipe, isPlatformBrowser, JsonPipe, KeyValuePipe, NgOptimizedImage} from "@angular/common";
 import {AppValidators} from "../../helper/app-validators";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {KudosCostCalculator} from "../../services/kudos-cost-calculator.service";
@@ -28,8 +28,9 @@ import {DataStorageManagerService} from "../../services/data-storage-manager.ser
 import {PostProcessor} from "../../types/horde/post-processor";
 import {TomSelectDirective} from "../../directives/tom-select.directive";
 import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
-import {ModelConfiguration} from "../../types/sd-repo/model-configuration";
+import {ModelConfiguration, ModelConfigurations} from "../../types/sd-repo/model-configuration";
 import {HordeRepoDataService} from "../../services/horde-repo-data.service";
+import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 
 interface Result {
   width: number;
@@ -60,7 +61,9 @@ interface Result {
     NgOptimizedImage,
     TranslocoMarkupComponent,
     TomSelectDirective,
-    ToggleCheckboxComponent
+    ToggleCheckboxComponent,
+    JsonPipe,
+    YesNoComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -73,14 +76,14 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
-  public availableModels: WritableSignal<ModelConfiguration[]> = signal([]);
+  public availableModels: WritableSignal<ModelConfigurations> = signal({});
   public liveModelDetails: WritableSignal<Record<string, number>> = signal({});
   public inProgress: WritableSignal<JobInProgress | null> = signal(null);
   public result: WritableSignal<Result | null> = signal(null);
   public requestStatus: WritableSignal<RequestStatusCheck | null> = signal(null);
   public groupedModels = computed(() => {
     const result: {[group: string]: ModelConfiguration[]} = {};
-    for (const model of this.availableModels()) {
+    for (const model of Object.values(this.availableModels())) {
       result[model.style] ??= [];
       result[model.style].push(model);
     }
@@ -179,7 +182,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
         await this.messageService.error(this.translator.get('app.error.kudos_calculation'));
       }
     });
-    this.availableModels.set(Object.values(await toPromise(this.hordeRepoData.getModelsConfig())));
+    this.availableModels.set(await toPromise(this.hordeRepoData.getModelsConfig()));
     this.liveModelDetails.set(await toPromise(this.api.getModels().pipe(
       map (response => {
         if (!response.success) {

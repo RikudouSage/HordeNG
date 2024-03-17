@@ -147,5 +147,13 @@
   "app.settings.google_drive.directory": "Directory",
   "app.settings.s3.endpoint": "Custom S3 endpoint",
   "app.generate.clip_skip": "CLIP skip",
-  "app.generate.cancel": "Cancel"
+  "app.generate.cancel": "Cancel",
+  "app.generate.workers_count": "workers",
+  "app.generate.tags": "tags",
+  "app.model.baseline": "Base model",
+  "app.model.description": "Description",
+  "app.model.examples": "Examples",
+  "app.model.example_number": "Example #{{number}}",
+  "app.model.tags": "Tags",
+  "app.model.trigger": "Trigger phrase"
 }
