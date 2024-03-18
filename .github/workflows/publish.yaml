@@ -43,4 +43,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           CDN_ID=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Cdn'].OutputValue" --output=text)
-          aws cloudfront create-invalidation --distribution-id $CDN_ID  --paths "/*"
+          aws cloudfront create-invalidation --distribution-id $CDN_ID  --paths "/*" 2>&1 > /dev/null
