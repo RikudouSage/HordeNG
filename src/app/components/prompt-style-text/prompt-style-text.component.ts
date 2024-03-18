@@ -14,13 +14,11 @@ export class PromptStyleTextComponent {
   public promptHtml = computed(() => {
     if (this.negative()) {
       const split = this.stylePrompt().split('###');
-      const target = split.length === 1 ? split[0].trim() : split[1].trim();
+      if (split.length === 1) {
+        return `<span class="text-primary">${this.originalPrompt()}</span>`;
+      }
 
-      const split2 = target
-        .replace('{np}', `<span class="text-primary">${this.originalPrompt()}</span>`)
-        .split('{p}');
-
-      return split2.length === 1 ? split2[0].trim() : split2[1].trim();
+      return split[1].trim().replace('{np}', `<span class="text-primary">${this.originalPrompt()}</span>`);
     }
 
     return this.stylePrompt()
@@ -30,4 +28,6 @@ export class PromptStyleTextComponent {
       .split('{np}')[0]
       .trim()
   });
+
+  public debug = computed(() => this.stylePrompt() === 'Intricate colorful neon rainbow {p} darkness, intricately stylized vector design, line work, flourishes, patterns###white, blank,{np}');
 }
