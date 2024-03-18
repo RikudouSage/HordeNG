@@ -167,5 +167,8 @@
   "app.generation.validation.cfg_scale": "CFG scale must be {{expected}}",
   "app.generate.use_style": "Use existing style",
   "app.prompt_style.choose": "Choose a style for your prompt",
-  "app.prompt_style.use": "Use style"
+  "app.prompt_style.use": "Use style",
+  "app.generate.style_effective_value": "Effective value from style",
+  "app.generate.cancel_style": "Cancel style",
+  "app.generate.apply_style_directly": "Apply style directly"
 }

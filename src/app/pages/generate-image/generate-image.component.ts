@@ -4,7 +4,7 @@ import {
   Inject,
   OnDestroy,
   OnInit,
-  PLATFORM_ID,
+  PLATFORM_ID, Signal,
   signal,
   TemplateRef, ViewContainerRef,
   WritableSignal
@@ -48,6 +48,7 @@ import {
 import {PromptStyleModalComponent} from "../../components/prompt-style-modal/prompt-style-modal.component";
 import {ModalService} from "../../services/modal.service";
 import {EnrichedPromptStyle} from "../../types/sd-repo/prompt-style";
+import {EffectiveValueComponent} from "../../components/effective-value/effective-value.component";
 
 interface Result {
   width: number;
@@ -81,7 +82,8 @@ interface Result {
     ToggleCheckboxComponent,
     JsonPipe,
     YesNoComponent,
-    PromptStyleModalComponent
+    PromptStyleModalComponent,
+    EffectiveValueComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -94,6 +96,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   private checkInterval: Subscription | null = null;
 
   private currentModelName: WritableSignal<string> = signal('');
+  private currentPrompt: WritableSignal<string> = signal('');
+  private currentNegativePrompt: WritableSignal<string | null> = signal(null);
 
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
@@ -113,6 +117,44 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   });
   public validationErrors: WritableSignal<OptionsValidationErrors> = signal([]);
   public currentModelDetail = computed(() => this.availableModels()[this.currentModelName()]);
+  public chosenStyle: WritableSignal<EnrichedPromptStyle | null> = signal(null);
+  public modifiedOptions: Signal<null | Partial<GenerationOptions>> = computed(() => {
+    if (this.chosenStyle() === null) {
+      return null;
+    }
+
+    const style = this.chosenStyle()!;
+
+    let promptParts = style.prompt.split('###');
+    if (promptParts.length === 1) {
+      promptParts = style.prompt.split('{np}');
+      promptParts[1] = `{np}${promptParts[1]}`;
+    }
+
+    const patch: Partial<GenerationOptions> = {
+      prompt: promptParts[0].replace('{p}', this.currentPrompt()),
+      negativePrompt: promptParts[1].replace('{np}', this.currentNegativePrompt() ?? ''),
+      model: style.model,
+    };
+    if (style.height) {
+      patch.height = style.height;
+    }
+    if (style.width) {
+      patch.width = style.width;
+    }
+    if (style.cfg_scale) {
+      patch.cfgScale = style.cfg_scale;
+    }
+    if (style.sampler_name) {
+      patch.sampler = style.sampler_name;
+    }
+    if (style.steps) {
+      patch.steps = style.steps;
+    }
+
+    return patch;
+  });
+  public effectiveModel = computed(() => this.modifiedOptions()?.model ?? this.currentModelName());
 
   public form = new FormGroup({
     prompt: new FormControl<string>('', [
@@ -193,9 +235,20 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     if (!this.isBrowser) {
       return;
     }
+
+    // for these two we need even the initial values, that's why there are multiple listeners
+    this.form.valueChanges.subscribe(changes => {
+      if (changes.prompt) {
+        this.currentPrompt.set(changes.prompt);
+      }
+      if (changes.negativePrompt) {
+        this.currentNegativePrompt.set(changes.negativePrompt);
+      }
+    });
+
     this.form.patchValue(await this.database.getGenerationOptions());
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
-    this.kudosCost.set(await this.costCalculator.calculate(await this.database.getGenerationOptions()));
+    this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
     this.form.valueChanges.subscribe(async changes => {
       await this.database.storeGenerationOptions(this.formAsOptions);
       this.kudosCost.set(null);
@@ -207,7 +260,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.form.valueChanges.pipe(
       debounceTime(400),
     ).subscribe(async changes => {
-      this.kudosCost.set(await this.costCalculator.calculate(await this.database.getGenerationOptions()));
+      this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
       if (this.kudosCost() === null) {
         await this.messageService.error(this.translator.get('app.error.kudos_calculation'));
       }
@@ -302,7 +355,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(this.result()!.source);
     }
     this.result.set(null);
-    const response = await toPromise(this.api.generateImage(this.formAsOptions));
+    const response = await toPromise(this.api.generateImage(this.formAsOptionsStyled));
     if (!response.success) {
       await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
       this.loading.set(false);
@@ -312,7 +365,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     await this.database.addInProgressJob(response.successResponse!);
     await this.database.storeJobMetadata({
       requestId: response.successResponse!.id,
-      ...this.formAsOptions,
+      ...this.formAsOptionsStyled,
     });
     this.inProgress.set(response.successResponse!);
     this.loading.set(false);
@@ -342,6 +395,14 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       allowDowngrade: value.allowDowngrade ?? false,
       clipSkip: value.clipSkip ?? 1,
     };
+  }
+
+  private get formAsOptionsStyled(): GenerationOptions {
+    if (!this.modifiedOptions()) {
+      return this.formAsOptions;
+    }
+
+    return {...this.formAsOptions, ...this.modifiedOptions()};
   }
 
   private async downloadImages(result: RequestStatusFull, metadata: JobMetadata): Promise<void> {
@@ -403,34 +464,13 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.modalService.open(this.view, modal);
   }
 
-  public async onStyleUsed(style: EnrichedPromptStyle): Promise<void> {
-    let promptParts = style.prompt.split('###');
-    if (promptParts.length === 1) {
-      promptParts = style.prompt.split('{np}');
-      promptParts[1] = `{np}${promptParts[1]}`;
-    }
+  public async applyStyleDirectly(): Promise<void> {
+    this.form.patchValue(this.modifiedOptions()!);
+    this.chosenStyle.set(null);
+  }
 
-    const patch: Partial<GenerationOptions> = {
-      prompt: promptParts[0].replace('{p}', this.form.value.prompt!),
-      negativePrompt: promptParts[1].replace('{np}', this.form.value.negativePrompt ?? ''),
-      model: style.model,
-    };
-    if (style.height) {
-      patch.height = style.height;
-    }
-    if (style.width) {
-      patch.width = style.width;
-    }
-    if (style.cfg_scale) {
-      patch.cfgScale = style.cfg_scale;
-    }
-    if (style.sampler_name) {
-      patch.sampler = style.sampler_name;
-    }
-    if (style.steps) {
-      patch.steps = style.steps;
-    }
-
-    this.form.patchValue(patch);
+  public async applyStyle(style: EnrichedPromptStyle): Promise<void> {
+    this.chosenStyle.set(style);
+    await this.costCalculator.calculate(this.formAsOptionsStyled);
   }
 }

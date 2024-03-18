@@ -7,18 +7,24 @@
         <div class="form-group">
           <label for="inputPrompt">{{ 'app.generate.prompt' | transloco }}</label>
           <input required type="text" class="form-control" formControlName="prompt" id="inputPrompt" autocomplete="off"/>
-          <button type="button" class="btn" (click)="openModal(styleModal)">{{'app.generate.use_style' | transloco}}</button>
+          <div class="flex">
+            <button type="button" class="btn mr-05" (click)="openModal(styleModal)">{{'app.generate.use_style' | transloco}}</button>
+            <button type="button" class="btn btn-danger mr-05" [disabled]="chosenStyle() === null" (click)="chosenStyle.set(null)">{{'app.generate.cancel_style' | transloco}}</button>
+            <button type="button" class="btn" [disabled]="chosenStyle() === null" (click)="applyStyleDirectly()">{{'app.generate.apply_style_directly' | transloco}}</button>
+          </div>
           <ng-template #styleModal>
             <app-prompt-style-modal
               [originalPrompt]="form.value.prompt!"
               [originalNegativePrompt]="form.value.negativePrompt || null"
-              (styleChosen)="onStyleUsed($event)"
+              (styleChosen)="applyStyle($event)"
             />
           </ng-template>
+          <app-effective-value [value]="modifiedOptions()?.prompt" [original]="form.value.prompt" />
         </div>
         <div class="form-group">
           <label for="inputNegativePrompt">{{ 'app.generate.negative_prompt' | transloco }}</label>
           <input type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt" autocomplete="off"/>
+          <app-effective-value [value]="modifiedOptions()?.negativePrompt" [original]="form.value.negativePrompt" />
         </div>
         <div class="form-group">
           <label for="inputSeed">{{'app.generate.seed' | transloco}}</label>
@@ -31,6 +37,7 @@
               <option [value]="enumCase.value">{{ enumCase.value }}</option>
             }
           </select>
+          <app-effective-value [value]="modifiedOptions()?.sampler" [original]="form.value.sampler" />
         </div>
         <div class="form-group">
           <label for="inputModel">{{ 'app.generate.model' | transloco }}</label>
@@ -71,24 +78,25 @@
               }
             </ul>
           }
-          @if (form.value.model) {
+          <app-effective-value [value]="modifiedOptions()?.model" [original]="form.value.model" />
+          @if (effectiveModel()) {
             <small>
-              <strong>{{'app.model.baseline' | transloco}}</strong>: {{availableModels()[form.value.model].baseline}}<br>
-              <strong>{{'app.model.description' | transloco}}</strong>: {{availableModels()[form.value.model].description}}<br>
-              @if (availableModels()[form.value.model].showcases) {
+              <strong>{{'app.model.baseline' | transloco}}</strong>: {{availableModels()[effectiveModel()].baseline}}<br>
+              <strong>{{'app.model.description' | transloco}}</strong>: {{availableModels()[effectiveModel()].description}}<br>
+              @if (availableModels()[effectiveModel()].showcases) {
                 <strong>{{'app.model.examples' | transloco}}</strong>:
-                @for (showcase of availableModels()[form.value.model].showcases; track showcase) {
+                @for (showcase of availableModels()[effectiveModel()].showcases; track showcase) {
                   <a href="{{showcase}}" target="_blank">{{'app.model.example_number' | transloco:{number: $index + 1} }}</a>,
                 }
                 <br>
               }
-              <strong>{{'app.model.style' | transloco}}</strong>: {{availableModels()[form.value.model].style}}<br>
-              <strong>{{'app.model.nsfw' | transloco}}</strong>: <app-yes-no [value]="availableModels()[form.value.model].nsfw" /><br>
-              @if (availableModels()[form.value.model].tags) {
-                <strong>{{'app.model.tags' | transloco}}</strong>: {{availableModels()[form.value.model].tags!.join(', ')}}<br>
+              <strong>{{'app.model.style' | transloco}}</strong>: {{availableModels()[effectiveModel()].style}}<br>
+              <strong>{{'app.model.nsfw' | transloco}}</strong>: <app-yes-no [value]="availableModels()[effectiveModel()].nsfw" /><br>
+              @if (availableModels()[effectiveModel()].tags) {
+                <strong>{{'app.model.tags' | transloco}}</strong>: {{availableModels()[effectiveModel()].tags!.join(', ')}}<br>
               }
-              @if (availableModels()[form.value.model].trigger) {
-                <strong>{{'app.model.trigger' | transloco}}</strong>: {{availableModels()[form.value.model].trigger}}<br>
+              @if (availableModels()[effectiveModel()].trigger) {
+                <strong>{{'app.model.trigger' | transloco}}</strong>: {{availableModels()[effectiveModel()].trigger}}<br>
               }
             </small>
           }
@@ -112,11 +120,13 @@
           <label for="inputWidth">{{ 'app.generate.width' | transloco }}</label>
           <input type="number" min="64" max="3072" step="64" formControlName="width" id="inputWidth"
                  class="form-control"/>
+          <app-effective-value [value]="modifiedOptions()?.width" [original]="form.value.width" />
         </div>
         <div class="form-group">
           <label for="inputHeight">{{ 'app.generate.height' | transloco }}</label>
           <input type="number" min="64" max="3072" step="64" formControlName="height" id="inputHeight"
                  class="form-control"/>
+          <app-effective-value [value]="modifiedOptions()?.height" [original]="form.value.height" />
         </div>
         <div class="form-group">
           <label for="inputDenoisingStrength">{{ 'app.generate.denoising_strength' | transloco }}
@@ -129,11 +139,13 @@
             ({{ form.controls.cfgScale.value! | formatNumber:1 }})</label>
           <input type="range" min="0" max="100" step="0.5" formControlName="cfgScale" class="form-control"
                  id="inputCfgScale"/>
+          <app-effective-value [value]="modifiedOptions()?.cfgScale" [original]="form.value.cfgScale" />
         </div>
         <div class="form-group">
           <label for="inputSteps">{{ 'app.generate.steps' | transloco }}
             ({{ form.controls.steps.value! | formatNumber }})</label>
           <input type="range" min="1" max="500" step="1" formControlName="steps" class="form-control" id="inputSteps"/>
+          <app-effective-value [value]="modifiedOptions()?.steps" [original]="form.value.steps" />
         </div>
         <div class="form-group">
           <label for="inputClipSkip">{{ 'app.generate.clip_skip' | transloco }}
