@@ -179,5 +179,6 @@
   "app.about.features.google_drive": "Store images in Google Drive",
   "app.about.features.categorized_models": "Categorized models, searchable by name and tags",
   "app.about.features.styles": "Apply predefined curated prompt styles",
-  "app.about.features.more": "... and more!"
+  "app.about.features.more": "... and more!",
+  "app.version": "Version"
 }
