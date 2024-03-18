@@ -24,6 +24,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DOMAIN_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
           DOMAIN_NAME: horde-ng.org
+      - name: Create runtime version
+        run: echo "window['APP_VERSION'] = '$GITHUB_SHA';" >> src/assets/runtime-variables.js
       - name: Build app
         run: ./node_modules/.bin/ng build
       - name: Copy files to S3
