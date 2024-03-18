@@ -170,5 +170,14 @@
   "app.prompt_style.use": "Use style",
   "app.generate.style_effective_value": "Effective value from style",
   "app.generate.cancel_style": "Cancel style",
-  "app.generate.apply_style_directly": "Apply style directly"
+  "app.generate.apply_style_directly": "Apply style directly",
+  "app.about.features": "Features",
+  "app.about.features.generate_images": "Generating images (duh)",
+  "app.about.features.local_storage": "Store your images locally in your browser",
+  "app.about.features.s3_storage": "Store images on AWS S3 or compatible (CloudFlare R2, Backblaze B2, Wasabi...)",
+  "app.about.features.anonymous": "Can be used anonymously or with an api key",
+  "app.about.features.google_drive": "Store images in Google Drive",
+  "app.about.features.categorized_models": "Categorized models, searchable by name and tags",
+  "app.about.features.styles": "Apply predefined curated prompt styles",
+  "app.about.features.more": "... and more!"
 }
