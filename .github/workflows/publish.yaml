@@ -1,0 +1,46 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup prod dependencies
+        run: yarn install
+      - name: Deploy infrastructure
+        uses: serverless/github-action@v3
+        with:
+          args: deploy --stage prod --verbose
+        env:
+          AWS_REGION: eu-central-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DOMAIN_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
+          DOMAIN_NAME: horde-ng.org
+      - name: Build app
+        run: ./node_modules/.bin/ng build
+      - name: Copy files to S3
+        env:
+          STACK_NAME: HordeNG-prod
+          AWS_REGION: eu-central-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Bucket'].OutputValue" --output=text)
+          aws s3 sync dist/baby-tracker-ui s3://$BUCKET --delete
+      - name: Create invalidation
+        env:
+          STACK_NAME: HordeNG-prod
+          AWS_REGION: eu-central-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          CDN_ID=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Cdn'].OutputValue" --output=text)
+          aws cloudfront create-invalidation --distribution-id $CDN_ID  --paths "/*"
