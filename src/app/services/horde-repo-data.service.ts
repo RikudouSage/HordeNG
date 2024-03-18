@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
 import {CacheService} from "./cache.service";
 import {HttpClient} from "@angular/common/http";
-import {from, map, Observable, of, switchMap, tap} from "rxjs";
+import {from, map, Observable, of, switchMap, tap, zip} from "rxjs";
 import {ModelConfigurations} from "../types/sd-repo/model-configuration";
 import {CategoriesResponse, EnrichedPromptStyle, PromptStyles} from "../types/sd-repo/prompt-style";
+import {mergeDeep} from "../helper/merge-deep";
 
 @Injectable({
   providedIn: 'root'
@@ -45,9 +46,17 @@ export class HordeRepoDataService {
           return of(cacheItem.value!);
         }
 
-        return this.httpClient.get<CategoriesResponse>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-Styles/main/categories.json').pipe(
+        return zip(
+          this.httpClient.get<CategoriesResponse>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-Styles/main/categories.json'),
+          this.httpClient.get<CategoriesResponse>("/assets/styles/categories.json")
+        ).pipe(
+          map (values => mergeDeep(values[0], values[1])),
           switchMap(categories => {
-            return this.httpClient.get<PromptStyles>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-Styles/main/styles.json').pipe(
+            return zip(
+              this.httpClient.get<PromptStyles>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-Styles/main/styles.json'),
+              this.httpClient.get<PromptStyles>('/assets/styles/styles.json'),
+            ).pipe(
+              map (values => mergeDeep(values[0], values[1])),
               map (styles => {
                 let result: EnrichedPromptStyle[] = [];
                 for (const styleName of Object.keys(styles)) {
