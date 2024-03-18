@@ -9,7 +9,6 @@ export interface UnsavedStoredImage extends GenerationOptions {
   };
   model: string;
   seed: string;
-  loras: string[];
 }
 
 export interface StoredImage extends UnsavedStoredImage {

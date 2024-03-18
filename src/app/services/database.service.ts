@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {JobInProgress} from "../types/db/job-in-progress";
-import {GenerationOptions} from "../types/db/generation-options";
+import {GenerationOptions, LoraGenerationOption} from "../types/db/generation-options";
 import {Sampler} from "../types/horde/sampler";
 import {JobMetadata} from "../types/job-metadata";
 import {AppSetting} from "../types/app-setting";
@@ -84,8 +84,8 @@ export class DatabaseService {
   }
 
   public async getGenerationOptions(): Promise<GenerationOptions> {
-    const values = await this.getAll<{option: string; value: string | number | null | boolean | string[]}>(this.ObjectStores.GenerationOptions);
-    const valuesMap: {[option: string]: string | number | null | boolean | string[]} = {};
+    const values = await this.getAll<{option: string; value: any}>(this.ObjectStores.GenerationOptions);
+    const valuesMap: {[option: string]: any} = {};
     for (const value of values) {
       valuesMap[value.option] = value.value;
     }
@@ -111,6 +111,7 @@ export class DatabaseService {
       slowWorkers: <boolean>valuesMap['slowWorkers'] ?? true,
       allowDowngrade: <boolean>valuesMap['allowDowngrade'] ?? false,
       clipSkip: <number>valuesMap['clipSkip'] ?? 1,
+      loraList: <LoraGenerationOption[]>valuesMap['loras'] ?? [],
     };
   }
 

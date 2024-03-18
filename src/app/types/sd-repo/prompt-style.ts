@@ -8,6 +8,13 @@ export interface PromptStyle {
   steps?: number;
   cfg_scale?: number;
   sampler_name?: Sampler;
+  loras?: {
+    name: string;
+    model?: number;
+    clip?: number;
+    inject_trigger?: string;
+    is_version?: boolean;
+  }[];
 }
 
 export interface PromptStyles {

@@ -62,6 +62,13 @@ export class AiHorde {
         hires_fix: options.hiresFix,
         facefixer_strength: options.faceFixerStrength,
         clip_skip: options.clipSkip,
+        loras: options.loraList.map(lora => ({
+          name: String(lora.modelId),
+          model: lora.strengthModel,
+          clip: lora.strengthClip,
+          inject_trigger: lora.injectTrigger,
+          is_version: lora.isVersion,
+        }))
       },
       nsfw: options.nsfw,
       trusted_workers: options.trustedWorkers,

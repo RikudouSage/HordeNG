@@ -25,7 +25,7 @@ import {WorkerType} from "../../types/horde/worker-type";
 import {JobInProgress} from "../../types/db/job-in-progress";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
-import {GenerationOptions} from "../../types/db/generation-options";
+import {GenerationOptions, LoraGenerationOption} from "../../types/db/generation-options";
 import {RequestStatusCheck} from "../../types/horde/request-status-check";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {HttpClient, HttpResponse} from "@angular/common/http";
@@ -151,6 +151,15 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     if (style.steps) {
       patch.steps = style.steps;
     }
+    if (style.loras?.length) {
+      patch.loraList = style.loras.map(lora => ({
+        isVersion: lora.is_version,
+        injectTrigger: lora.inject_trigger,
+        strengthClip: lora.clip,
+        strengthModel: lora.model,
+        modelId: lora.name,
+      }));
+    }
 
     return patch;
   });
@@ -211,6 +220,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       Validators.min(1),
       Validators.max(12),
     ]),
+    loraList: new FormControl<LoraGenerationOption[]>([]),
   });
   private readonly isBrowser: boolean;
 
@@ -394,6 +404,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       trustedWorkers: value.trustedWorkers ?? false,
       allowDowngrade: value.allowDowngrade ?? false,
       clipSkip: value.clipSkip ?? 1,
+      loraList: value.loraList ?? [],
     };
   }
 
@@ -435,7 +446,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     const storeData: UnsavedStoredImage = {
       id: generations[0].id,
       data: image,
-      loras: [],
       worker: {
         id: generations[0].worker_id,
         name: generations[0].worker_name,

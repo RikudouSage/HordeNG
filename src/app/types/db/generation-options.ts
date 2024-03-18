@@ -1,6 +1,14 @@
 import {Sampler} from "../horde/sampler";
 import {PostProcessor} from "../horde/post-processor";
 
+export interface LoraGenerationOption {
+  modelId: string;
+  strengthModel?: number;
+  strengthClip?: number;
+  injectTrigger?: string;
+  isVersion?: boolean;
+}
+
 export interface GenerationOptions {
   prompt: string;
   negativePrompt: string | null;
@@ -22,4 +30,5 @@ export interface GenerationOptions {
   trustedWorkers: boolean;
   allowDowngrade: boolean;
   clipSkip: number;
+  loraList: LoraGenerationOption[];
 }

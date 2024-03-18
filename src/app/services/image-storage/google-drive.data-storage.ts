@@ -87,7 +87,6 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       workerName: image.worker.name,
       model: image.model,
       seed: image.seed,
-      loras: image.loras.join(','),
       postProcessors: image.postProcessors.join(','),
       prompt: image.prompt,
       negativePrompt: image.negativePrompt ?? '',
@@ -105,6 +104,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       slowWorkers: String(Number(image.slowWorkers)),
       trustedWorkers: String(Number(image.trustedWorkers)),
       nsfw: String(Number(image.nsfw)),
+      loras: JSON.stringify(image.loraList),
       googleApiId: result.id,
     });
   }
@@ -164,7 +164,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
         cfgScale: Number(metadata['cfgScale'] ?? 0),
         prompt: metadata['prompt'] ?? '',
         negativePrompt: metadata['negativePrompt'],
-        loras: [],
+        loraList: JSON.parse(metadata['loras'] || '[]'),
         censorNsfw: Boolean(Number(metadata['censorNsfw'] ?? 0)),
         slowWorkers: Boolean(Number(metadata['slowWorkers'] ?? 0)),
         trustedWorkers: Boolean(Number(metadata['trustedWorkers'] ?? 0)),
