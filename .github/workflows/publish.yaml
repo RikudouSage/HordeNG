@@ -34,7 +34,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           BUCKET=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Bucket'].OutputValue" --output=text)
-          aws s3 sync dist/baby-tracker-ui s3://$BUCKET --delete
+          aws s3 sync dist/horde-gui/browser s3://$BUCKET --delete
       - name: Create invalidation
         env:
           STACK_NAME: HordeNG-prod
