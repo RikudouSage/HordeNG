@@ -272,7 +272,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.form.patchValue(await this.database.getGenerationOptions());
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
     if (this.form.valid) {
-      console.log('here')
       this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
     }
     this.form.valueChanges.subscribe(async changes => {
