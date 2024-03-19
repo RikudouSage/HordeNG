@@ -193,5 +193,6 @@
   "app.image.model_image": "Model image",
   "app.image.no_image": "No image",
   "app.model.version": "Version",
-  "app.lora_selector.use_lora": "Use LORA"
+  "app.lora_selector.use_lora": "Use LORA",
+  "app.about.features.lora": "Search for and use LORAs"
 }

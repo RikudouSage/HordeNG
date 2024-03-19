@@ -103,7 +103,8 @@
         </div>
         <div class="form-group">
           <label>{{'app.generate.lora_list' | transloco}}</label>
-          <button class="btn" type="button" (click)="openModal(addLoraModal)">{{'app.generate.add_loras' | transloco}}</button>
+          <button [disabled]="(form.value.loraList?.length ?? 0) >= 5" class="btn" type="button"
+                  (click)="openModal(addLoraModal)">{{'app.generate.add_loras' | transloco}}</button>
           <ng-template #addLoraModal>
             <app-lora-selector [selectedLoras]="form.value.loraList ?? []" (loraSelected)="addLora($event)" />
           </ng-template>

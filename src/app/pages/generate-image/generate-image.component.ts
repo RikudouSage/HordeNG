@@ -231,7 +231,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       Validators.min(1),
       Validators.max(12),
     ]),
-    loraList: new FormControl<LoraGenerationOption[]>([]),
+    loraList: new FormControl<LoraGenerationOption[]>([], [
+      Validators.maxLength(5),
+    ]),
   });
   private readonly isBrowser: boolean;
 
@@ -269,7 +271,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
     this.form.patchValue(await this.database.getGenerationOptions());
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
-    this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
+    if (this.form.valid) {
+      console.log('here')
+      this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
+    }
     this.form.valueChanges.subscribe(async changes => {
       await this.database.storeGenerationOptions(this.formAsOptions);
       this.kudosCost.set(null);
@@ -281,9 +286,13 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.form.valueChanges.pipe(
       debounceTime(400),
     ).subscribe(async changes => {
-      this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
-      if (this.kudosCost() === null) {
-        await this.messageService.error(this.translator.get('app.error.kudos_calculation'));
+      if (this.form.valid) {
+        this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
+        if (this.kudosCost() === null) {
+          await this.messageService.error(this.translator.get('app.error.kudos_calculation'));
+        }
+      } else {
+        this.kudosCost.set(0);
       }
     });
     this.availableModels.set(await toPromise(this.hordeRepoData.getModelsConfig()));
@@ -492,7 +501,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
   public async applyStyle(style: EnrichedPromptStyle): Promise<void> {
     this.chosenStyle.set(style);
-    await this.costCalculator.calculate(this.formAsOptionsStyled);
+    if (this.form.valid) {
+      await this.costCalculator.calculate(this.formAsOptionsStyled);
+    }
   }
 
   public async removeLora(modelId: number): Promise<void> {
