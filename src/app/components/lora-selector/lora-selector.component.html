@@ -54,6 +54,14 @@
             </select>
           </div>
           <div class="mt-2">
+            <strong>{{'app.model.baseline' | transloco}}</strong>: {{versionBases()[Number(versionSelect.value)]}}
+            @if (versionBases()[Number(versionSelect.value)]|modelBasesMatchWarning:selectedModel().baseline) {
+              <p class="text-warning">
+                {{versionBases()[Number(versionSelect.value)]|modelBasesMatchWarning:selectedModel().baseline | async}}
+              </p>
+            }
+          </div>
+          <div class="mt-1">
             <button class="btn btn-primary" type="button"
                     [disabled]="selectedLoraIds().includes(Number(versionSelect.value))"
                     (click)="selectLora(Number(versionSelect.value))">{{ 'app.lora_selector.use_lora' | transloco }}

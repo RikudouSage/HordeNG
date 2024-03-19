@@ -1,6 +1,6 @@
 import {CivitAiModelVersion} from "./civit-ai-model-version";
 
-export interface CivitAiModelVersionDetails extends CivitAiModelVersion {
+export interface CivitAiModelVersionDetail extends CivitAiModelVersion {
   modelId: number;
   updatedAt: string;
   trainedWords: string[];

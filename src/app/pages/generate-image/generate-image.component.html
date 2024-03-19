@@ -106,7 +106,7 @@
           <button [disabled]="(form.value.loraList?.length ?? 0) >= 5" class="btn" type="button"
                   (click)="openModal(addLoraModal)">{{'app.generate.add_loras' | transloco}}</button>
           <ng-template #addLoraModal>
-            <app-lora-selector [selectedLoras]="form.value.loraList ?? []" (loraSelected)="addLora($event)" />
+            <app-lora-selector [selectedLoras]="form.value.loraList ?? []" [selectedModel]="currentModelDetail()" (loraSelected)="addLora($event)" />
           </ng-template>
           @if (modifiedOptions()?.loraList) {
             <small>

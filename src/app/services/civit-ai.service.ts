@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {catchError, Observable, of, switchMap} from "rxjs";
 import {LoraSearchResponse} from "../types/civit-ai/lora-search-response";
 import {CivitAiModel} from "../types/civit-ai/civit-ai-model";
-import {CivitAiModelVersion} from "../types/civit-ai/civit-ai-model-version";
-import {CivitAiModelVersionDetails} from "../types/civit-ai/civit-ai-model-version-details";
+import {CivitAiModelVersionDetail} from "../types/civit-ai/civit-ai-model-version-detail";
 
 @Injectable({
   providedIn: 'root'
@@ -29,8 +28,12 @@ export class CivitAiService {
   }
 
   public getLoraByVersion(id: number): Observable<CivitAiModel> {
-    return this.httpClient.get<CivitAiModelVersionDetails>(`https://civitai.com/api/v1/model-versions/${id}`).pipe(
+    return this.getVersionDetail(id).pipe(
       switchMap(version => this.getLoraDetail(version.modelId)),
     );
+  }
+
+  public getVersionDetail(id: number): Observable<CivitAiModelVersionDetail> {
+    return this.httpClient.get<CivitAiModelVersionDetail>(`https://civitai.com/api/v1/model-versions/${id}`);
   }
 }

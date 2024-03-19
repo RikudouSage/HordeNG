@@ -194,5 +194,6 @@
   "app.image.no_image": "No image",
   "app.model.version": "Version",
   "app.lora_selector.use_lora": "Use LORA",
-  "app.about.features.lora": "Search for and use LORAs"
+  "app.about.features.lora": "Search for and use LORAs",
+  "app.warning.model_bases_match": "The base models don't match, {{expected}} is expected, but {{provided}} was provided."
 }

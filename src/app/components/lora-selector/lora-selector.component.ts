@@ -1,7 +1,7 @@
 import {Component, computed, input, OnInit, output, signal} from '@angular/core';
 import {LoraGenerationOption} from "../../types/db/generation-options";
 import {LoaderComponent} from "../loader/loader.component";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {CivitAiService} from "../../services/civit-ai.service";
 import {CivitAiModel} from "../../types/civit-ai/civit-ai-model";
 import {DatabaseService} from "../../services/database.service";
@@ -11,6 +11,10 @@ import {ToggleCheckboxComponent} from "../toggle-checkbox/toggle-checkbox.compon
 import {debounceTime} from "rxjs";
 import {BoxComponent} from "../box/box.component";
 import {TomSelectDirective} from "../../directives/tom-select.directive";
+import {ModelConfiguration} from "../../types/sd-repo/model-configuration";
+import {ModelBasesMatchWarningPipe} from "../../pipes/model-bases-match-warning.pipe";
+import {AsyncPipe} from "@angular/common";
+import {CivitAiBaseModel} from "../../types/civit-ai/civit-ai-base-model";
 
 interface LoraSearchForm {
   query: string;
@@ -26,19 +30,32 @@ interface LoraSearchForm {
     ReactiveFormsModule,
     ToggleCheckboxComponent,
     BoxComponent,
-    TomSelectDirective
+    TomSelectDirective,
+    ModelBasesMatchWarningPipe,
+    AsyncPipe,
   ],
   templateUrl: './lora-selector.component.html',
   styleUrl: './lora-selector.component.scss'
 })
 export class LoraSelectorComponent implements OnInit {
   public selectedLoras = input.required<LoraGenerationOption[]>();
+  public selectedModel = input.required<ModelConfiguration>();
   public selectedLoraIds = computed(() => this.selectedLoras().map(lora => lora.id));
-
 
   public loadingInitial = signal(true);
   public loading = signal(false);
   public items = signal<CivitAiModel[]>([]);
+
+  public versionBases = computed(() => {
+    const result: {[version: number]: CivitAiBaseModel} = {};
+    for (const item of this.items()) {
+      for (const version of item.modelVersions) {
+        result[version.id] = version.baseModel;
+      }
+    }
+
+    return result;
+  });
 
   public loraSelected = output<number>();
 
