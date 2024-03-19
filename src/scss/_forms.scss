@@ -65,3 +65,7 @@ label:has(+ [required]), label.required {
     color: $dangerColor;
   }
 }
+
+label {
+  font-weight: bold;
+}

@@ -50,6 +50,8 @@ export class DatabaseService {
     return this.getRows(this.ObjectStores.Images, page, limit, order);
   }
 
+  public async getSetting<T>(setting: string): Promise<AppSetting<T> | undefined>;
+  public async getSetting<T>(setting: string, defaultValue: T): Promise<AppSetting<T>>;
   public async getSetting<T>(setting: string, defaultValue: T | undefined = undefined): Promise<AppSetting<T> | undefined> {
     const value = await this.getValue<AppSetting<T>>(this.ObjectStores.Settings, setting);
     if (value === undefined && defaultValue !== undefined) {
@@ -111,7 +113,7 @@ export class DatabaseService {
       slowWorkers: <boolean>valuesMap['slowWorkers'] ?? true,
       allowDowngrade: <boolean>valuesMap['allowDowngrade'] ?? false,
       clipSkip: <number>valuesMap['clipSkip'] ?? 1,
-      loraList: <LoraGenerationOption[]>valuesMap['loras'] ?? [],
+      loraList: <LoraGenerationOption[]>valuesMap['loraList'] ?? [],
     };
   }
 

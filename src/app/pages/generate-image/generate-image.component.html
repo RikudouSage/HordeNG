@@ -102,6 +102,35 @@
           }
         </div>
         <div class="form-group">
+          <label>{{'app.generate.lora_list' | transloco}}</label>
+          <button class="btn" type="button" (click)="openModal(addLoraModal)">{{'app.generate.add_loras' | transloco}}</button>
+          <ng-template #addLoraModal>
+            <app-lora-selector [selectedLoras]="form.value.loraList ?? []" (loraSelected)="addLora($event)" />
+          </ng-template>
+          @if (modifiedOptions()?.loraList) {
+            <small>
+              <strong>{{'app.generate.style_effective_value' | transloco}}</strong>:
+              @for (lora of modifiedOptions()!.loraList!; track lora.id) {
+                <app-lora-text-row [lora]="lora" [comma]="!$last" />
+              }
+            </small>
+          }
+          @if (!form.value.loraList?.length) {
+            <p>{{'app.generate.lora_list.no_loras' | transloco}}</p>
+          } @else {
+            <ul>
+            @for (lora of form.value.loraList!; track lora.id) {
+              <li>
+                <strong><app-lora-text-row [lora]="lora" /></strong>
+                <button (click)="removeLora(lora.id)" class="text-danger icon-button ml-1" type="button" title="{{'app.delete' | transloco}}">
+                  <fa-icon title="{{'app.delete' | transloco}}" [icon]="iconDelete()" size="2xl" />
+                </button>
+              </li>
+            }
+            </ul>
+          }
+        </div>
+        <div class="form-group">
           <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>
           <select id="inputPostProcessors" multiple tom-select formControlName="postProcessors">
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {

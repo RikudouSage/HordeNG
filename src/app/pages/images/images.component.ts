@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
-import {isPlatformBrowser} from "@angular/common";
+import {AsyncPipe, isPlatformBrowser} from "@angular/common";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {StoredImage} from "../../types/db/stored-image";
 import {TranslocoPipe} from "@ngneat/transloco";
@@ -20,6 +20,8 @@ import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {DataStorage} from "../../services/image-storage/data-storage";
 import {DatabaseService} from "../../services/database.service";
 import {PostProcessor} from "../../types/horde/post-processor";
+import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -33,7 +35,10 @@ interface StoredImageWithLink extends StoredImage {
     LoaderComponent,
     TranslocoPipe,
     FormatNumberPipe,
-    YesNoComponent
+    YesNoComponent,
+    LoraNamePipe,
+    AsyncPipe,
+    LoraTextRowComponent
   ],
   templateUrl: './images.component.html',
   styleUrl: './images.component.scss'

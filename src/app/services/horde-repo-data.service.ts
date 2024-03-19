@@ -6,6 +6,12 @@ import {ModelConfigurations} from "../types/sd-repo/model-configuration";
 import {CategoriesResponse, EnrichedPromptStyle, PromptStyles} from "../types/sd-repo/prompt-style";
 import {mergeDeep} from "../helper/merge-deep";
 
+interface SdxlPromptStyle {
+  name: string;
+  prompt: string;
+  negative_prompt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -55,8 +61,21 @@ export class HordeRepoDataService {
             return zip(
               this.httpClient.get<PromptStyles>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-Styles/main/styles.json'),
               this.httpClient.get<PromptStyles>('/assets/styles/styles.json'),
+              this.httpClient.get<SdxlPromptStyle[]>('https://raw.githubusercontent.com/twri/sdxl_prompt_styler/main/sdxl_styles_twri.json'),
+              this.httpClient.get<SdxlPromptStyle[]>('https://raw.githubusercontent.com/twri/sdxl_prompt_styler/main/sdxl_styles_sai.json'),
+              this.httpClient.get<SdxlPromptStyle[]>('https://raw.githubusercontent.com/MoonRide303/Fooocus-MRE/moonride-main/sdxl_styles/sdxl_styles_mre.json'),
+              this.httpClient.get<SdxlPromptStyle[]>('https://raw.githubusercontent.com/MoonRide303/Fooocus-MRE/moonride-main/sdxl_styles/sdxl_styles_diva.json'),
             ).pipe(
-              map (values => mergeDeep(values[0], values[1])),
+              map (values => {
+                return mergeDeep(
+                  values[0],
+                  values[1],
+                  this.sdxlPromptStylesToPromptStyles(values[2], 'twri'),
+                  this.sdxlPromptStylesToPromptStyles(values[3], 'sai'),
+                  this.sdxlPromptStylesToPromptStyles(values[4], 'mre'),
+                  this.sdxlPromptStylesToPromptStyles(values[5], 'diva'),
+                );
+              }),
               map (styles => {
                 let result: EnrichedPromptStyle[] = [];
                 for (const styleName of Object.keys(styles)) {
@@ -64,7 +83,7 @@ export class HordeRepoDataService {
                   result.push({
                     ...style,
                     name: styleName,
-                    category: this.getCategory(styleName, categories),
+                    category: style.category ?? this.getCategory(styleName, categories),
                   });
                 }
 
@@ -90,5 +109,22 @@ export class HordeRepoDataService {
     }
 
     return 'no category';
+  }
+
+  private sdxlPromptStylesToPromptStyles(styles: SdxlPromptStyle[], category: string | undefined = undefined): PromptStyles {
+    const result: PromptStyles = {};
+    for (const style of styles) {
+      let prompt = style.prompt.replace('{prompt}', '{p}');
+      if (style.negative_prompt) {
+        prompt += `###${style.negative_prompt},{np}`;
+      }
+      result[style.name] = {
+        prompt: prompt,
+        category: category,
+        model: 'AlbedoBase XL (SDXL)',
+      };
+    }
+
+    return result;
   }
 }

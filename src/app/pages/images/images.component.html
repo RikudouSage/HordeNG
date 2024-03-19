@@ -71,6 +71,16 @@
                   </p>
                 }
                 <p>{{'app.image.worker' | transloco}}: <strong>{{image.worker.name}} ({{image.worker.id}})</strong></p>
+                @if (image.loraList && image.loraList.length) {
+                  <p>
+                    {{'app.generate.lora_list' | transloco}}:
+                    <strong>
+                    @for (lora of image.loraList; track lora.id) {
+                      <app-lora-text-row [lora]="lora" [comma]="!$last" />
+                    }
+                    </strong>
+                  </p>
+                }
               </div>
               <div class="buttons">
                 <button class="btn btn-danger" (click)="deleteImage(image)">{{'app.delete' | transloco}}</button>

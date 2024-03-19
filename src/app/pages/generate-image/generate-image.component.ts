@@ -6,7 +6,7 @@ import {
   OnInit,
   PLATFORM_ID, Signal,
   signal,
-  TemplateRef, ViewContainerRef,
+  TemplateRef, ViewChild, ViewContainerRef, ViewRef,
   WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -49,6 +49,11 @@ import {PromptStyleModalComponent} from "../../components/prompt-style-modal/pro
 import {ModalService} from "../../services/modal.service";
 import {EnrichedPromptStyle} from "../../types/sd-repo/prompt-style";
 import {EffectiveValueComponent} from "../../components/effective-value/effective-value.component";
+import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {faRemove} from "@fortawesome/free-solid-svg-icons";
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {LoraSelectorComponent} from "../../components/lora-selector/lora-selector.component";
+import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
 
 interface Result {
   width: number;
@@ -83,7 +88,11 @@ interface Result {
     JsonPipe,
     YesNoComponent,
     PromptStyleModalComponent,
-    EffectiveValueComponent
+    EffectiveValueComponent,
+    LoraNamePipe,
+    FaIconComponent,
+    LoraSelectorComponent,
+    LoraTextRowComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -153,17 +162,19 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     }
     if (style.loras?.length) {
       patch.loraList = style.loras.map(lora => ({
-        isVersion: lora.is_version,
+        isVersionId: lora.is_version,
         injectTrigger: lora.inject_trigger,
         strengthClip: lora.clip,
         strengthModel: lora.model,
-        modelId: lora.name,
+        id: Number(lora.name),
       }));
     }
 
     return patch;
   });
   public effectiveModel = computed(() => this.modifiedOptions()?.model ?? this.currentModelName());
+
+  public iconDelete = signal(faRemove);
 
   public form = new FormGroup({
     prompt: new FormControl<string>('', [
@@ -482,5 +493,21 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   public async applyStyle(style: EnrichedPromptStyle): Promise<void> {
     this.chosenStyle.set(style);
     await this.costCalculator.calculate(this.formAsOptionsStyled);
+  }
+
+  public async removeLora(modelId: number): Promise<void> {
+    const loras = this.form.value.loraList ?? [];
+    this.form.patchValue({
+      loraList: loras.filter(lora => lora.id !== modelId),
+    });
+  }
+
+  public async addLora(versionId: number) {
+    const loras = this.form.value.loraList ?? [];
+    loras.push({id: versionId, isVersionId: true});
+    this.form.patchValue({
+      loraList: loras,
+    });
+    await this.modalService.close();
   }
 }

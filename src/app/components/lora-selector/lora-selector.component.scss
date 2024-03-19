@@ -1,0 +1,27 @@
+@import "../../../scss/colors";
+
+:host {
+  min-width: 200px;
+  min-height: 200px;
+  display: block;
+}
+
+.img {
+  overflow: hidden;
+  flex-basis: 25%;
+
+  img {
+    width: 100%;
+    max-height: 20vh;
+    object-fit: cover;
+  }
+}
+
+.model {
+  flex-basis: 75%;
+}
+
+.lora-row {
+  border: 1px solid $borderColor;
+  padding: 8px;
+}

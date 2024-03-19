@@ -2,11 +2,11 @@ import {Sampler} from "../horde/sampler";
 import {PostProcessor} from "../horde/post-processor";
 
 export interface LoraGenerationOption {
-  modelId: string;
+  id: number;
   strengthModel?: number;
   strengthClip?: number;
   injectTrigger?: string;
-  isVersion?: boolean;
+  isVersionId?: boolean;
 }
 
 export interface GenerationOptions {
