@@ -1,7 +1,7 @@
 @if (loadingInitial()) {
   <app-loader/>
 } @else {
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="search()">
     <div class="row">
       <div class="col-md-6 mr-1">
         <div class="form-group">
@@ -9,9 +9,19 @@
                  placeholder="{{ 'app.lora_selector.search_term' | transloco }}"/>
         </div>
       </div>
-      <div class="col-md-5 mr-1">
+      <div class="col-md-3 mr-1">
         <div class="form-group">
           <app-toggle-checkbox [description]="'app.lora_selector.nsfw' | transloco" formControlName="nsfw"/>
+        </div>
+      </div>
+      <div class="col-md-2 mr-1">
+        <div class="form-group">
+          <label for="inputModelBase">{{'app.model.baseline' | transloco}}</label>
+          <select id="inputModelBase" multiple tom-select [create]="false" formControlName="baseModels">
+            @for (option of CivitAiBaseModel | keyvalue; track option.key) {
+              <option [value]="option.value">{{option.key}}</option>
+            }
+          </select>
         </div>
       </div>
       <div class="col-md-1">
@@ -25,7 +35,7 @@
   <hr class="mt-2 mb-2">
 
   @if (loading()) {
-    <div class="position-relative mt-2">
+    <div class="position-relative mt-2 loader-wrapper">
       <app-loader/>
     </div>
   } @else {
