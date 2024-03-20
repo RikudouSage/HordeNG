@@ -133,10 +133,10 @@ export class ImagesComponent implements OnInit {
   public async deleteImage(image: StoredImageWithLink): Promise<void> {
     this.loading.set(true);
 
+    await this.modalService.close();
     const storage = await this.storageManager.currentStorage;
     await storage.deleteImage(image);
     URL.revokeObjectURL(image.link);
-    await this.modalService.close();
     await this.loadData(storage);
 
     this.loading.set(false);
@@ -153,6 +153,7 @@ export class ImagesComponent implements OnInit {
 
   public async sendToTxt2Img(image: StoredImageWithLink): Promise<void> {
     await this.database.storeGenerationOptions(image);
+    await this.modalService.close();
     await this.router.navigateByUrl('/generate');
   }
 }
