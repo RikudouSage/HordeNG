@@ -61,11 +61,15 @@
               </p>
             }
           </div>
-          <div class="mt-1">
+          <div class="mt-1 bottom-row">
+            <ng-template #configureModal>
+              <app-configure-lora [lora]="item" [versionId]="Number(versionSelect.value)" (configured)="onConfigured($event)" />
+            </ng-template>
             <button class="btn btn-primary" type="button"
                     [disabled]="selectedLoraIds().includes(Number(versionSelect.value))"
-                    (click)="selectLora(Number(versionSelect.value))">{{ 'app.lora_selector.use_lora' | transloco }}
+                    (click)="selectLora(configureModal)">{{ 'app.lora_selector.use_lora' | transloco }}
             </button>
+            <a href="https://civitai.com/models/{{item.id}}" target="_blank">{{'app.lora_selector.view_on_civitai' | transloco}}</a>
           </div>
         </div>
       </div>

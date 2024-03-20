@@ -251,7 +251,7 @@ export class HordeComponent implements OnInit {
   }
 
   public async openModal(createKeyModal: TemplateRef<any>): Promise<void> {
-    this.modalService.open(this.view, createKeyModal);
+    this.modalService.open(createKeyModal);
   }
 
   public async createSharedKey(): Promise<void> {

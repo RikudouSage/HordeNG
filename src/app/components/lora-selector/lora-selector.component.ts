@@ -1,4 +1,4 @@
-import {Component, computed, input, OnInit, output, signal} from '@angular/core';
+import {Component, computed, input, OnInit, output, signal, TemplateRef, ViewContainerRef} from '@angular/core';
 import {LoraGenerationOption} from "../../types/db/generation-options";
 import {LoaderComponent} from "../loader/loader.component";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
@@ -15,6 +15,8 @@ import {ModelConfiguration} from "../../types/sd-repo/model-configuration";
 import {ModelBasesMatchWarningPipe} from "../../pipes/model-bases-match-warning.pipe";
 import {AsyncPipe} from "@angular/common";
 import {CivitAiBaseModel} from "../../types/civit-ai/civit-ai-base-model";
+import {ModalService} from "../../services/modal.service";
+import {ConfigureLoraComponent, ConfigureLoraResult} from "../configure-lora/configure-lora.component";
 
 interface LoraSearchForm {
   query: string;
@@ -33,6 +35,7 @@ interface LoraSearchForm {
     TomSelectDirective,
     ModelBasesMatchWarningPipe,
     AsyncPipe,
+    ConfigureLoraComponent,
   ],
   templateUrl: './lora-selector.component.html',
   styleUrl: './lora-selector.component.scss'
@@ -57,7 +60,7 @@ export class LoraSelectorComponent implements OnInit {
     return result;
   });
 
-  public loraSelected = output<number>();
+  public loraSelected = output<LoraGenerationOption>();
 
   public form = new FormGroup({
     query: new FormControl<string>(''),
@@ -67,6 +70,8 @@ export class LoraSelectorComponent implements OnInit {
   constructor(
     private readonly civitAi: CivitAiService,
     private readonly database: DatabaseService,
+    private readonly modalService: ModalService,
+    private readonly view: ViewContainerRef,
   ) {
   }
 
@@ -100,7 +105,16 @@ export class LoraSelectorComponent implements OnInit {
 
   protected readonly Number = Number;
 
-  public async selectLora(versionId: number): Promise<void> {
-    this.loraSelected.emit(versionId);
+  public async selectLora(modal: TemplateRef<any>): Promise<void> {
+    this.modalService.open(modal);
+  }
+
+  public async onConfigured(config: ConfigureLoraResult) {
+    this.loraSelected.emit({
+      id: config.versionId,
+      isVersionId: true,
+      strengthClip: config.clip,
+      strengthModel: config.model,
+    });
   }
 }

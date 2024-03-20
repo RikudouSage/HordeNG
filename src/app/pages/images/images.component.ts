@@ -127,7 +127,7 @@ export class ImagesComponent implements OnInit {
   }
 
   public async openModal(modal: TemplateRef<Element>): Promise<void> {
-    this.modalService.open(this.view, modal);
+    this.modalService.open(modal);
   }
 
   public async deleteImage(image: StoredImageWithLink): Promise<void> {

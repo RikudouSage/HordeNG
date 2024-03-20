@@ -195,5 +195,9 @@
   "app.model.version": "Version",
   "app.lora_selector.use_lora": "Use LORA",
   "app.about.features.lora": "Search for and use LORAs",
-  "app.warning.model_bases_match": "The base models don't match, {{expected}} is expected, but {{provided}} was provided."
+  "app.warning.model_bases_match": "The base models don't match, {{expected}} is expected, but {{provided}} was provided.",
+  "app.lora_selector.view_on_civitai": "View on CivitAI",
+  "app.lora_configure.description": "Here you can configure how strongly does the LORA affect the image generation.",
+  "app.lora_configure.model_strength": "Model strength",
+  "app.lora_configure.clip_strength": "CLIP strength"
 }

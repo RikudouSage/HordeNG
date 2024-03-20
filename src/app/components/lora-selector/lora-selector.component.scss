@@ -25,3 +25,9 @@
   border: 1px solid $borderColor;
   padding: 8px;
 }
+
+.bottom-row {
+  * {
+    margin-right: 8px;
+  }
+}

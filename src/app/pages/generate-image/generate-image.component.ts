@@ -490,7 +490,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   }
 
   public async openModal(modal: TemplateRef<any>) {
-    this.modalService.open(this.view, modal);
+    this.modalService.open(modal);
   }
 
   public async applyStyleDirectly(): Promise<void> {
@@ -512,9 +512,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     });
   }
 
-  public async addLora(versionId: number) {
+  public async addLora(lora: LoraGenerationOption) {
     const loras = this.form.value.loraList ?? [];
-    loras.push({id: versionId, isVersionId: true});
+    loras.push(lora);
     this.form.patchValue({
       loraList: loras,
     });

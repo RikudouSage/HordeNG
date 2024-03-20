@@ -8,13 +8,18 @@ import {
 } from '@angular/core';
 import {ModalComponent} from "../components/modal/modal.component";
 import {ModalOptions} from "../types/modal-options";
+import {interval} from "rxjs";
+import {globalAppView} from "../global-app-view";
 
 // https://medium.com/@greenFlag/how-to-easily-and-quickly-create-a-modal-in-angular-a2f82d5c11f6
 @Injectable({
   providedIn: 'root'
 })
 export class ModalService {
-  private newModalComponent: ComponentRef<ModalComponent> | null = null;
+  private locked: boolean = false;
+  private modals: ComponentRef<ModalComponent>[] = [];
+
+  private zIndex = 2;
 
   constructor(
     private readonly app: ApplicationRef,
@@ -23,24 +28,27 @@ export class ModalService {
   }
 
 
-  public open(view: ViewContainerRef, content: TemplateRef<Element>, options?: ModalOptions): void {
-    view.clear();
-    const innerContent = view.createEmbeddedView(content);
+  public open(content: TemplateRef<Element>, options?: ModalOptions): void {
+    const innerContent = globalAppView()!.createEmbeddedView(content);
 
     options = this.assignDefaultOptions(options);
 
-    this.newModalComponent = view.createComponent(ModalComponent, {
+    const modal = globalAppView()!.createComponent(ModalComponent, {
       environmentInjector: this.injector,
       projectableNodes: [innerContent.rootNodes],
     });
-    this.newModalComponent.instance.options = options ?? null;
+    modal.instance.options = options ?? null;
+    this.modals.push(modal);
   }
 
   public async close(): Promise<void> {
-    if (!this.newModalComponent) {
+    await this.lock();
+    if (!this.modals.length) {
       return;
     }
-    await this.newModalComponent.instance.close();
+    await this.modals[this.modals.length - 1].instance.close();
+    this.modals.pop();
+    this.releaseLock();
   }
 
   private assignDefaultOptions(options: ModalOptions | undefined): ModalOptions {
@@ -52,7 +60,29 @@ export class ModalService {
     options.animations.overlay.enter ??= 'fade-in 0.8s';
     options.animations.overlay.leave ??= 'fade-out 0.3s forwards';
     options.size ??= {};
+    options.zIndex ??= this.zIndex++;
 
     return options;
+  }
+
+  private lock(): Promise<void> {
+    if (!this.locked) {
+      this.locked = true;
+      return Promise.resolve();
+    }
+
+    return new Promise(resolve => {
+      const subscription = interval(100).subscribe(() => {
+        if (!this.locked) {
+          this.locked = true;
+          subscription.unsubscribe();
+          resolve();
+        }
+      });
+    });
+  }
+
+  private releaseLock() {
+    this.locked = false;
   }
 }
