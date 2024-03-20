@@ -86,7 +86,8 @@
               @if (availableModels()[effectiveModel()].showcases) {
                 <strong>{{'app.model.examples' | transloco}}</strong>:
                 @for (showcase of availableModels()[effectiveModel()].showcases; track showcase) {
-                  <a href="{{showcase}}" target="_blank">{{'app.model.example_number' | transloco:{number: $index + 1} }}</a>,
+                  <a href="{{showcase}}" target="_blank">{{'app.model.example_number' | transloco:{number: $index + 1} }}</a>
+                  @if (!$last) {, }
                 }
                 <br>
               }
