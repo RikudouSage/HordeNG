@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {ToastrService} from "ngx-toastr";
 import {Resolvable, toPromise} from "../helper/resolvable";
 import {TranslatorService} from "./translator.service";

@@ -1,7 +1,5 @@
 import {Injectable} from '@angular/core';
 import {GenerationOptions} from "../types/db/generation-options";
-import {Sampler} from "../types/horde/sampler";
-import {PostProcessor} from "../types/horde/post-processor";
 import {AiHorde} from "./ai-horde.service";
 import {toPromise} from "../helper/resolvable";
 

@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {map, Observable, of, switchMap} from "rxjs";
 import {CivitAiService} from "../services/civit-ai.service";
 

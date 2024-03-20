@@ -1,5 +1,6 @@
 import {
-  Component, computed,
+  Component,
+  computed,
   Inject,
   OnInit,
   PLATFORM_ID,

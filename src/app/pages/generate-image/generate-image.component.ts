@@ -4,9 +4,11 @@ import {
   Inject,
   OnDestroy,
   OnInit,
-  PLATFORM_ID, Signal,
+  PLATFORM_ID,
+  Signal,
   signal,
-  TemplateRef, ViewChild, ViewContainerRef, ViewRef,
+  TemplateRef,
+  ViewContainerRef,
   WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -42,7 +44,8 @@ import {ModelConfiguration, ModelConfigurations} from "../../types/sd-repo/model
 import {HordeRepoDataService} from "../../services/horde-repo-data.service";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {
-  GenerationOptionsValidatorService, OptionsValidationError,
+  GenerationOptionsValidatorService,
+  OptionsValidationError,
   OptionsValidationErrors
 } from "../../services/generation-options-validator.service";
 import {PromptStyleModalComponent} from "../../components/prompt-style-modal/prompt-style-modal.component";

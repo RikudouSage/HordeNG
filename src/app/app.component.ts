@@ -6,7 +6,6 @@ import {AuthManagerService} from "./services/auth-manager.service";
 import {toPromise} from "./helper/resolvable";
 import {DataStorageManagerService} from "./services/data-storage-manager.service";
 import {isPlatformBrowser} from "@angular/common";
-import {S3DataStorage} from "./services/image-storage/s3.data-storage";
 import {globalAppView} from "./global-app-view";
 
 @Component({

@@ -4,7 +4,6 @@ import {Resolvable} from "../../helper/resolvable";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {PaginatedResult} from "../../types/paginated-result";
 import {CacheService} from "../cache.service";
-import {PutObjectCommand} from "@aws-sdk/client-s3";
 
 export abstract class AbstractExternalDataStorage<TCredentials extends Credentials> implements DataStorage<TCredentials> {
   protected get BaseCacheKeys() {

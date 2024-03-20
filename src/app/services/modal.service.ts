@@ -1,11 +1,4 @@
-import {
-  ApplicationRef,
-  ComponentRef,
-  EnvironmentInjector,
-  Injectable,
-  TemplateRef, Type,
-  ViewContainerRef
-} from '@angular/core';
+import {ApplicationRef, ComponentRef, EnvironmentInjector, Injectable, TemplateRef} from '@angular/core';
 import {ModalComponent} from "../components/modal/modal.component";
 import {ModalOptions} from "../types/modal-options";
 import {interval} from "rxjs";

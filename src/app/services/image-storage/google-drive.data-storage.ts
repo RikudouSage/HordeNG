@@ -9,7 +9,6 @@ import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
 import TokenResponse = google.accounts.oauth2.TokenResponse;
-import {PutObjectCommand} from "@aws-sdk/client-s3";
 
 @Injectable({
   providedIn: 'root',

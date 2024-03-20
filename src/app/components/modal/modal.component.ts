@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, HostListener, Signal, viewChild, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, viewChild} from '@angular/core';
 import {ModalOptions} from "../../types/modal-options";
 import {ModalService} from "../../services/modal.service";
 import {fromEvent, Observable, zip} from "rxjs";

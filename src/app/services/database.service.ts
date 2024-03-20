@@ -4,7 +4,6 @@ import {GenerationOptions, LoraGenerationOption} from "../types/db/generation-op
 import {Sampler} from "../types/horde/sampler";
 import {JobMetadata} from "../types/job-metadata";
 import {AppSetting} from "../types/app-setting";
-import {Credentials} from "../types/credentials/credentials";
 import {StoredImage, UnsavedStoredImage} from "../types/db/stored-image";
 import {PostProcessor} from "../types/horde/post-processor";
 import {PaginatedResult} from "../types/paginated-result";

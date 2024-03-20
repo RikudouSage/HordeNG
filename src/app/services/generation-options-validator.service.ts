@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HordeRepoDataService} from "./horde-repo-data.service";
 import {GenerationOptions} from "../types/db/generation-options";
 import {toPromise} from "../helper/resolvable";
