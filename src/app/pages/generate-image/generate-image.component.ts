@@ -271,10 +271,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
     // for these two we need even the initial values, that's why there are multiple listeners
     this.form.valueChanges.subscribe(changes => {
-      if (changes.prompt) {
+      if (typeof changes.prompt === 'string') {
         this.currentPrompt.set(changes.prompt);
       }
-      if (changes.negativePrompt) {
+      if (typeof changes.negativePrompt === 'string') {
         this.currentNegativePrompt.set(changes.negativePrompt);
       }
     });
