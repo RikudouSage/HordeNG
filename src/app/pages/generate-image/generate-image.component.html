@@ -133,16 +133,6 @@
           }
         </div>
         <div class="form-group">
-          <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>
-          <select id="inputPostProcessors" multiple tom-select formControlName="genericPostProcessors">
-            @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
-              @if (!(enumCase.value | isFaceFixer) && !(enumCase.value | isUpscaler)) {
-                <option [value]="enumCase.value">{{enumCase.value}}</option>
-              }
-            }
-          </select>
-        </div>
-        <div class="form-group">
           <label for="inputFaceFixers">{{'app.generate.face_fixers' | transloco}}</label>
           <select id="inputFaceFixers" multiple tom-select formControlName="faceFixers">
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
@@ -165,6 +155,16 @@
             <option [value]="null">{{'app.select.empty_option' | transloco}}</option>
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
               @if (enumCase.value | isUpscaler) {
+                <option [value]="enumCase.value">{{enumCase.value}}</option>
+              }
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>
+          <select id="inputPostProcessors" multiple tom-select formControlName="genericPostProcessors">
+            @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
+              @if (!(enumCase.value | isFaceFixer) && !(enumCase.value | isUpscaler)) {
                 <option [value]="enumCase.value">{{enumCase.value}}</option>
               }
             }
