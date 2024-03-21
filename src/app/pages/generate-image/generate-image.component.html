@@ -134,19 +134,42 @@
         </div>
         <div class="form-group">
           <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>
-          <select id="inputPostProcessors" multiple tom-select formControlName="postProcessors">
+          <select id="inputPostProcessors" multiple tom-select formControlName="genericPostProcessors">
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
-              <option [value]="enumCase.value">{{enumCase.value}}</option>
+              @if (!(enumCase.value | isFaceFixer) && !(enumCase.value | isUpscaler)) {
+                <option [value]="enumCase.value">{{enumCase.value}}</option>
+              }
             }
           </select>
         </div>
-        @if (form.controls.postProcessors.value!.includes(PostProcessor.GFPGAN) || form.controls.postProcessors.value!.includes(PostProcessor.CodeFormers)) {
+        <div class="form-group">
+          <label for="inputFaceFixers">{{'app.generate.face_fixers' | transloco}}</label>
+          <select id="inputFaceFixers" multiple tom-select formControlName="faceFixers">
+            @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
+              @if (enumCase.value | isFaceFixer) {
+                <option [value]="enumCase.value">{{enumCase.value}}</option>
+              }
+            }
+          </select>
+        </div>
+        @if (form.value.faceFixers?.length) {
           <div class="form-group">
             <label for="inputFaceFixerStrength">{{ 'app.generate.face_fixer_strength' | transloco }}
               ({{ form.controls.faceFixerStrength.value! | formatNumber:2 }})</label>
             <input type="range" min="0" max="1" step="0.01" formControlName="faceFixerStrength" class="form-control" id="inputFaceFixerStrength"/>
           </div>
         }
+        <div class="form-group">
+          <label for="inputUpscaler">{{'app.generate.upscaler' | transloco}}</label>
+          <select id="inputUpscaler" tom-select formControlName="upscaler" [maxItems]="1">
+            <option [value]="null">{{'app.select.empty_option' | transloco}}</option>
+            @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
+              @if (enumCase.value | isUpscaler) {
+                <option [value]="enumCase.value">{{enumCase.value}}</option>
+              }
+            }
+          </select>
+        </div>
         <div class="form-group">
           <label for="inputWidth">{{ 'app.generate.width' | transloco }}</label>
           <input type="number" min="64" max="3072" step="64" formControlName="width" id="inputWidth"

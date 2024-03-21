@@ -57,6 +57,9 @@ import {faRemove} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {LoraSelectorComponent} from "../../components/lora-selector/lora-selector.component";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
+import {IsFaceFixerPipe} from "../../pipes/is-face-fixer.pipe";
+import {IsUpscalerPipe} from "../../pipes/is-upscaler.pipe";
+import {getFaceFixers, getGenericPostProcessors, getUpscalers} from "../../helper/post-processor-helper";
 
 interface Result {
   width: number;
@@ -95,7 +98,9 @@ interface Result {
     LoraNamePipe,
     FaIconComponent,
     LoraSelectorComponent,
-    LoraTextRowComponent
+    LoraTextRowComponent,
+    IsFaceFixerPipe,
+    IsUpscalerPipe
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -216,7 +221,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     model: new FormControl<string>('', [
       Validators.required,
     ]),
-    postProcessors: new FormControl<string[]>([]),
+    faceFixers: new FormControl<PostProcessor[]>([]),
+    upscaler: new FormControl<PostProcessor | null>(null),
+    genericPostProcessors: new FormControl<PostProcessor[]>([]),
     seed: new FormControl<string>(''),
     karras: new FormControl<boolean>(false),
     hiresFix: new FormControl<boolean>(false),
@@ -272,7 +279,13 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.form.patchValue(await this.database.getGenerationOptions());
+    const storedOptions = await this.database.getGenerationOptions();
+    this.form.patchValue(storedOptions);
+    this.form.patchValue({
+      faceFixers: getFaceFixers(storedOptions.postProcessors),
+      upscaler: getUpscalers(storedOptions.postProcessors)[0] ?? null,
+      genericPostProcessors: getGenericPostProcessors(storedOptions.postProcessors),
+    });
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
     if (this.form.valid) {
       this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
@@ -405,6 +418,17 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
   private get formAsOptions(): GenerationOptions {
     const value = this.form.value;
+    if (<string>value.upscaler === 'null') {
+      value.upscaler = null;
+    }
+
+    let postProcessors: PostProcessor[] = getFaceFixers(value.faceFixers ?? []);
+    if (value.upscaler) {
+      postProcessors.push(value.upscaler);
+    }
+    postProcessors = postProcessors.concat(value.genericPostProcessors ?? []);
+    postProcessors = postProcessors.filter((processor, index) => postProcessors.indexOf(processor) === index);
+
     return {
       prompt: value.prompt ?? '',
       negativePrompt: value.negativePrompt ?? null,
@@ -416,7 +440,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       steps: value.steps ?? 30,
       model: value.model ?? '',
       karras: value.karras ?? true,
-      postProcessors: value.postProcessors?.map(value => <PostProcessor>value) ?? [],
+      postProcessors: postProcessors,
       seed: value.seed || null,
       hiresFix: value.hiresFix ?? false,
       faceFixerStrength: value.faceFixerStrength ?? 0.75,
