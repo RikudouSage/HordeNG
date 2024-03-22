@@ -7,33 +7,11 @@
     </div>
   </div>
   <div class="row mt-2">
-    <div class="col-md-12 flex flex-justify-content-center">
-      <app-small-box [title]="'app.kudos' | transloco" color="#67c23a" [icon]="kudosIcon()">
-        {{currentUser()!.kudos | formatNumber}}
-      </app-small-box>
-      <app-small-box [title]="'app.requested' | transloco" color="#f56c6c" [icon]="requestedIcon()">
-        {{currentUser()!.records.request.image | formatNumber}}
-      </app-small-box>
-      <app-small-box [title]="'app.generated' | transloco" color="#409eff" [icon]="generatedIcon()">
-        {{currentUser()!.records.fulfillment.image | formatNumber}}
-      </app-small-box>
-    </div>
+    <app-current-user-status [currentUser]="currentUser()!" />
   </div>
   <div class="row mt-2">
     <div class="col-md-6 mr-1">
-      <app-box [title]="'app.horde.status' | transloco">
-        <p>
-          <transloco key="app.horde.stats" [params]="{
-            requests: performanceStatus()!.queued_requests | formatNumber,
-            mps: performanceStatus()!.queued_megapixelsteps | formatNumber:2,
-            workers: performanceStatus()!.worker_count | formatNumber,
-            threads: performanceStatus()!.thread_count | formatNumber,
-          }" />
-        </p>
-        <p>
-          <transloco key="app.horde.stats_minute" [params]="{mps: performanceStatus()!.past_minute_megapixelsteps | formatNumber}"/>
-        </p>
-      </app-box>
+      <app-horde-status />
     </div>
     <div class="col-md-6">
       <app-box [title]="'app.workers.yours' | transloco">

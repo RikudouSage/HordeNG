@@ -17,6 +17,7 @@ import {RequestStatusCheck} from "../types/horde/request-status-check";
 import {RequestStatusFull} from "../types/horde/request-status-full";
 import {SharedKey, UncreatedSharedKey} from "../types/horde/shared-key";
 import {KudosCostResponse} from "../types/horde/kudos-cost-response";
+import {UpdateWorkerRequest} from "../types/horde/update-worker-request";
 
 @Injectable({
   providedIn: 'root'
@@ -123,6 +124,10 @@ export class AiHorde {
   public removeSharedKey(key: SharedKey): Observable<ApiResponse<any>> {
     // noinspection SpellCheckingInspection
     return this.sendRequest(HttpMethod.Delete, `sharedkeys/${key.id}`);
+  }
+
+  public updateWorker(id: string, workerSettings: UpdateWorkerRequest): Observable<ApiResponse<any>> {
+    return this.sendRequest(HttpMethod.Put, `workers/${id}`, workerSettings);
   }
 
   private sendRequest<T>(

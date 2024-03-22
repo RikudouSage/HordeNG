@@ -7,7 +7,6 @@ import {
   Signal,
   signal,
   TemplateRef,
-  ViewContainerRef,
   WritableSignal
 } from '@angular/core';
 import {LoaderComponent} from "../../components/loader/loader.component";
@@ -19,7 +18,7 @@ import {TranslatorService} from "../../services/translator.service";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {SmallBoxComponent} from "../../components/small-box/small-box.component";
-import {faCoins, faCrosshairs, faImage, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {BoxComponent} from "../../components/box/box.component";
 import {HordePerformance} from "../../types/horde/horde-performance";
@@ -39,6 +38,8 @@ import {ModalService} from "../../services/modal.service";
 import {FormatDatetimePipe} from "../../pipes/format-date.pipe";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
+import {CurrentUserStatusComponent} from "../../components/horde/current-user-status/current-user-status.component";
+import {HordeStatusComponent} from "../../components/horde/horde-status/horde-status.component";
 
 @Component({
   selector: 'app-horde',
@@ -57,7 +58,9 @@ import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
     ReactiveFormsModule,
     CopyButtonComponent,
     FormatDatetimePipe,
-    FaIconComponent
+    FaIconComponent,
+    CurrentUserStatusComponent,
+    HordeStatusComponent
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
@@ -71,10 +74,6 @@ export class HordeComponent implements OnInit {
   public currentUser: WritableSignal<UserDetails | null> = signal(null);
   public performanceStatus: WritableSignal<HordePerformance | null> = signal(null);
   public workers: WritableSignal<WorkerDetails[]> = signal([]);
-
-  public kudosIcon = signal(faCoins);
-  public requestedIcon = signal(faImage);
-  public generatedIcon = signal(faCrosshairs);
 
   public isAnonymous = this.authManager.isAnonymous;
   public isSharedKey = computed(() => {
@@ -149,7 +148,6 @@ export class HordeComponent implements OnInit {
     private readonly translator: TranslatorService,
     private readonly authManager: AuthManagerService,
     private readonly modalService: ModalService,
-    private readonly view: ViewContainerRef,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
