@@ -21,7 +21,6 @@ import {SmallBoxComponent} from "../../components/small-box/small-box.component"
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {BoxComponent} from "../../components/box/box.component";
-import {WorkerDetails} from "../../types/horde/worker-details";
 import {AsyncPipe, isPlatformBrowser} from "@angular/common";
 import {interval} from "rxjs";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
@@ -75,7 +74,6 @@ export class HordeComponent implements OnInit {
   public loading = signal(true);
 
   public currentUser: WritableSignal<UserDetails | null> = signal(null);
-  public workers: WritableSignal<WorkerDetails[]> = signal([]);
 
   public isAnonymous = this.authManager.isAnonymous;
   public isSharedKey = computed(() => {
@@ -206,18 +204,6 @@ export class HordeComponent implements OnInit {
 
     this.currentUser.set(responses[0].successResponse!);
     this.fetchSharedKeyDetails();
-
-    if (this.currentUser()!.worker_ids) {
-      const workers = await Promise.all(this.currentUser()!.worker_ids!.map(async workerId => {
-        const response = await toPromise(this.api.getWorkerDetail(workerId));
-        if (!response.success) {
-          return null;
-        }
-
-        return response.successResponse!;
-      }));
-      this.workers.set(<WorkerDetails[]>workers.filter(worker => worker !== null && worker.type === WorkerType.image));
-    }
 
     this.loading.set(false);
   }
