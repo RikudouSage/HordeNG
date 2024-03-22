@@ -64,6 +64,10 @@ export class DatabaseService {
     await this.setValue(this.ObjectStores.Settings, setting);
   }
 
+  public async removeSetting(key: string): Promise<void> {
+    await this.removeItem(this.ObjectStores.Settings, key);
+  }
+
   public getJobsInProgress(): Promise<JobInProgress[]> {
     return this.getAll(this.ObjectStores.JobsInProgress);
   }

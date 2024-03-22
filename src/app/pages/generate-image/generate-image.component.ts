@@ -22,7 +22,7 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {KudosCostCalculator} from "../../services/kudos-cost-calculator.service";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
-import {debounceTime, interval, map, Subscription} from "rxjs";
+import {debounceTime, interval, map, pairwise, startWith, Subscription} from "rxjs";
 import {WorkerType} from "../../types/horde/worker-type";
 import {JobInProgress} from "../../types/db/job-in-progress";
 import {MessageService} from "../../services/message.service";
@@ -290,12 +290,21 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
     }
-    this.form.valueChanges.subscribe(async changes => {
+    this.form.valueChanges.pipe(
+      startWith(this.form.value),
+      pairwise(),
+    ).subscribe(async changeSet => {
+      const changes = changeSet[1];
+      const old = changeSet[0];
+
       await this.database.storeGenerationOptions(this.formAsOptions);
       this.kudosCost.set(null);
       if (changes.model) {
         this.currentModelName.set(changes.model);
         this.validationErrors.set(await this.generationOptionsValidator.getModelValidationStatus(this.formAsOptions, changes.model));
+      }
+      if (changes.model !== old.model) {
+        await this.database.removeSetting('lora_bases_modified');
       }
     });
     this.form.valueChanges.pipe(

@@ -87,15 +87,24 @@ export class LoraSelectorComponent implements OnInit {
       baseModels: [],
     })).value);
 
-    this.form.patchValue({
-      baseModels: convertToCivitAiBase(this.selectedModel().baseline),
-    });
+    const modified = await this.database.getSetting<string>('lora_bases_modified');
+    if (modified?.value !== this.selectedModel().name) {
+      this.form.patchValue({
+        baseModels: convertToCivitAiBase(this.selectedModel().baseline),
+      });
+    }
 
     this.form.valueChanges.subscribe(changes => {
       this.database.setSetting({
         setting: 'lora_search_form',
         value: changes,
       });
+      if (changes.baseModels?.sort().join(',') !== convertToCivitAiBase(this.selectedModel().baseline).sort().join(',')) {
+        this.database.setSetting({
+          setting: 'lora_bases_modified',
+          value: this.selectedModel().name,
+        });
+      }
     });
     await this.search();
     this.loadingInitial.set(false);
