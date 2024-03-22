@@ -202,5 +202,6 @@
   "app.lora_configure.clip_strength": "CLIP strength",
   "app.generate.face_fixers": "Face fixers",
   "app.select.empty_option": "-- none --",
-  "app.generate.upscaler": "Upscaler"
+  "app.generate.upscaler": "Upscaler",
+  "app.workers.horde_workers": "Horde workers"
 }

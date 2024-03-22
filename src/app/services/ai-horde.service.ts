@@ -41,6 +41,10 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Get, `workers/${id}`);
   }
 
+  public getAllWorkers(): Observable<ApiResponse<WorkerDetails[]>> {
+    return this.sendRequest(HttpMethod.Get, `workers?type=image`);
+  }
+
   public getModels(): Observable<ApiResponse<ActiveModel[]>> {
     return this.sendRequest(HttpMethod.Get, `status/models`);
   }

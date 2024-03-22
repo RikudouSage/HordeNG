@@ -1,4 +1,4 @@
-<app-box title="{{worker().name}} ({{worker().online ? ('app.worker.online' | transloco) : ('app.worker.offline' | transloco)}})" [collapsible]="collapsible()" [collapsedByDefault]="collapsedByDefault()">
+<app-box [title]="title()" [collapsible]="collapsible()" [collapsedByDefault]="collapsedByDefault()">
   <table class="table key-value">
     <tr>
       <td>{{'app.worker.type' | transloco}}</td>

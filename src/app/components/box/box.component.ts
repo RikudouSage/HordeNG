@@ -1,4 +1,4 @@
-import {Component, input, InputSignal, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, input, InputSignal, OnInit, output, signal, WritableSignal} from '@angular/core';
 
 @Component({
   selector: 'app-box',
@@ -12,10 +12,13 @@ export class BoxComponent implements OnInit {
   public collapsible: InputSignal<boolean> = input(false);
   public collapsedByDefault: InputSignal<boolean> = input(true);
 
-  public collapsed: WritableSignal<boolean> = signal(true);
+  public isCollapsed: WritableSignal<boolean> = signal(true);
+
+  public collapsed = output<void>();
+  public expanded = output<void>();
 
   public ngOnInit(): void {
-    this.collapsed.set(this.collapsedByDefault());
+    this.isCollapsed.set(this.collapsedByDefault());
   }
 
   public toggleCollapsed(): void {
@@ -23,6 +26,11 @@ export class BoxComponent implements OnInit {
       return;
     }
 
-    this.collapsed.update(value => !value);
+    this.isCollapsed.update(value => !value);
+    if (this.isCollapsed()) {
+      this.collapsed.emit();
+    } else {
+      this.expanded.emit();
+    }
   }
 }

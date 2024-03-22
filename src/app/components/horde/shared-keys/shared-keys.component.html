@@ -1,5 +1,5 @@
 <app-box [collapsible]="true" [title]="'app.shared_keys' | transloco" class="position-relative" #box>
-  @if ((sharedKeyDetails() === null || loading()) && !box.collapsed()) {
+  @if ((sharedKeyDetails() === null || loading()) && !box.isCollapsed()) {
     <app-loader />
   } @else {
     @for (sharedKey of sharedKeyDetails(); track sharedKey.id) {

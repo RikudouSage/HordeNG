@@ -1,4 +1,4 @@
-<div class="card" [class.collapsed]="collapsible() && collapsed()">
+<div class="card" [class.collapsed]="collapsible() && isCollapsed()">
   <div class="card-header" [class.cursor-pointer]="collapsible()" (click)="toggleCollapsed()">
     <h3 class="card-title">{{title()}}</h3>
   </div>

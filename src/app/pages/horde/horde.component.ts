@@ -25,6 +25,7 @@ import {WorkerDetailComponent} from "../../components/worker-detail/worker-detai
 import {YourWorkersComponent} from "../../components/horde/your-workers/your-workers.component";
 import {TransferKudosComponent} from "../../components/horde/transfer-kudos/transfer-kudos.component";
 import {SharedKeysComponent} from "../../components/horde/shared-keys/shared-keys.component";
+import {AllWorkersComponent} from "../../components/horde/all-workers/all-workers.component";
 
 @Component({
   selector: 'app-horde',
@@ -49,7 +50,8 @@ import {SharedKeysComponent} from "../../components/horde/shared-keys/shared-key
     WorkerDetailComponent,
     YourWorkersComponent,
     TransferKudosComponent,
-    SharedKeysComponent
+    SharedKeysComponent,
+    AllWorkersComponent
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
