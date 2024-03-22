@@ -21,7 +21,6 @@ import {SmallBoxComponent} from "../../components/small-box/small-box.component"
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {BoxComponent} from "../../components/box/box.component";
-import {HordePerformance} from "../../types/horde/horde-performance";
 import {WorkerDetails} from "../../types/horde/worker-details";
 import {AsyncPipe, isPlatformBrowser} from "@angular/common";
 import {interval} from "rxjs";
@@ -72,7 +71,6 @@ export class HordeComponent implements OnInit {
   public loading = signal(true);
 
   public currentUser: WritableSignal<UserDetails | null> = signal(null);
-  public performanceStatus: WritableSignal<HordePerformance | null> = signal(null);
   public workers: WritableSignal<WorkerDetails[]> = signal([]);
 
   public isAnonymous = this.authManager.isAnonymous;
@@ -189,7 +187,6 @@ export class HordeComponent implements OnInit {
   private async loadData(): Promise<void> {
     const responses = await Promise.all([
       toPromise(this.api.currentUser()),
-      toPromise(this.api.getPerformanceStatus()),
     ]);
 
     for (const response of responses) {
@@ -205,7 +202,6 @@ export class HordeComponent implements OnInit {
 
     this.currentUser.set(responses[0].successResponse!);
     this.fetchSharedKeyDetails();
-    this.performanceStatus.set(responses[1].successResponse!);
 
     if (this.currentUser()!.worker_ids) {
       const workers = await Promise.all(this.currentUser()!.worker_ids!.map(async workerId => {
