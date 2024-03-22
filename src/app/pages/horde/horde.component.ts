@@ -39,6 +39,8 @@ import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
 import {CurrentUserStatusComponent} from "../../components/horde/current-user-status/current-user-status.component";
 import {HordeStatusComponent} from "../../components/horde/horde-status/horde-status.component";
+import {WorkerDetailComponent} from "../../components/worker-detail/worker-detail.component";
+import {YourWorkersComponent} from "../../components/horde/your-workers/your-workers.component";
 
 @Component({
   selector: 'app-horde',
@@ -59,7 +61,9 @@ import {HordeStatusComponent} from "../../components/horde/horde-status/horde-st
     FormatDatetimePipe,
     FaIconComponent,
     CurrentUserStatusComponent,
-    HordeStatusComponent
+    HordeStatusComponent,
+    WorkerDetailComponent,
+    YourWorkersComponent
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'

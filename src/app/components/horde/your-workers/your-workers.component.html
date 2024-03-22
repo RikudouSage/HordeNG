@@ -1,0 +1,11 @@
+@if (workers() === null) {
+  <app-loader />
+} @else {
+  <app-box [title]="'app.workers.yours' | transloco">
+    @for (worker of workers(); track worker.id) {
+      <app-worker-detail [worker]="worker" [collapsible]="true" [collapsedByDefault]="true" />
+    } @empty {
+      <p>{{'app.workers.no_workers' | transloco}}</p>
+    }
+  </app-box>
+}
