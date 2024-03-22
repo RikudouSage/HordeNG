@@ -1,11 +1,11 @@
 <div class="col-md-12 flex flex-justify-content-center">
   <app-small-box [title]="'app.kudos' | transloco" color="#67c23a" [icon]="kudosIcon()">
-    {{user()!.kudos | formatNumber}}
+    {{currentUser().kudos | formatNumber}}
   </app-small-box>
   <app-small-box [title]="'app.requested' | transloco" color="#f56c6c" [icon]="requestedIcon()">
-    {{user()!.records.request.image | formatNumber}}
+    {{currentUser().records.request.image | formatNumber}}
   </app-small-box>
   <app-small-box [title]="'app.generated' | transloco" color="#409eff" [icon]="generatedIcon()">
-    {{user()!.records.fulfillment.image | formatNumber}}
+    {{currentUser().records.fulfillment.image | formatNumber}}
   </app-small-box>
 </div>

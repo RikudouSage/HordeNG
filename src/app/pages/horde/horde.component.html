@@ -7,7 +7,7 @@
     </div>
   </div>
   <div class="row mt-2">
-    <app-current-user-status [currentUser]="currentUser()!" />
+    <app-current-user-status [currentUser]="currentUser()!" (refreshRequested)="refreshCurrentUser()" />
   </div>
   <div class="row mt-2">
     <div class="col-md-6 mr-1">
@@ -20,23 +20,7 @@
   @if (!isAnonymous() && !isSharedKey()) {
     <div class="row mt-2">
       <div class="col-md-6 mr-1">
-        <app-box [collapsible]="true" [title]="'app.transfer_kudos' | transloco">
-          <form [formGroup]="transferKudosForm" (ngSubmit)="transferKudos()">
-            <div class="form-group">
-              <label for="inputTransferTargetUser">{{'app.transfer_kudos.target_user' | transloco}}</label>
-              <input class="form-control" type="text" id="inputTransferTargetUser" formControlName="targetUser" aria-describedby="inputTransferTargetUserDescription" />
-              <small id="inputTransferTargetUserDescription">
-                <transloco key="app.transfer_kudos.target_user.description" [params]="{example: currentUser()!.username}" />
-              </small>
-            </div>
-            <div class="form-group">
-              <label for="inputTransferAmount">{{'app.transfer_kudos.amount' | transloco}}</label>
-              <input class="form-control" type="number" id="inputTransferAmount" min="1" step="1" [max]="currentUser()?.kudos ?? 0" formControlName="amount" />
-            </div>
-
-            <button class="btn btn-primary" type="submit" [disabled]="!transferKudosForm.valid">{{'app.transfer_kudos.transfer' | transloco}}</button>
-          </form>
-        </app-box>
+        <app-transfer-kudos [currentUser]="currentUser()!" (kudosTransferred)="refreshCurrentUser()" />
       </div>
       <div class="col-md-6">
         <app-box [collapsible]="true" [title]="'app.shared_keys' | transloco" class="position-relative" #box>

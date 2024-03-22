@@ -1,4 +1,4 @@
-import {Component, Inject, input, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
+import {Component, Inject, input, OnDestroy, OnInit, output, PLATFORM_ID, signal} from '@angular/core';
 import {FormatNumberPipe} from "../../../pipes/format-number.pipe";
 import {SmallBoxComponent} from "../../small-box/small-box.component";
 import {TranslocoPipe} from "@ngneat/transloco";
@@ -9,7 +9,6 @@ import {MessageService} from "../../../services/message.service";
 import {TranslatorService} from "../../../services/translator.service";
 import {isPlatformBrowser} from "@angular/common";
 import {interval, Subscription} from "rxjs";
-import {toPromise} from "../../../helper/resolvable";
 
 @Component({
   selector: 'app-current-user-status',
@@ -32,7 +31,7 @@ export class CurrentUserStatusComponent implements OnInit, OnDestroy {
   public requestedIcon = signal(faImage);
   public generatedIcon = signal(faCrosshairs);
 
-  public user = signal<UserDetails | null>(null);
+  public refreshRequested = output();
 
   constructor(
     private readonly api: AiHorde,
@@ -44,19 +43,9 @@ export class CurrentUserStatusComponent implements OnInit, OnDestroy {
   }
 
   public async ngOnInit(): Promise<void> {
-    this.user.set(this.currentUser());
-
     if (this.isBrowser) {
-      this.refreshInterval = interval(30_000).subscribe(async () => {
-        const response = await toPromise(this.api.currentUser());
-        if (!response.success) {
-          await this.messageService.error(this.translator.get('app.error.api_error', {
-            message: response.errorResponse!.message,
-            code: response.errorResponse!.rc
-          }));
-          return;
-        }
-        this.user.set(response.successResponse!);
+      this.refreshInterval = interval(30_000).subscribe(() => {
+        this.refreshRequested.emit();
       });
     }
   }

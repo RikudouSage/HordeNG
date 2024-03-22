@@ -40,6 +40,7 @@ import {CurrentUserStatusComponent} from "../../components/horde/current-user-st
 import {HordeStatusComponent} from "../../components/horde/horde-status/horde-status.component";
 import {WorkerDetailComponent} from "../../components/worker-detail/worker-detail.component";
 import {YourWorkersComponent} from "../../components/horde/your-workers/your-workers.component";
+import {TransferKudosComponent} from "../../components/horde/transfer-kudos/transfer-kudos.component";
 
 @Component({
   selector: 'app-horde',
@@ -62,7 +63,8 @@ import {YourWorkersComponent} from "../../components/horde/your-workers/your-wor
     CurrentUserStatusComponent,
     HordeStatusComponent,
     WorkerDetailComponent,
-    YourWorkersComponent
+    YourWorkersComponent,
+    TransferKudosComponent
   ],
   templateUrl: './horde.component.html',
   styleUrl: './horde.component.scss'
@@ -90,17 +92,6 @@ export class HordeComponent implements OnInit {
 
   public removeIcon: Signal<IconDefinition> = signal(faTrash);
 
-  public transferKudosForm = new FormGroup({
-    targetUser: new FormControl<string | null>(null, [
-      Validators.required,
-      AppValidators.regex(/.+#[0-9]+/),
-    ]),
-    amount: new FormControl<number | null>(null, [
-      Validators.required,
-      AppValidators.lazyMax(() => this.currentUser()?.kudos ?? 0),
-      Validators.min(1),
-    ]),
-  });
   public createSharedKeyForm = new FormGroup({
     kudosLimit: new FormControl<number>(5_000, [
       Validators.min(-1),
@@ -187,51 +178,9 @@ export class HordeComponent implements OnInit {
   }
 
   private async loadData(): Promise<void> {
-    const responses = await Promise.all([
-      toPromise(this.api.currentUser()),
-    ]);
-
-    for (const response of responses) {
-      if (!response.success) {
-        await this.messageService.error(this.translator.get('app.error.api_error', {
-          message: response.errorResponse!.message,
-          code: response.errorResponse!.rc
-        }));
-        this.loading.set(false);
-        return;
-      }
-    }
-
-    this.currentUser.set(responses[0].successResponse!);
+    await this.refreshCurrentUser();
     this.fetchSharedKeyDetails();
 
-    this.loading.set(false);
-  }
-
-  public async transferKudos(): Promise<void> {
-    if (!this.transferKudosForm.valid) {
-      await this.messageService.error(this.translator.get('app.error.form_invalid'));
-      return;
-    }
-    this.loading.set(true);
-    const response = await toPromise(this.api.transferKudos(
-      this.transferKudosForm.controls.targetUser.value!,
-      this.transferKudosForm.controls.amount.value!,
-    ));
-    if (!response.success) {
-      await this.messageService.error(this.translator.get('app.error.api_error', {
-        message: response.errorResponse!.message,
-        code: response.errorResponse!.rc
-      }));
-      this.loading.set(false);
-      return;
-    }
-
-    await this.messageService.success(this.translator.get('app.transfer_kudos.success'));
-    await this.loadData();
-    this.transferKudosForm.patchValue({
-      amount: null,
-    });
     this.loading.set(false);
   }
 
@@ -299,5 +248,19 @@ export class HordeComponent implements OnInit {
       }));
     }
     this.loading.set(false);
+  }
+
+  public async refreshCurrentUser() {
+    const response = await toPromise(this.api.currentUser());
+    if (!response.success) {
+      await this.messageService.error(this.translator.get('app.error.api_error', {
+        message: response.errorResponse!.message,
+        code: response.errorResponse!.rc
+      }));
+      this.loading.set(false);
+      return;
+    }
+
+    this.currentUser.set(response.successResponse!);
   }
 }
