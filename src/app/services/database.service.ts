@@ -99,7 +99,7 @@ export class DatabaseService {
       negativePrompt: <string|null>valuesMap['negativePrompt'] ?? null,
       prompt: <string>valuesMap['prompt'] ?? '',
       sampler: <Sampler>valuesMap['sampler'] ?? Sampler.k_dpmpp_sde,
-      steps: <number>valuesMap['steps'] ?? 30,
+      steps: <number>valuesMap['steps'] ?? 25,
       model: <string>valuesMap['model'] ?? 'AlbedoBase XL (SDXL)',
       karras: <boolean>valuesMap['karras'] ?? true,
       postProcessors: <PostProcessor[]>valuesMap['postProcessors'] ?? [],
