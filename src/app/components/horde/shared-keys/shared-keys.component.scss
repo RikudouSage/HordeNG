@@ -1,0 +1,19 @@
+:host {
+  position: relative;
+  width: 100%;
+  display: block;
+  min-height: 120px;
+}
+
+.create-key-row {
+  min-width: 20vw;
+}
+
+.shared-key-box {
+  display: block;
+  margin-top: 8px;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
