@@ -30,6 +30,7 @@ export class ToggleablePasswordInputComponent implements ControlValueAccessor {
   private iconEyeClosed = signal(faEyeSlash);
 
   public inputId = input<string>();
+  public required = input(false);
 
   public disabled = signal(false);
   public value = signal('');

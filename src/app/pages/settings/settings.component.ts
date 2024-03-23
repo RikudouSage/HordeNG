@@ -22,6 +22,8 @@ import {CopyButtonComponent} from "../../components/copy-button/copy-button.comp
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {GoogleDriveDataStorage} from "../../services/image-storage/google-drive.data-storage";
 import {GoogleDriveCredentials} from "../../types/credentials/google-drive.credentials";
+import {DropboxCredentials} from "../../types/credentials/dropbox.credentials";
+import {DropboxDataStorage} from "../../services/image-storage/dropbox.data-storage";
 
 @Component({
   selector: 'app-settings',
@@ -67,6 +69,7 @@ export class SettingsComponent implements OnInit {
     google_drive_access_key: new FormControl<string>(''),
     google_drive_expires_at: new FormControl<Date | null>(null),
     google_drive_directory: new FormControl<string>(''),
+    dropbox_accessKey: new FormControl<string>(''),
   }, [
     AppValidators.requiredIf(
       group => group.controls['storage'].value === 's3',
@@ -82,6 +85,10 @@ export class SettingsComponent implements OnInit {
       'google_drive_access_key',
       'google_drive_expires_at',
       'google_drive_directory',
+    ),
+    AppValidators.requiredIf(
+      group => group.controls['storage'].value === 'dropbox',
+      'dropbox_accessKey',
     ),
   ]);
 
@@ -127,6 +134,11 @@ export class SettingsComponent implements OnInit {
               google_drive_expires_at: (<GoogleDriveCredentials>credentials.value).expiresAt,
               google_drive_api_key: (<GoogleDriveCredentials>credentials.value).apiKey,
               google_drive_directory: (<GoogleDriveCredentials>credentials.value).directory,
+            });
+            break;
+          case 'dropbox':
+            this.form.patchValue({
+              dropbox_accessKey: (<DropboxCredentials>credentials.value).accessKey,
             });
             break;
         }
@@ -185,6 +197,9 @@ export class SettingsComponent implements OnInit {
     switch (id) {
       case 's3':
         return await this.validateS3Storage();
+      case 'dropbox':
+        const storage = <DropboxDataStorage>(await this.storageManager.findByName(this.form.controls.storage.value!));
+        return await storage.validateCredentials({accessKey: this.form.value.dropbox_accessKey!});
       default:
         return true;
     }
@@ -240,6 +255,15 @@ export class SettingsComponent implements OnInit {
           },
         });
         await (<GoogleDriveDataStorage>storage).clearCache();
+        break;
+      case 'dropbox':
+        await this.database.setSetting<DropboxCredentials>({
+          setting: 'credentials',
+          value: {
+            accessKey: this.form.value.dropbox_accessKey!,
+          },
+        });
+        await (<DropboxDataStorage>storage).clearCache();
         break;
     }
   }

@@ -13,6 +13,7 @@ import {IndexedDbDataStorage} from "./services/image-storage/indexed-db.data-sto
 import {S3DataStorage} from "./services/image-storage/s3.data-storage";
 import {Credentials} from "./types/credentials/credentials";
 import {GoogleDriveDataStorage} from "./services/image-storage/google-drive.data-storage";
+import {DropboxDataStorage} from "./services/image-storage/dropbox.data-storage";
 
 export const DATA_STORAGE = new InjectionToken<DataStorage<Credentials>>('ImageStorage');
 
@@ -47,5 +48,6 @@ export const appConfig: ApplicationConfig = {
     {useClass: IndexedDbDataStorage, provide: DATA_STORAGE, multi: true},
     {useClass: S3DataStorage, provide: DATA_STORAGE, multi: true},
     {useClass: GoogleDriveDataStorage, provide: DATA_STORAGE, multi: true},
+    {useClass: DropboxDataStorage, provide: DATA_STORAGE, multi: true},
   ],
 };

@@ -19,6 +19,7 @@ import {PostProcessor} from "../../types/horde/post-processor";
 import _ from 'lodash';
 import {CacheService} from "../cache.service";
 import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
+import {GenerationOptions} from "../../types/db/generation-options";
 
 export const S3CorsConfig = [
   {
@@ -199,34 +200,37 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       throw new Error("S3 storage requires providing IDs beforehand.");
     }
 
+    const metadata: Record<(keyof Omit<GenerationOptions, 'worker' | 'data' | 'loraList'>) | 'workerId' | 'workerName' | 'loras', string> = {
+      workerId: image.worker.id,
+      workerName: image.worker.name,
+      model: image.model,
+      seed: image.seed,
+      loras: JSON.stringify(image.loraList),
+      postProcessors: image.postProcessors.join(','),
+      prompt: image.prompt,
+      negativePrompt: image.negativePrompt ?? '',
+      sampler: image.sampler,
+      cfgScale: String(image.cfgScale),
+      denoisingStrength: String(image.denoisingStrength),
+      height: String(image.height),
+      width: String(image.width),
+      steps: String(image.steps),
+      karras: String(Number(image.karras)),
+      faceFixerStrength: String(image.faceFixerStrength),
+      hiresFix: String(Number(image.hiresFix)),
+      allowDowngrade: String(Number(image.allowDowngrade)),
+      censorNsfw: String(Number(image.censorNsfw)),
+      slowWorkers: String(Number(image.slowWorkers)),
+      trustedWorkers: String(Number(image.trustedWorkers)),
+      nsfw: String(Number(image.nsfw)),
+      clipSkip: String(image.clipSkip),
+    }
+
     await client.send(new PutObjectCommand({
       Bucket: await this.getBucket(),
       Key: `${await this.getPrefix()}/${image.id}.webp`,
       Body: image.data,
-      Metadata: {
-        workerId: image.worker.id,
-        workerName: image.worker.name,
-        model: image.model,
-        seed: image.seed,
-        loras: JSON.stringify(image.loraList),
-        postProcessors: image.postProcessors.join(','),
-        prompt: image.prompt,
-        negativePrompt: image.negativePrompt ?? '',
-        sampler: image.sampler,
-        cfgScale: String(image.cfgScale),
-        denoisingStrength: String(image.denoisingStrength),
-        height: String(image.height),
-        width: String(image.width),
-        steps: String(image.steps),
-        karras: String(Number(image.karras)),
-        faceFixerStrength: String(image.faceFixerStrength),
-        hiresFix: String(Number(image.hiresFix)),
-        allowDowngrade: String(Number(image.allowDowngrade)),
-        censorNsfw: String(Number(image.censorNsfw)),
-        slowWorkers: String(Number(image.slowWorkers)),
-        trustedWorkers: String(Number(image.trustedWorkers)),
-        nsfw: String(Number(image.nsfw)),
-      },
+      Metadata: metadata,
       ContentType: 'image/webp',
     }));
   }

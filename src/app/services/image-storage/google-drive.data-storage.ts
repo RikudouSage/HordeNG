@@ -8,6 +8,7 @@ import {CacheService} from "../cache.service";
 import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
+import {GenerationOptions} from "../../types/db/generation-options";
 import TokenResponse = google.accounts.oauth2.TokenResponse;
 
 @Injectable({
@@ -81,7 +82,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       content: image.data,
     });
 
-    await this.storeOption(`image.metadata.${image.id}`, {
+    const metadata: Record<(keyof Omit<GenerationOptions, 'worker' | 'data' | 'loraList'>) | 'workerId' | 'workerName' | 'loras' | 'googleApiId', string> = {
       workerId: image.worker.id,
       workerName: image.worker.name,
       model: image.model,
@@ -105,7 +106,10 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       nsfw: String(Number(image.nsfw)),
       loras: JSON.stringify(image.loraList),
       googleApiId: result.id,
-    });
+      clipSkip: String(image.clipSkip),
+    };
+
+    await this.storeOption(`image.metadata.${image.id}`, metadata);
   }
 
   protected override async getFreshImages(): Promise<StoredImage[]> {
