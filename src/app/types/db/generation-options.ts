@@ -32,3 +32,27 @@ export interface GenerationOptions {
   clipSkip: number;
   loraList: LoraGenerationOption[];
 }
+
+export const DefaultGenerationOptions: GenerationOptions = {
+  prompt: '',
+  negativePrompt: null,
+  seed: null,
+  sampler: Sampler.k_dpmpp_sde,
+  cfgScale: 5,
+  denoisingStrength: 0.75,
+  height: 512,
+  width: 52,
+  steps: 25,
+  model: 'AlbedoBase XL (SDXL)',
+  karras: true,
+  postProcessors: [],
+  hiresFix: false,
+  faceFixerStrength: 0.75,
+  nsfw: false,
+  slowWorkers: true,
+  censorNsfw: false,
+  trustedWorkers: false,
+  allowDowngrade: false,
+  clipSkip: 1,
+  loraList: [],
+};

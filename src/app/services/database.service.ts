@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {JobInProgress} from "../types/db/job-in-progress";
-import {GenerationOptions, LoraGenerationOption} from "../types/db/generation-options";
+import {DefaultGenerationOptions, GenerationOptions, LoraGenerationOption} from "../types/db/generation-options";
 import {Sampler} from "../types/horde/sampler";
 import {JobMetadata} from "../types/job-metadata";
 import {AppSetting} from "../types/app-setting";
@@ -96,27 +96,27 @@ export class DatabaseService {
     }
 
     return {
-      height: <number>valuesMap['height'] ?? 512,
-      width: <number>valuesMap['width'] ?? 512,
-      cfgScale: <number>valuesMap['cfgScale'] ?? 7,
-      denoisingStrength: <number>valuesMap['denoisingStrength'] ?? 0.75,
-      negativePrompt: <string|null>valuesMap['negativePrompt'] ?? null,
-      prompt: <string>valuesMap['prompt'] ?? '',
-      sampler: <Sampler>valuesMap['sampler'] ?? Sampler.k_dpmpp_sde,
-      steps: <number>valuesMap['steps'] ?? 25,
-      model: <string>valuesMap['model'] ?? 'AlbedoBase XL (SDXL)',
-      karras: <boolean>valuesMap['karras'] ?? true,
-      postProcessors: <PostProcessor[]>valuesMap['postProcessors'] ?? [],
-      seed: <string>valuesMap['seed'] ?? null,
-      hiresFix: <boolean>valuesMap['hiresFix'] ?? false,
-      faceFixerStrength: <number>valuesMap['faceFixerStrength'] ?? 0.75,
-      nsfw: <boolean>valuesMap['nsfw'] ?? false,
-      trustedWorkers: <boolean>valuesMap['trustedWorkers'] ?? false,
-      censorNsfw: <boolean>valuesMap['censorNsfw'] ?? false,
-      slowWorkers: <boolean>valuesMap['slowWorkers'] ?? true,
-      allowDowngrade: <boolean>valuesMap['allowDowngrade'] ?? false,
-      clipSkip: <number>valuesMap['clipSkip'] ?? 1,
-      loraList: <LoraGenerationOption[]>valuesMap['loraList'] ?? [],
+      height: <number>valuesMap['height'] ?? DefaultGenerationOptions.height,
+      width: <number>valuesMap['width'] ?? DefaultGenerationOptions.width,
+      cfgScale: <number>valuesMap['cfgScale'] ?? DefaultGenerationOptions.cfgScale,
+      denoisingStrength: <number>valuesMap['denoisingStrength'] ?? DefaultGenerationOptions.denoisingStrength,
+      negativePrompt: <string|null>valuesMap['negativePrompt'] ?? DefaultGenerationOptions.negativePrompt,
+      prompt: <string>valuesMap['prompt'] ?? DefaultGenerationOptions.prompt,
+      sampler: <Sampler>valuesMap['sampler'] ?? DefaultGenerationOptions.sampler,
+      steps: <number>valuesMap['steps'] ?? DefaultGenerationOptions.steps,
+      model: <string>valuesMap['model'] ?? DefaultGenerationOptions.model,
+      karras: <boolean>valuesMap['karras'] ?? DefaultGenerationOptions.karras,
+      postProcessors: <PostProcessor[]>valuesMap['postProcessors'] ?? DefaultGenerationOptions.postProcessors,
+      seed: <string>valuesMap['seed'] ?? DefaultGenerationOptions.seed,
+      hiresFix: <boolean>valuesMap['hiresFix'] ?? DefaultGenerationOptions.hiresFix,
+      faceFixerStrength: <number>valuesMap['faceFixerStrength'] ?? DefaultGenerationOptions.faceFixerStrength,
+      nsfw: <boolean>valuesMap['nsfw'] ?? DefaultGenerationOptions.nsfw,
+      trustedWorkers: <boolean>valuesMap['trustedWorkers'] ?? DefaultGenerationOptions.trustedWorkers,
+      censorNsfw: <boolean>valuesMap['censorNsfw'] ?? DefaultGenerationOptions.censorNsfw,
+      slowWorkers: <boolean>valuesMap['slowWorkers'] ?? DefaultGenerationOptions.slowWorkers,
+      allowDowngrade: <boolean>valuesMap['allowDowngrade'] ?? DefaultGenerationOptions.allowDowngrade,
+      clipSkip: <number>valuesMap['clipSkip'] ?? DefaultGenerationOptions.clipSkip,
+      loraList: <LoraGenerationOption[]>valuesMap['loraList'] ?? DefaultGenerationOptions.loraList,
     };
   }
 

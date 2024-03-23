@@ -153,7 +153,8 @@ export class ImagesComponent implements OnInit {
   }
 
   public async sendToTxt2Img(image: StoredImageWithLink): Promise<void> {
-    await this.database.storeGenerationOptions(image);
+    const storage = await this.storageManager.currentStorage;
+    await storage.storeGenerationOptions(image);
     await this.modalService.close();
     await this.router.navigateByUrl('/generate');
   }

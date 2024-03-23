@@ -2,6 +2,7 @@ import {Credentials} from "../../types/credentials/credentials";
 import {Resolvable} from "../../helper/resolvable";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {PaginatedResult} from "../../types/paginated-result";
+import {GenerationOptions} from "../../types/db/generation-options";
 
 export interface DataStorage<TCredentials extends Credentials> {
   get name(): string;
@@ -14,4 +15,6 @@ export interface DataStorage<TCredentials extends Credentials> {
   getOption<T>(option: string, defaultValue: T): Promise<T>;
   getOption<T>(option: string): Promise<T | undefined>;
   getSize(): Promise<number | null>;
+  getGenerationOptions(): Promise<GenerationOptions>;
+  storeGenerationOptions(options: GenerationOptions): Promise<void>;
 }

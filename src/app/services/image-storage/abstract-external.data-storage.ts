@@ -4,6 +4,8 @@ import {Resolvable} from "../../helper/resolvable";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {PaginatedResult} from "../../types/paginated-result";
 import {CacheService} from "../cache.service";
+import {GenerationOptions} from "../../types/db/generation-options";
+import {DatabaseService} from "../database.service";
 
 export abstract class AbstractExternalDataStorage<TCredentials extends Credentials> implements DataStorage<TCredentials> {
   protected get BaseCacheKeys() {
@@ -19,6 +21,7 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
   abstract validateCredentials(credentials: TCredentials): Promise<boolean | string>;
 
   protected abstract get cache(): CacheService;
+  protected abstract get database(): DatabaseService;
   protected abstract getFreshImages(): Promise<StoredImage[]>;
   protected abstract getFreshOptions(): Promise<Record<string, any>>;
   protected abstract doStoreImage(image: UnsavedStoredImage): Promise<void>;
@@ -26,19 +29,24 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
   protected abstract doDeleteImage(image: StoredImage): Promise<void>;
   protected abstract doClearCache(): Promise<void>;
 
+  getOption<T>(option: string, defaultValue: T, useCache: boolean): Promise<T>;
   getOption<T>(option: string, defaultValue: T): Promise<T>;
   getOption<T>(option: string): Promise<T | undefined>;
-  public async getOption<T>(option: string, defaultValue?: T): Promise<T | undefined> {
+  public async getOption<T>(option: string, defaultValue?: T, useCache?: boolean): Promise<T | undefined> {
+    useCache ??= true;
+
     const cacheItem = await this.cache.getItem<Record<string, any>>(this.BaseCacheKeys.Options);
     let options: Record<string, any> = {};
-    if (cacheItem.isHit) {
+    if (cacheItem.isHit && useCache) {
       options = cacheItem.value!;
     } else {
       options = await this.getFreshOptions();
     }
 
     cacheItem.value = options;
-    await this.cache.save(cacheItem);
+    if (useCache) {
+      await this.cache.save(cacheItem);
+    }
 
     return options[option] ?? defaultValue;
   }
@@ -134,5 +142,17 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
 
     await Promise.all(promises);
     await this.doClearCache();
+  }
+
+  public async getGenerationOptions(): Promise<GenerationOptions> {
+    return await this.getOption(
+      'generation_options',
+      await this.database.getGenerationOptions(),
+      false,
+    );
+  }
+
+  public async storeGenerationOptions(options: GenerationOptions): Promise<void> {
+    await this.storeOption('generation_options', options);
   }
 }

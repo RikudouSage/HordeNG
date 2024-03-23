@@ -32,7 +32,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
   private partialCredentials: PartialGoogleDriveCredentials | null = null;
 
   constructor(
-    private readonly database: DatabaseService,
+    protected readonly database: DatabaseService,
     protected readonly cache: CacheService,
   ) {
     super();

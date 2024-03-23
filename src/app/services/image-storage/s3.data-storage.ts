@@ -72,7 +72,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
 
   constructor(
     private readonly translator: TranslatorService,
-    private readonly database: DatabaseService,
+    protected readonly database: DatabaseService,
     protected readonly cache: CacheService,
   ) {
     super();

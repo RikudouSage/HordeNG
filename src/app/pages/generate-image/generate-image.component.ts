@@ -8,7 +8,6 @@ import {
   Signal,
   signal,
   TemplateRef,
-  ViewContainerRef,
   WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -60,6 +59,7 @@ import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row
 import {IsFaceFixerPipe} from "../../pipes/is-face-fixer.pipe";
 import {IsUpscalerPipe} from "../../pipes/is-upscaler.pipe";
 import {getFaceFixers, getGenericPostProcessors, getUpscalers} from "../../helper/post-processor-helper";
+import _ from 'lodash';
 
 interface Result {
   width: number;
@@ -254,11 +254,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
     private readonly httpClient: HttpClient,
-    private readonly imageStorage: DataStorageManagerService,
+    private readonly dataStorage: DataStorageManagerService,
     private readonly hordeRepoData: HordeRepoDataService,
     private readonly generationOptionsValidator: GenerationOptionsValidatorService,
     private readonly modalService: ModalService,
-    private readonly view: ViewContainerRef,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -279,7 +278,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       }
     });
 
-    const storedOptions = await this.database.getGenerationOptions();
+    const storage = await this.dataStorage.currentStorage;
+    const storedOptions = await storage.getGenerationOptions();
     this.form.patchValue(storedOptions);
     this.form.patchValue({
       faceFixers: getFaceFixers(storedOptions.postProcessors),
@@ -297,7 +297,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       const changes = changeSet[1];
       const old = changeSet[0];
 
-      await this.database.storeGenerationOptions(this.formAsOptions);
       this.kudosCost.set(null);
       if (changes.model) {
         this.currentModelName.set(changes.model);
@@ -309,7 +308,12 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     });
     this.form.valueChanges.pipe(
       debounceTime(400),
-    ).subscribe(async changes => {
+      startWith(this.form.value),
+      pairwise(),
+    ).subscribe(async changeSet => {
+      const changes = changeSet[1];
+      const old = changeSet[0];
+
       if (this.form.valid) {
         this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
         if (this.kudosCost() === null) {
@@ -317,6 +321,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
         }
       } else {
         this.kudosCost.set(0);
+      }
+
+      if (!_.isMatch(changes, old)) {
+        await storage.storeGenerationOptions(this.formAsOptions);
       }
     });
     this.availableModels.set(await toPromise(this.hordeRepoData.getModelsConfig()));
@@ -509,7 +517,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       model: generations[0].model,
       seed: generations[0].seed,
     };
-    const storage = await this.imageStorage.currentStorage;
+    const storage = await this.dataStorage.currentStorage;
     await storage.storeImage(storeData);
     await this.database.removeJobMetadata(metadata);
   }
