@@ -130,8 +130,8 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
     await this.uploadFile('options.json',new Blob([JSON.stringify(options)], {type: 'application/json'}));
   }
 
-  protected override doDeleteImage(image: StoredImage): Promise<void> {
-    throw new Error("Method not implemented.");
+  protected override async doDeleteImage(image: StoredImage): Promise<void> {
+    await toPromise(this.dropbox.deleteFile(`/images/${image.id}.webp`));
   }
 
   protected override async doClearCache(): Promise<void> {

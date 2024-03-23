@@ -99,6 +99,14 @@ export class DropboxService {
     );
   }
 
+  public deleteFile(path: string): Observable<any> {
+    return this.httpRequest(HttpMethod.Post, this.apiUrl(`files/delete_v2`), {
+      requestBody: {
+        path: path,
+      }
+    });
+  }
+
   private httpRequest<T>(method: HttpMethod, url: string, options: HttpRequestOptions): Observable<T>;
   private httpRequest<T, TBinary extends boolean>(method: HttpMethod, url: string, options: HttpRequestOptions, binary: TBinary): Observable<TBinary extends true ? Blob : T>;
   private httpRequest<T, TBinary extends boolean>(method: HttpMethod, url: string, options: HttpRequestOptions, binary?: TBinary): Observable<TBinary extends true ? Blob : T> {
