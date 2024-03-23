@@ -135,7 +135,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     return result;
   });
   public validationErrors: WritableSignal<OptionsValidationErrors> = signal([]);
-  public currentModelDetail = computed(() => this.availableModels()[this.currentModelName()]);
+  public currentModelDetail: Signal<ModelConfiguration | null> = computed(() => this.availableModels()[this.currentModelName()] ?? null);
   public chosenStyle: WritableSignal<EnrichedPromptStyle | null> = signal(null);
   public modifiedOptions: Signal<null | Partial<GenerationOptions>> = computed(() => {
     if (this.chosenStyle() === null) {
