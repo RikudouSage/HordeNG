@@ -60,6 +60,7 @@ import {IsFaceFixerPipe} from "../../pipes/is-face-fixer.pipe";
 import {IsUpscalerPipe} from "../../pipes/is-upscaler.pipe";
 import {getFaceFixers, getGenericPostProcessors, getUpscalers} from "../../helper/post-processor-helper";
 import _ from 'lodash';
+import {BaselineModel} from "../../types/sd-repo/baseline-model";
 
 interface Result {
   width: number;
