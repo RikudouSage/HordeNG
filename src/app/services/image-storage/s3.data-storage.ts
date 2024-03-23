@@ -95,6 +95,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       const item = await client.send(new GetObjectCommand({
         Bucket: await this.getBucket(),
         Key: `${await this.getPrefix()}/options.json`,
+        IfNoneMatch: 'invalid',
       }));
       if (item.Body) {
         return JSON.parse(await item.Body.transformToString());
