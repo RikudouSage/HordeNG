@@ -109,6 +109,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   protected readonly Sampler = Sampler;
   protected readonly PostProcessor = PostProcessor;
   protected readonly OptionsValidationError = OptionsValidationError;
+  protected readonly BaselineModel = BaselineModel;
 
   private checkInterval: Subscription | null = null;
 

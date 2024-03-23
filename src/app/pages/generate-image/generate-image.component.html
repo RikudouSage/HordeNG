@@ -56,6 +56,9 @@
               </optgroup>
             }
           </select>
+          @if (currentModelDetail().baseline === BaselineModel.StableCascade) {
+            <p class="text-warning">{{'app.generate.no_commercial' | transloco}}</p>
+          }
           @if (validationErrors().length) {
             <p class="text-warning">{{'app.generate.validation.errors' | transloco}}</p>
             <ul class="text-warning">
