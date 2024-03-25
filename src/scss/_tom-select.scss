@@ -1,0 +1,16 @@
+@import "colors";
+
+.ts-wrapper {
+  .ts-control, &.single .ts-control {
+    background: $bodyBackground;
+    border-color: $borderColor;
+    color: $mainTextColor;
+    box-shadow: none;
+  }
+
+  &.input-active {
+    .ts-control, &.single .ts-control {
+      color: black;
+    }
+  }
+}
