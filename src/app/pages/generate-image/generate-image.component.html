@@ -259,10 +259,10 @@
           <div class="col-md-12">
             <div id="image-wrapper">
               @if (result()) {
-                <a href="{{result()!.source}}" target="_blank">
+                <a href="{{result()!.source}}" target="_blank" class="image-link">
                   <img src="{{result()!.source}}"/>
                 </a>
-                <div class="mt-2">
+                <div class="mt-2 image-parameter-result">
                   <p>
                     <transloco key="app.generate.result.info" [params]="{
                       width: result()!.width,
