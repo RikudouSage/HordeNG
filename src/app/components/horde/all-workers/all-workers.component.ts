@@ -1,4 +1,4 @@
-import {Component, OnDestroy, signal} from '@angular/core';
+import {Component, computed, OnDestroy, signal} from '@angular/core';
 import {BoxComponent} from "../../box/box.component";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {interval, Subscription} from "rxjs";
@@ -25,7 +25,20 @@ import {WorkerDetailComponent} from "../../worker-detail/worker-detail.component
 export class AllWorkersComponent implements OnDestroy {
   private refreshInterval: Subscription | null = null;
 
-  public workers = signal<WorkerDetails[] | null>(null);
+  private allWorkers = signal<WorkerDetails[] | null>(null);
+  public workers = computed(() => {
+    if (this.allWorkers() === null) {
+      return null;
+    }
+
+    return this.allWorkers()!.sort((a, b) => {
+      if (a.models.length === b.models.length) {
+        return 0;
+      }
+
+      return a.models.length > b.models.length ? -1 : 1;
+    })
+  });
 
   constructor(
     private readonly api: AiHorde,
@@ -59,6 +72,6 @@ export class AllWorkersComponent implements OnDestroy {
       }));
       return;
     }
-    this.workers.set(response.successResponse!);
+    this.allWorkers.set(response.successResponse!);
   }
 }
