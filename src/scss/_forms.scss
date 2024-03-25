@@ -22,6 +22,7 @@
   border: 1px solid $borderColor;
   border-radius: 5px;
   transition: border-color 0.2s ease-in-out;
+  font-size: 14px;
 
   &:hover, &:focus {
     border-color: $primaryColor;
@@ -68,4 +69,14 @@ label:has(+ [required]), label.required {
 
 label {
   font-weight: bold;
+}
+
+textarea {
+  font-family: inherit;
+
+  &.form-control {
+    line-height: 1.5;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
 }

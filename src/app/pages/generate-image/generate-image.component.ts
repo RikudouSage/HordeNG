@@ -61,6 +61,7 @@ import {IsUpscalerPipe} from "../../pipes/is-upscaler.pipe";
 import {getFaceFixers, getGenericPostProcessors, getUpscalers} from "../../helper/post-processor-helper";
 import _ from 'lodash';
 import {BaselineModel} from "../../types/sd-repo/baseline-model";
+import {AutoGrowDirective} from "../../directives/auto-grow.directive";
 
 interface Result {
   width: number;
@@ -101,7 +102,8 @@ interface Result {
     LoraSelectorComponent,
     LoraTextRowComponent,
     IsFaceFixerPipe,
-    IsUpscalerPipe
+    IsUpscalerPipe,
+    AutoGrowDirective
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
