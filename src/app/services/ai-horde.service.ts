@@ -180,5 +180,4 @@ export class AiHorde {
   private createUrl(endpoint: string): string {
     return `${environment.apiUrl}/${environment.apiVersion}/${endpoint}`;
   }
-
 }

@@ -68,4 +68,25 @@ export class YourWorkersComponent implements OnInit, OnDestroy {
 
     this.workers.set(responses.map(response => response.successResponse!));
   }
+
+  public async refreshWorkerPauseStatus(targetWorker: WorkerDetails, paused: boolean): Promise<void> {
+    this.workers.update(workers => {
+      if (workers === null) {
+        return null;
+      }
+
+      const result: WorkerDetails[] = [];
+
+      for (const worker of workers) {
+        const newWorker = {...worker};
+        if (newWorker.id === newWorker.id) {
+          newWorker.maintenance_mode = paused;
+        }
+
+        result.push(newWorker);
+      }
+
+      return result;
+    });
+  }
 }

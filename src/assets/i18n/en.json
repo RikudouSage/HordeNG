@@ -206,5 +206,7 @@
   "app.generate.upscaler": "Upscaler",
   "app.workers.horde_workers": "Horde workers",
   "app.settings.dropbox.access_key": "Access key",
-  "app.generate.no_commercial": "This model does not allow commercial use, please make sure you only use it in a non-commercial way."
+  "app.generate.no_commercial": "This model does not allow commercial use, please make sure you only use it in a non-commercial way.",
+  "app.worker.pause": "Pause worker",
+  "app.worker.resume": "Resume worker"
 }

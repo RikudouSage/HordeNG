@@ -26,6 +26,8 @@
   line-height: 15px;
   padding: 15px;
   border-bottom: 1px solid $borderColor;
+  display: flex;
+  justify-content: space-between;
 }
 
 .card-title {

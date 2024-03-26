@@ -3,7 +3,14 @@
 } @else {
   <app-box [title]="'app.workers.yours' | transloco">
     @for (worker of workers(); track worker.id) {
-      <app-worker-detail [worker]="worker" [collapsible]="true" [collapsedByDefault]="true" [onlineInTitle]="true" />
+      <app-worker-detail
+        [pausable]="true"
+        [worker]="worker"
+        [collapsible]="true"
+        [collapsedByDefault]="true"
+        [onlineInTitle]="true"
+        (pauseStatusUpdated)="refreshWorkerPauseStatus(worker, $event)"
+      />
     } @empty {
       <p>{{'app.workers.no_workers' | transloco}}</p>
     }
