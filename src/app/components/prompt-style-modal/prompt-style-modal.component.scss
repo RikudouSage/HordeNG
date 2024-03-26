@@ -1,3 +1,9 @@
+:host {
+  min-width: 120px;
+  min-height: 120px;
+  display: block;
+}
+
 .prompt-style .card-header {
   width: 100%;
   display: flex;
