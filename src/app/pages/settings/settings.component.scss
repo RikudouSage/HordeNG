@@ -1,0 +1,69 @@
+@import "../../../scss/colors";
+@import "../../../scss/breakpoints";
+
+:host {
+  min-width: 100%;
+}
+
+.settingContent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+
+  &--right,
+  &--left {
+    width: calc(100% / 2 - 10px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-self: flex-start;
+    margin-bottom: 20px;
+    gap: 20px;
+
+    @include mediaMax($medium) {
+      width: 100%;
+    }
+
+    .form-group {
+      width: 100%;
+      margin-bottom: 0;
+    }
+  }
+
+  &--left {
+    @include mediaMax($medium) {
+      margin-bottom: 0;
+    }
+  }
+
+  &--right {
+    width: 100%;
+
+    .btn.btn-primary {
+      @include mediaMin($medium) {
+        position: relative;
+        top: -20px;
+      }
+    }
+  }
+
+  &--right:has(.form-group) {
+    width: calc(100% / 2 - 10px);
+
+    @include mediaMax($medium) {
+      width: 100%;
+    }
+
+    .btn.btn-primary {
+      @include mediaMin($medium) {
+        position: relative;
+        top: auto;
+      }
+    }
+  }
+}
+
+.btn.btn-primary {
+  padding: 10px 15px;
+}
+

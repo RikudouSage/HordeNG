@@ -2,12 +2,12 @@
   <app-loader />
 } @else {
   <div class="row">
-    <div class="col-md-12 text-center">
+    <div class="col-md-12">
       <h1><transloco key="app.logged_in_as" [params]="{username: currentUser()!.username}" /></h1>
     </div>
   </div>
-  <div class="row mt-2">
-    <div class="col-md-12 flex flex-justify-content-center">
+  <div class="row">
+    <div class="col-md-12 flex smallBoxGap">
       <app-small-box [title]="'app.kudos' | transloco" color="#67c23a" [icon]="kudosIcon()">
         {{currentUser()!.kudos | formatNumber}}
       </app-small-box>
@@ -19,8 +19,8 @@
       </app-small-box>
     </div>
   </div>
-  <div class="row mt-2">
-    <div class="col-md-6 mr-1">
+  <div class="row">
+    <div class="col-md-6">
       <app-box [title]="'app.horde.status' | transloco">
         <p>
           <transloco key="app.horde.stats" [params]="{

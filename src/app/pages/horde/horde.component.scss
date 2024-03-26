@@ -1,7 +1,10 @@
+@import "../../../scss/colors";
+@import "../../../scss/breakpoints";
+
+
 app-small-box {
-  margin-right: 15px;
-  &:last-of-type {
-    margin-right: 0;
+  @include mediaMax($large) {
+   flex-grow: 1;
   }
 }
 
@@ -15,5 +18,33 @@ app-small-box {
 
   &:first-of-type {
     margin-top: 0;
+  }
+}
+
+h1 {
+  margin: 50px 0;
+}
+
+.smallBoxGap {
+  gap: 15px;
+
+  @include mediaMax($large) {
+    flex-wrap: wrap;
+  }
+}
+
+.row {
+  gap: 15px;
+  margin-bottom: 15px;
+
+  @include mediaMax($large) {
+    flex-wrap: wrap;
+  }
+
+  .col-md-6 {
+    @include mediaMax($large) {
+      width: 100%;
+      flex-basis: unset;
+    }
   }
 }

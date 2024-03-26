@@ -2,6 +2,12 @@
 @import "../../../scss/breakpoints";
 
 :host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid $borderColor;
+  margin-bottom: 20px;
+
   @include mediaMax($topMenuBreakpoint) {
     position: fixed;
     top: 0;
@@ -9,6 +15,7 @@
     background: $bodyBackground;
     z-index: 100;
     width: 100%;
+    margin-bottom: 0;
   }
 
   @include mediaMax($small) {
@@ -21,61 +28,55 @@
 ul {
   list-style-type: none;
   display: flex;
-  border-bottom: 1px solid $borderColor;
+  height: 84px;
 
   @include mediaMax($topMenuBreakpoint) {
-    justify-content: center;
-    width: 100%;
+    padding-right: 20px;
+  }
+
+  @include mediaMax($small) {
+    height: 14vw;
+    padding-right: 4vw;
   }
 }
 
 li {
-  height: 72px;
   display: block;
-
-  @include mediaMax($topMenuBreakpoint) {
-    height: auto;
-    padding: 10px 0;
-
-    &:first-of-type {
-      margin-left: 0;
-    }
-  }
-
-  @include mediaMax($topMenuBreakpoint2) {
-    margin-left: 5px;
-  }
-
-  @include mediaMax($topMenuBreakpoint3) {
-    margin-left: 0;
-  }
-
-  @include mediaMax($topMenuBreakpoint4) {
-    //margin-left: 15px;
-    margin: 8px 0 8px 15px;
-  }
+  margin: 0;
 }
 
 a {
+  display: inline-flex;
+  align-items: center;
   color: $mainTextColor;
   text-decoration: none;
   height: 100%;
-  padding: 0 10px;
-
+  padding: 0 15px;
   display: flex;
   align-items: center;
 
+  @include mediaMax($topMenuBreakpoint3) {
+    padding: 0 10px;
+  }
+
+  @include mediaMax($small) {
+    padding: 0 4vw;
+  }
+
   &:hover {
-    background: $primaryDarkColor;
-    color: $primaryColor;
+    background: $bodyBackgroundHover;
   }
 
   span {
     font-variant: small-caps;
     font-size: 18px;
 
+    @include mediaMax($topMenuBreakpoint3) {
+      font-size: 16px;
+    }
+
     @include mediaMax($small) {
-      font-size: 15px;
+      font-size: 0;
     }
 
     @include mediaMax($topMenuBreakpoint4) {
@@ -84,20 +85,21 @@ a {
   }
 
   & > * {
-    display: block;
+    display: inline-flex;
   }
 }
 
 .logo {
-  padding-right: 20px;
+  padding: 10px;
 
   @include mediaMax($topMenuBreakpoint) {
-    padding-right: 10px;
+    justify-content: center;
+    margin-left: 5px;
   }
 
   @include mediaMax($small) {
-    padding-right: 0;
-    padding-left: 0;
+    padding: 3vw 4vw 3vw 3vw;
+    margin-left: 0;
   }
 
   img {
@@ -106,7 +108,12 @@ a {
     @include mediaMax($topMenuBreakpoint) {
       width: 30px;
       height: 30px;
-      margin-right: 10px;
+    }
+
+    @include mediaMax($small) {
+      width: 8vw;
+      height: 8vw;
+      margin: 0;
     }
   }
 
@@ -128,8 +135,11 @@ a {
 }
 
 fa-icon {
-  width: 26px;
-  height: 26px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 25px;
+  height: 20px;
   margin-right: 10px;
 
   @include mediaMax($topMenuBreakpoint) {
@@ -138,29 +148,21 @@ fa-icon {
   }
 
   @include mediaMax($small) {
-    margin-right: 5px;
-  }
-
-  @include mediaMax($topMenuBreakpoint4) {
+    width: auto;
+    height: 6vw;
     margin-right: 0;
-    width: 32px;
-    height: 32px;
   }
 }
 
 :host ::ng-deep {
   svg {
-    width: 26px;
-    height: 26px;
+    max-height: 20px;
+    height: auto;
+    align-self: center;
 
-    @include mediaMax($topMenuBreakpoint) {
-      width: 16px;
-      height: 16px;
-    }
-
-    @include mediaMax($topMenuBreakpoint4) {
-      width: 32px;
-      height: 32px;
+    @include mediaMax($small) {
+      max-height: 6vw;
+      height: 100%;
     }
   }
 }

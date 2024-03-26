@@ -4,6 +4,8 @@
   <div class="row">
     <div class="col-xs-12">
       <form [formGroup]="form" (ngSubmit)="submitForm()">
+        <div class="settingContent">
+        <div class="settingContent--left">
         <div class="form-group">
           <!--suppress XmlInvalidId -->
           <label for="inputApiKey" class="required">{{'app.api_key' | transloco}}</label>
@@ -17,6 +19,8 @@
             }
           </select>
         </div>
+        </div>
+        <div class="settingContent--right">
         @if (form.controls.storage.value === 's3') {
           @if (s3CorsCheckResult() === null) {
             <p class="text-warning">{{'app.s3_cors_check.unknown' | transloco}}</p>
@@ -70,18 +74,21 @@
           </div>
 
           @if (!form.value.google_drive_access_key) {
-            <div class="form-group">
+
               <button
                 (click)="authorizeInGoogle()"
                 class="btn btn-primary"
                 type="button"
                 [disabled]="!form.value.google_drive_api_key || !form.value.google_drive_client_id"
               >{{'app.settings.google_drive.authorize' | transloco}}</button>
-            </div>
+
           }
         }
 
         <button class="btn btn-primary" type="submit" [disabled]="!form.valid">{{'app.save' | transloco}}</button>
+
+      </div>
+      </div>
       </form>
     </div>
   </div>
