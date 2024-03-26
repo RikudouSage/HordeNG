@@ -18,6 +18,7 @@ import {RequestStatusFull} from "../types/horde/request-status-full";
 import {SharedKey, UncreatedSharedKey} from "../types/horde/shared-key";
 import {KudosCostResponse} from "../types/horde/kudos-cost-response";
 import {UpdateWorkerRequest} from "../types/horde/update-worker-request";
+import {CacheHelperService} from "./cache-helper.service";
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,7 @@ export class AiHorde {
   constructor(
     private readonly httpClient: HttpClient,
     private readonly authManager: AuthManagerService,
+    private readonly cacheHelper: CacheHelperService,
   ) {
   }
 
@@ -46,7 +48,11 @@ export class AiHorde {
   }
 
   public getModels(): Observable<ApiResponse<ActiveModel[]>> {
-    return this.sendRequest(HttpMethod.Get, `status/models`);
+    return this.cacheHelper.staleWhileRevalidate(
+      `horde.models`,
+      5 * 60 * 1000,
+      () => this.sendRequest(HttpMethod.Get, `status/models`),
+    );
   }
 
   public generateImage(options: GenerationOptions): Observable<ApiResponse<AsyncGenerationResponse>>;

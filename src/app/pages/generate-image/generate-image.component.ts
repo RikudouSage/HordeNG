@@ -292,7 +292,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     });
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
     if (this.form.valid) {
-      this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
+      this.costCalculator.calculate(this.formAsOptionsStyled).then(result => {
+        this.kudosCost.set(result);
+      });
     }
     this.form.valueChanges.pipe(
       startWith(this.form.value),
