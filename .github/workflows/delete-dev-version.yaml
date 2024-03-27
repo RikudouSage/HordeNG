@@ -33,3 +33,8 @@ jobs:
           aws s3 rm s3://$BUCKET_NAME --recursive
           aws s3 rm s3://$DEPLOYMENT_BUCKET_NAME --recursive
           aws cloudformation delete-stack --stack-name $STACK_NAME
+      - name: Post Link
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: The preview URL for this PR was deleted when the PR got closed.
+          comment_tag: post_link_comment
