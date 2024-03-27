@@ -1,0 +1,4 @@
+<div class="flex">
+  <input type="range" [min]="min()" [max]="max()" [step]="step()" [value]="value()" (input)="value.set(Number(input1.value))" class="form-control" [id]="inputId()" #input1 />
+  <input type="number" [min]="min()" [max]="max()" [step]="step()"  class="form-control" [value]="value()" (input)="value.set(Number(input2.value))" #input2 />
+</div>

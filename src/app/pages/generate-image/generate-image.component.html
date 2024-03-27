@@ -153,9 +153,9 @@
         </div>
         @if (form.value.faceFixers?.length) {
           <div class="form-group">
-            <label for="inputFaceFixerStrength">{{ 'app.generate.face_fixer_strength' | transloco }}
-              ({{ form.controls.faceFixerStrength.value! | formatNumber:2 }})</label>
-            <input type="range" min="0" max="1" step="0.01" formControlName="faceFixerStrength" class="form-control" id="inputFaceFixerStrength"/>
+            <!--suppress XmlInvalidId -->
+            <label for="inputFaceFixerStrength">{{ 'app.generate.face_fixer_strength' | transloco }}</label>
+            <app-slider-with-value [min]="0" [max]="1" [step]="0.01" formControlName="faceFixerStrength" inputId="inputFaceFixerStrength" />
           </div>
         }
         <div class="form-group">
@@ -194,14 +194,16 @@
         <div class="row formGroup">
           <div class="col-md-6">
             <div class="form-group">
-              <label for="inputDenoisingStrength">{{ 'app.generate.denoising_strength' | transloco }}({{ form.controls.denoisingStrength.value! | formatNumber:2 }})</label>
-              <input type="range" min="0.01" max="1" step="0.01" formControlName="denoisingStrength" class="form-control"id="inputDenoisingStrength"/>
+              <!--suppress XmlInvalidId -->
+              <label for="inputDenoisingStrength">{{ 'app.generate.denoising_strength' | transloco }})</label>
+              <app-slider-with-value [min]="0.01" [max]="1" [step]="0.01" formControlName="denoisingStrength" inputId="inputDenoisingStrength" />
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              <label for="inputCfgScale">{{ 'app.generate.cfg_scale' | transloco }}({{ form.controls.cfgScale.value! | formatNumber:1 }})</label>
-              <input type="range" min="0" max="100" step="0.5" formControlName="cfgScale" class="form-control" id="inputCfgScale"/>
+              <!--suppress XmlInvalidId -->
+              <label for="inputCfgScale">{{ 'app.generate.cfg_scale' | transloco }}</label>
+              <app-slider-with-value [min]="0" [max]="100" [step]="0.5" formControlName="cfgScale" inputId="inputCfgScale" />
               <app-effective-value [value]="modifiedOptions()?.cfgScale" [original]="form.value.cfgScale" />
             </div>
           </div>
