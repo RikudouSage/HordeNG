@@ -6,7 +6,9 @@ on:
     types: [closed]
 
 jobs:
-  publish:
+  delete:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - name: GitHub Slug Action
