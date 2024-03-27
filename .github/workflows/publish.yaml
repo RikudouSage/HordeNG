@@ -10,6 +10,18 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
+      - name: GitHub Slug Action
+        uses: rlespinasse/github-slug-action@v4
+      - name: Generate Domain Name
+        id: generate_domain_name
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if (context.payload.ref == 'refs/heads/master') {
+              return 'horde-ng.org';
+            }
+            return process.env.GITHUB_REF_SLUG_URL + '.horde-ng.org';
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup prod dependencies
@@ -23,7 +35,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DOMAIN_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
-          DOMAIN_NAME: horde-ng.org
+          DOMAIN_NAME: ${{ steps.generate_domain_name.outputs.result }}
       - name: Create runtime version
         run: echo "window['APP_VERSION'] = '$GITHUB_SHA';" >> src/assets/runtime-variables.js
       - name: Build app
