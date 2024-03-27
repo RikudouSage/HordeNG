@@ -21,6 +21,16 @@ jobs:
               return 'horde-ng.org';
             }
             return process.env.GITHUB_REF_SLUG_URL + '.horde-ng.org';
+      - name: Generate SLS Stage
+        id: generate_sls_stage
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if (context.payload.ref == 'refs/heads/master') {
+              return 'prod';
+            }
+            return process.env.GITHUB_REF_SLUG_URL;
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup prod dependencies
@@ -28,7 +38,7 @@ jobs:
       - name: Deploy infrastructure
         uses: serverless/github-action@v3
         with:
-          args: deploy --stage ${{ env.GITHUB_REF_SLUG_URL }} --verbose
+          args: deploy --stage ${{ steps.generate_sls_stage.outputs.result }} --verbose
         env:
           AWS_REGION: eu-central-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
