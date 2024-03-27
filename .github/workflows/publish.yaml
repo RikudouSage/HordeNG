@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - master
+  pull_request:
 
 jobs:
   publish:
@@ -20,7 +22,7 @@ jobs:
             if (context.payload.ref == 'refs/heads/master') {
               return 'horde-ng.org';
             }
-            return process.env.GITHUB_REF_SLUG_URL + '.horde-ng.org';
+            return process.env.GITHUB_REF_SLUG_URL + '.dev.horde-ng.org';
       - name: Generate SLS Stage
         id: generate_sls_stage
         uses: actions/github-script@v6
