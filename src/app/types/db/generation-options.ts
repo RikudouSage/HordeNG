@@ -41,7 +41,7 @@ export const DefaultGenerationOptions: GenerationOptions = {
   cfgScale: 5,
   denoisingStrength: 0.75,
   height: 512,
-  width: 52,
+  width: 512,
   steps: 25,
   model: 'AlbedoBase XL (SDXL)',
   karras: true,
