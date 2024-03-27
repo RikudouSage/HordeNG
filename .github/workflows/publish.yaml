@@ -74,5 +74,5 @@ jobs:
       - name: Post Link
         uses: thollander/actions-comment-pull-request@v2
         with:
-          message: The pull request has been deployed to https://${{ steps.generate_domain_name.outputs.result }}
+          message: This pull request has been deployed to https://${{ steps.generate_domain_name.outputs.result }}
           comment_tag: post_link_comment
