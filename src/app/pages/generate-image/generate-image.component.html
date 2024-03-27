@@ -6,7 +6,7 @@
       <div class="col-md-6 setContainer">
         <div class="form-group">
           <label for="inputPrompt">{{ 'app.generate.prompt' | transloco }}</label>
-          <textarea required type="text" class="form-control" formControlName="prompt" id="inputPrompt" autocomplete="off"></textarea>
+          <textarea required type="text" class="form-control" formControlName="prompt" id="inputPrompt" auto-grow></textarea>
           <div class="flex-wrap setGap">
             <button type="button" class="btn" (click)="openModal(styleModal)">{{'app.generate.use_style' | transloco}}</button>
             <button type="button" class="btn btn-danger" [disabled]="chosenStyle() === null" (click)="chosenStyle.set(null)">{{'app.generate.cancel_style' | transloco}}</button>
@@ -23,7 +23,7 @@
         </div>
         <div class="form-group">
           <label for="inputNegativePrompt">{{ 'app.generate.negative_prompt' | transloco }}</label>
-          <textarea type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt" autocomplete="off"></textarea>
+          <textarea type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt" auto-grow></textarea>
           <app-effective-value [value]="modifiedOptions()?.negativePrompt" [original]="form.value.negativePrompt" />
         </div>
         <div class="row formGroup">
@@ -36,10 +36,10 @@
           <div class="col-md-6">
             <div class="form-group">
               <label for="inputSampler">{{ 'app.generate.sampler' | transloco }}</label>
-              <select id="inputSampler" class="form-control" formControlName="sampler" required>
-              @for (enumCase of Sampler | keyvalue; track enumCase.key) {
-              <option [value]="enumCase.value">{{ enumCase.value }}</option>
-              }
+              <select id="inputSampler" tom-select [maxItems]="1" formControlName="sampler" required>
+                @for (enumCase of Sampler | keyvalue; track enumCase.key) {
+                  <option [value]="enumCase.value">{{ enumCase.value }}</option>
+                }
               </select>
               <app-effective-value [value]="modifiedOptions()?.sampler" [original]="form.value.sampler" />
             </div>
@@ -62,19 +62,22 @@
               </optgroup>
             }
           </select>
+          @if (currentModelDetail()?.baseline === BaselineModel.StableCascade) {
+            <p class="text-warning">{{'app.generate.no_commercial' | transloco}}</p>
+          }
           @if (validationErrors().length) {
             <p class="text-warning">{{'app.generate.validation.errors' | transloco}}</p>
             <ul class="text-warning">
               @for (error of validationErrors(); track error) {
                 <li>
                   @if (error === OptionsValidationError.ClipSkip) {
-                    {{'app.generation.validation.clip_skip' | transloco:{expected: currentModelDetail().requirements!.clip_skip!} }}
+                    {{'app.generation.validation.clip_skip' | transloco:{expected: currentModelDetail()!.requirements!.clip_skip!} }}
                   } @else if (error === OptionsValidationError.Karras) {
                     {{'app.generation.validation.karras' | transloco}}
                   } @else if (error === OptionsValidationError.Sampler) {
-                    {{'app.generation.validation.samplers' | transloco:{expected: currentModelDetail().requirements!.samplers!.join(', ')} }}
+                    {{'app.generation.validation.samplers' | transloco:{expected: currentModelDetail()!.requirements!.samplers!.join(', ')} }}
                   } @else if (error === OptionsValidationError.Steps) {
-                    {{'app.generation.validation.steps' | transloco:{min: currentModelDetail().requirements!.min_steps, max: currentModelDetail()!.requirements!.max_steps} }}
+                    {{'app.generation.validation.steps' | transloco:{min: currentModelDetail()!.requirements!.min_steps, max: currentModelDetail()!.requirements!.max_steps} }}
                   } @else if (error === OptionsValidationError.ModelNotFound) {
                     {{'app.generation.validation.model_not_found' | transloco }}
                   } @else if (error === OptionsValidationError.CfgScale) {
@@ -92,7 +95,8 @@
               @if (availableModels()[effectiveModel()].showcases) {
                 <strong>{{'app.model.examples' | transloco}}</strong>:
                 @for (showcase of availableModels()[effectiveModel()].showcases; track showcase) {
-                  <a href="{{showcase}}" target="_blank">{{'app.model.example_number' | transloco:{number: $index + 1} }}</a>,
+                  <a href="{{showcase}}" target="_blank">{{'app.model.example_number' | transloco:{number: $index + 1} }}</a>
+                  @if (!$last) {, }
                 }
                 <br>
               }
@@ -108,35 +112,84 @@
           }
         </div>
         <div class="form-group">
-          <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>
-          <select id="inputPostProcessors" multiple tom-select formControlName="postProcessors">
+          <label>{{'app.generate.lora_list' | transloco}}</label>
+          <button [disabled]="(form.value.loraList?.length ?? 0) >= 5" class="btn" type="button"
+                  (click)="openModal(addLoraModal)">{{'app.generate.add_loras' | transloco}}</button>
+          <ng-template #addLoraModal>
+            <app-lora-selector [selectedLoras]="form.value.loraList ?? []" [selectedModel]="currentModelDetail()!" (loraSelected)="addLora($event)" />
+          </ng-template>
+          @if (modifiedOptions()?.loraList) {
+            <small>
+              <strong>{{'app.generate.style_effective_value' | transloco}}</strong>:
+              @for (lora of modifiedOptions()!.loraList!; track lora.id) {
+                <app-lora-text-row [lora]="lora" [comma]="!$last" />
+              }
+            </small>
+          }
+          @if (!form.value.loraList?.length) {
+            <p>{{'app.generate.lora_list.no_loras' | transloco}}</p>
+          } @else {
+            <ul>
+            @for (lora of form.value.loraList!; track lora.id) {
+              <li>
+                <strong><app-lora-text-row [lora]="lora" /></strong>
+                <button (click)="removeLora(lora.id)" class="text-danger icon-button ml-1" type="button" title="{{'app.delete' | transloco}}">
+                  <fa-icon title="{{'app.delete' | transloco}}" [icon]="iconDelete()" size="2xl" />
+                </button>
+              </li>
+            }
+            </ul>
+          }
+        </div>
+        <div class="form-group">
+          <label for="inputFaceFixers">{{'app.generate.face_fixers' | transloco}}</label>
+          <select id="inputFaceFixers" multiple tom-select formControlName="faceFixers">
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
-              <option [value]="enumCase.value">{{enumCase.value}}</option>
+              @if (enumCase.value | isFaceFixer) {
+                <option [value]="enumCase.value">{{enumCase.value}}</option>
+              }
             }
           </select>
         </div>
-        @if (form.controls.postProcessors.value!.includes(PostProcessor.GFPGAN) || form.controls.postProcessors.value!.includes(PostProcessor.CodeFormers)) {
+        @if (form.value.faceFixers?.length) {
           <div class="form-group">
             <label for="inputFaceFixerStrength">{{ 'app.generate.face_fixer_strength' | transloco }}
               ({{ form.controls.faceFixerStrength.value! | formatNumber:2 }})</label>
             <input type="range" min="0" max="1" step="0.01" formControlName="faceFixerStrength" class="form-control" id="inputFaceFixerStrength"/>
           </div>
         }
-        <div class="row formGroup">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label for="inputWidth">{{ 'app.generate.width' | transloco }}</label>
-              <input type="number" min="64" max="3072" step="64" formControlName="width" id="inputWidth" class="form-control"/>
-              <app-effective-value [value]="modifiedOptions()?.width" [original]="form.value.width" />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label for="inputHeight">{{ 'app.generate.height' | transloco }}</label>
-              <input type="number" min="64" max="3072" step="64" formControlName="height" id="inputHeight" class="form-control"/>
-              <app-effective-value [value]="modifiedOptions()?.height" [original]="form.value.height" />
-            </div>
-          </div>
+        <div class="form-group">
+          <label for="inputUpscaler">{{'app.generate.upscaler' | transloco}}</label>
+          <select id="inputUpscaler" tom-select formControlName="upscaler" [maxItems]="1">
+            <option [value]="null">{{'app.select.empty_option' | transloco}}</option>
+            @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
+              @if (enumCase.value | isUpscaler) {
+                <option [value]="enumCase.value">{{enumCase.value}}</option>
+              }
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>
+          <select id="inputPostProcessors" multiple tom-select formControlName="genericPostProcessors">
+            @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
+              @if (!(enumCase.value | isFaceFixer) && !(enumCase.value | isUpscaler)) {
+                <option [value]="enumCase.value">{{enumCase.value}}</option>
+              }
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="inputWidth">{{ 'app.generate.width' | transloco }}</label>
+          <input type="number" min="64" max="3072" step="64" formControlName="width" id="inputWidth"
+                 class="form-control"/>
+          <app-effective-value [value]="modifiedOptions()?.width" [original]="form.value.width" />
+        </div>
+        <div class="form-group">
+          <label for="inputHeight">{{ 'app.generate.height' | transloco }}</label>
+          <input type="number" min="64" max="3072" step="64" formControlName="height" id="inputHeight"
+                 class="form-control"/>
+          <app-effective-value [value]="modifiedOptions()?.height" [original]="form.value.height" />
         </div>
         <div class="row formGroup">
           <div class="col-md-6">
@@ -197,10 +250,10 @@
           <div class="col-md-12">
             <div id="image-wrapper">
               @if (result()) {
-                <a href="{{result()!.source}}" target="_blank">
+                <a href="{{result()!.source}}" target="_blank" class="image-link">
                   <img src="{{result()!.source}}"/>
                 </a>
-                <div class="mt-2">
+                <div class="mt-2 image-parameter-result">
                   <p>
                     <transloco key="app.generate.result.info" [params]="{
                       width: result()!.width,

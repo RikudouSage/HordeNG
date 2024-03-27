@@ -15,6 +15,7 @@ export interface PromptStyle {
     inject_trigger?: string;
     is_version?: boolean;
   }[];
+  category?: string; // not part of the JSON, added by this app
 }
 
 export interface PromptStyles {

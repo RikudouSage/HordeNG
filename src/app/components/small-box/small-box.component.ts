@@ -1,5 +1,4 @@
 import {Component, input, InputSignal, OnInit} from '@angular/core';
-import {Resolvable} from "../../helper/resolvable";
 import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 

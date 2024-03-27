@@ -26,6 +26,7 @@
     width: 100%;
     height: auto;
     cursor: pointer;
+    object-fit: contain;
   }
 
   a {
@@ -35,6 +36,18 @@
   & > div {
     padding: 1vh 1vw;
   }
+}
+
+.image-parameter-result {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.image-link {
+  max-height: calc(100% - 12vh);
 }
 
 .progress {
@@ -129,4 +142,10 @@
   .btn {
     margin: 0;
   }
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }

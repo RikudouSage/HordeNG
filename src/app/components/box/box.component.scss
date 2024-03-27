@@ -1,0 +1,12 @@
+@import "../../../scss/colors";
+
+.btn-img {
+  color: $mainTextColor;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  &[disabled] {
+    color: $mainTextDisabledColor;
+  }
+}

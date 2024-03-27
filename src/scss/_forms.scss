@@ -39,6 +39,7 @@
   border: 1px solid $borderColor;
   border-radius: 5px;
   transition: border-color 0.2s ease-in-out;
+  font-size: 14px;
 
   &:hover, &:focus {
     border-color: $primaryColor;
@@ -89,6 +90,7 @@ textarea {
   min-width: 718px;
   min-height: 100px;
   max-height: 300px;
+  font-family: inherit;
 
   @include mediaMax($extraLarge) {
     max-width: 550px;
@@ -100,3 +102,8 @@ textarea {
     min-width: 100%;
   }
 }
+
+label {
+  font-weight: bold;
+}
+

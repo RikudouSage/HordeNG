@@ -17,6 +17,8 @@ import {RequestStatusCheck} from "../types/horde/request-status-check";
 import {RequestStatusFull} from "../types/horde/request-status-full";
 import {SharedKey, UncreatedSharedKey} from "../types/horde/shared-key";
 import {KudosCostResponse} from "../types/horde/kudos-cost-response";
+import {UpdateWorkerRequest} from "../types/horde/update-worker-request";
+import {CacheHelperService} from "./cache-helper.service";
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +27,7 @@ export class AiHorde {
   constructor(
     private readonly httpClient: HttpClient,
     private readonly authManager: AuthManagerService,
+    private readonly cacheHelper: CacheHelperService,
   ) {
   }
 
@@ -40,8 +43,16 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Get, `workers/${id}`);
   }
 
+  public getAllWorkers(): Observable<ApiResponse<WorkerDetails[]>> {
+    return this.sendRequest(HttpMethod.Get, `workers?type=image`);
+  }
+
   public getModels(): Observable<ApiResponse<ActiveModel[]>> {
-    return this.sendRequest(HttpMethod.Get, `status/models`);
+    return this.cacheHelper.staleWhileRevalidate(
+      `horde.models`,
+      5 * 60 * 1000,
+      () => this.sendRequest(HttpMethod.Get, `status/models`),
+    );
   }
 
   public generateImage(options: GenerationOptions): Observable<ApiResponse<AsyncGenerationResponse>>;
@@ -63,11 +74,11 @@ export class AiHorde {
         facefixer_strength: options.faceFixerStrength,
         clip_skip: options.clipSkip,
         loras: options.loraList.map(lora => ({
-          name: String(lora.modelId),
+          name: String(lora.id),
           model: lora.strengthModel,
           clip: lora.strengthClip,
           inject_trigger: lora.injectTrigger,
-          is_version: lora.isVersion,
+          is_version: lora.isVersionId,
         }))
       },
       nsfw: options.nsfw,
@@ -125,6 +136,10 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Delete, `sharedkeys/${key.id}`);
   }
 
+  public updateWorker(id: string, workerSettings: UpdateWorkerRequest): Observable<ApiResponse<any>> {
+    return this.sendRequest(HttpMethod.Put, `workers/${id}`, workerSettings);
+  }
+
   private sendRequest<T>(
     method: HttpMethod,
     endpoint: string,
@@ -171,5 +186,4 @@ export class AiHorde {
   private createUrl(endpoint: string): string {
     return `${environment.apiUrl}/${environment.apiVersion}/${endpoint}`;
   }
-
 }

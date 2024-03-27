@@ -1,5 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import {min, Observable} from "rxjs";
+import {Pipe, PipeTransform} from '@angular/core';
 import {TranslatorService} from "../services/translator.service";
 import {toPromise} from "../helper/resolvable";
 

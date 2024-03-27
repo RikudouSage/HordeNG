@@ -8,6 +8,7 @@ import {DatabaseService} from "../database.service";
 import {PaginatedResult} from "../../types/paginated-result";
 import {Order} from "../../types/order";
 import {CacheService} from "../cache.service";
+import {GenerationOptions} from "../../types/db/generation-options";
 
 @Injectable({
   providedIn: 'root',
@@ -77,5 +78,13 @@ export class IndexedDbDataStorage implements DataStorage<Credentials> {
   public async storeImage(image: UnsavedStoredImage): Promise<void> {
     delete image.id;
     await this.database.storeImage(image);
+  }
+
+  public async getGenerationOptions(): Promise<GenerationOptions> {
+    return await this.database.getGenerationOptions();
+  }
+
+  public async storeGenerationOptions(options: GenerationOptions): Promise<void> {
+    await this.database.storeGenerationOptions(options);
   }
 }

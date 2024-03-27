@@ -1,7 +1,7 @@
 <div class="modal-wrapper">
-  <section class="modal" #modal>
+  <section class="modal" #modal [style.z-index]="(options?.zIndex ?? 2)">
     <ng-content></ng-content>
   </section>
 
-  <div class="modal-overlay" #overlay (click)="onClose()"></div>
+  <div class="modal-overlay" #overlay (click)="onClose()" [style.z-index]="(options?.zIndex ?? 2) - 1"></div>
 </div>

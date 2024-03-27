@@ -9,6 +9,7 @@
 @import "scss/animations";
 @import "scss/breakpoints";
 @import "scss/card";
+@import "scss/tom-select";
 
 * {
   padding: 0;
@@ -121,4 +122,8 @@ li {
 
 .display-block {
   display: block;
+}
+
+.text-bold {
+  font-weight: bold;
 }

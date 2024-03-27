@@ -1,0 +1,22 @@
+:host {
+  position: relative;
+  width: 100%;
+  display: block;
+}
+
+:host ::ng-deep .card-body {
+  min-height: 120px;
+}
+
+.workers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  app-worker-detail {
+    display: block;
+    flex: 33% 0 0;
+    margin-bottom: 1vh;
+    width: 33%;
+  }
+}

@@ -4,9 +4,10 @@ import {
   Inject,
   OnDestroy,
   OnInit,
-  PLATFORM_ID, Signal,
+  PLATFORM_ID,
+  Signal,
   signal,
-  TemplateRef, ViewContainerRef,
+  TemplateRef,
   WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -20,7 +21,7 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {KudosCostCalculator} from "../../services/kudos-cost-calculator.service";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
-import {debounceTime, interval, map, Subscription} from "rxjs";
+import {debounceTime, interval, map, pairwise, startWith, Subscription} from "rxjs";
 import {WorkerType} from "../../types/horde/worker-type";
 import {JobInProgress} from "../../types/db/job-in-progress";
 import {MessageService} from "../../services/message.service";
@@ -42,13 +43,25 @@ import {ModelConfiguration, ModelConfigurations} from "../../types/sd-repo/model
 import {HordeRepoDataService} from "../../services/horde-repo-data.service";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {
-  GenerationOptionsValidatorService, OptionsValidationError,
+  GenerationOptionsValidatorService,
+  OptionsValidationError,
   OptionsValidationErrors
 } from "../../services/generation-options-validator.service";
 import {PromptStyleModalComponent} from "../../components/prompt-style-modal/prompt-style-modal.component";
 import {ModalService} from "../../services/modal.service";
 import {EnrichedPromptStyle} from "../../types/sd-repo/prompt-style";
 import {EffectiveValueComponent} from "../../components/effective-value/effective-value.component";
+import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {faRemove} from "@fortawesome/free-solid-svg-icons";
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {LoraSelectorComponent} from "../../components/lora-selector/lora-selector.component";
+import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
+import {IsFaceFixerPipe} from "../../pipes/is-face-fixer.pipe";
+import {IsUpscalerPipe} from "../../pipes/is-upscaler.pipe";
+import {getFaceFixers, getGenericPostProcessors, getUpscalers} from "../../helper/post-processor-helper";
+import _ from 'lodash';
+import {BaselineModel} from "../../types/sd-repo/baseline-model";
+import {AutoGrowDirective} from "../../directives/auto-grow.directive";
 
 interface Result {
   width: number;
@@ -83,7 +96,14 @@ interface Result {
     JsonPipe,
     YesNoComponent,
     PromptStyleModalComponent,
-    EffectiveValueComponent
+    EffectiveValueComponent,
+    LoraNamePipe,
+    FaIconComponent,
+    LoraSelectorComponent,
+    LoraTextRowComponent,
+    IsFaceFixerPipe,
+    IsUpscalerPipe,
+    AutoGrowDirective
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -92,6 +112,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   protected readonly Sampler = Sampler;
   protected readonly PostProcessor = PostProcessor;
   protected readonly OptionsValidationError = OptionsValidationError;
+  protected readonly BaselineModel = BaselineModel;
 
   private checkInterval: Subscription | null = null;
 
@@ -116,7 +137,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     return result;
   });
   public validationErrors: WritableSignal<OptionsValidationErrors> = signal([]);
-  public currentModelDetail = computed(() => this.availableModels()[this.currentModelName()]);
+  public currentModelDetail: Signal<ModelConfiguration | null> = computed(() => this.availableModels()[this.currentModelName()] ?? null);
   public chosenStyle: WritableSignal<EnrichedPromptStyle | null> = signal(null);
   public modifiedOptions: Signal<null | Partial<GenerationOptions>> = computed(() => {
     if (this.chosenStyle() === null) {
@@ -153,17 +174,19 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     }
     if (style.loras?.length) {
       patch.loraList = style.loras.map(lora => ({
-        isVersion: lora.is_version,
+        isVersionId: lora.is_version,
         injectTrigger: lora.inject_trigger,
         strengthClip: lora.clip,
         strengthModel: lora.model,
-        modelId: lora.name,
+        id: Number(lora.name),
       }));
     }
 
     return patch;
   });
   public effectiveModel = computed(() => this.modifiedOptions()?.model ?? this.currentModelName());
+
+  public iconDelete = signal(faRemove);
 
   public form = new FormGroup({
     prompt: new FormControl<string>('', [
@@ -202,7 +225,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     model: new FormControl<string>('', [
       Validators.required,
     ]),
-    postProcessors: new FormControl<string[]>([]),
+    faceFixers: new FormControl<PostProcessor[]>([]),
+    upscaler: new FormControl<PostProcessor | null>(null),
+    genericPostProcessors: new FormControl<PostProcessor[]>([]),
     seed: new FormControl<string>(''),
     karras: new FormControl<boolean>(false),
     hiresFix: new FormControl<boolean>(false),
@@ -220,7 +245,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       Validators.min(1),
       Validators.max(12),
     ]),
-    loraList: new FormControl<LoraGenerationOption[]>([]),
+    loraList: new FormControl<LoraGenerationOption[]>([], [
+      Validators.maxLength(5),
+    ]),
   });
   private readonly isBrowser: boolean;
 
@@ -231,11 +258,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     private readonly messageService: MessageService,
     private readonly translator: TranslatorService,
     private readonly httpClient: HttpClient,
-    private readonly imageStorage: DataStorageManagerService,
+    private readonly dataStorage: DataStorageManagerService,
     private readonly hordeRepoData: HordeRepoDataService,
     private readonly generationOptionsValidator: GenerationOptionsValidatorService,
     private readonly modalService: ModalService,
-    private readonly view: ViewContainerRef,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -248,31 +274,63 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
     // for these two we need even the initial values, that's why there are multiple listeners
     this.form.valueChanges.subscribe(changes => {
-      if (changes.prompt) {
+      if (typeof changes.prompt === 'string') {
         this.currentPrompt.set(changes.prompt);
       }
-      if (changes.negativePrompt) {
+      if (typeof changes.negativePrompt === 'string') {
         this.currentNegativePrompt.set(changes.negativePrompt);
       }
     });
 
-    this.form.patchValue(await this.database.getGenerationOptions());
+    const storage = await this.dataStorage.currentStorage;
+    const storedOptions = await storage.getGenerationOptions();
+    this.form.patchValue(storedOptions);
+    this.form.patchValue({
+      faceFixers: getFaceFixers(storedOptions.postProcessors),
+      upscaler: getUpscalers(storedOptions.postProcessors)[0] ?? null,
+      genericPostProcessors: getGenericPostProcessors(storedOptions.postProcessors),
+    });
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
-    this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
-    this.form.valueChanges.subscribe(async changes => {
-      await this.database.storeGenerationOptions(this.formAsOptions);
+    if (this.form.valid) {
+      this.costCalculator.calculate(this.formAsOptionsStyled).then(result => {
+        this.kudosCost.set(result);
+      });
+    }
+    this.form.valueChanges.pipe(
+      startWith(this.form.value),
+      pairwise(),
+    ).subscribe(async changeSet => {
+      const changes = changeSet[1];
+      const old = changeSet[0];
+
       this.kudosCost.set(null);
       if (changes.model) {
         this.currentModelName.set(changes.model);
         this.validationErrors.set(await this.generationOptionsValidator.getModelValidationStatus(this.formAsOptions, changes.model));
       }
+      if (changes.model !== old.model) {
+        await this.database.removeSetting('lora_bases_modified');
+      }
     });
     this.form.valueChanges.pipe(
       debounceTime(400),
-    ).subscribe(async changes => {
-      this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
-      if (this.kudosCost() === null) {
-        await this.messageService.error(this.translator.get('app.error.kudos_calculation'));
+      startWith(this.form.value),
+      pairwise(),
+    ).subscribe(async changeSet => {
+      const changes = changeSet[1];
+      const old = changeSet[0];
+
+      if (this.form.valid) {
+        this.kudosCost.set(await this.costCalculator.calculate(this.formAsOptionsStyled));
+        if (this.kudosCost() === null) {
+          await this.messageService.error(this.translator.get('app.error.kudos_calculation'));
+        }
+      } else {
+        this.kudosCost.set(0);
+      }
+
+      if (!_.isMatch(changes, old)) {
+        await storage.storeGenerationOptions(this.formAsOptions);
       }
     });
     this.availableModels.set(await toPromise(this.hordeRepoData.getModelsConfig()));
@@ -383,6 +441,17 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
   private get formAsOptions(): GenerationOptions {
     const value = this.form.value;
+    if (<string>value.upscaler === 'null') {
+      value.upscaler = null;
+    }
+
+    let postProcessors: PostProcessor[] = getFaceFixers(value.faceFixers ?? []);
+    if (value.upscaler) {
+      postProcessors.push(value.upscaler);
+    }
+    postProcessors = postProcessors.concat(value.genericPostProcessors ?? []);
+    postProcessors = postProcessors.filter((processor, index) => postProcessors.indexOf(processor) === index);
+
     return {
       prompt: value.prompt ?? '',
       negativePrompt: value.negativePrompt ?? null,
@@ -394,7 +463,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       steps: value.steps ?? 30,
       model: value.model ?? '',
       karras: value.karras ?? true,
-      postProcessors: value.postProcessors?.map(value => <PostProcessor>value) ?? [],
+      postProcessors: postProcessors,
       seed: value.seed || null,
       hiresFix: value.hiresFix ?? false,
       faceFixerStrength: value.faceFixerStrength ?? 0.75,
@@ -454,7 +523,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       model: generations[0].model,
       seed: generations[0].seed,
     };
-    const storage = await this.imageStorage.currentStorage;
+    const storage = await this.dataStorage.currentStorage;
     await storage.storeImage(storeData);
     await this.database.removeJobMetadata(metadata);
   }
@@ -471,7 +540,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   }
 
   public async openModal(modal: TemplateRef<any>) {
-    this.modalService.open(this.view, modal);
+    this.modalService.open(modal);
   }
 
   public async applyStyleDirectly(): Promise<void> {
@@ -481,6 +550,24 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
   public async applyStyle(style: EnrichedPromptStyle): Promise<void> {
     this.chosenStyle.set(style);
-    await this.costCalculator.calculate(this.formAsOptionsStyled);
+    if (this.form.valid) {
+      await this.costCalculator.calculate(this.formAsOptionsStyled);
+    }
+  }
+
+  public async removeLora(modelId: number): Promise<void> {
+    const loras = this.form.value.loraList ?? [];
+    this.form.patchValue({
+      loraList: loras.filter(lora => lora.id !== modelId),
+    });
+  }
+
+  public async addLora(lora: LoraGenerationOption) {
+    const loras = this.form.value.loraList ?? [];
+    loras.push(lora);
+    this.form.patchValue({
+      loraList: loras,
+    });
+    await this.modalService.close();
   }
 }

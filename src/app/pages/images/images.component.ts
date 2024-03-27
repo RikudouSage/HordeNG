@@ -1,5 +1,6 @@
 import {
-  Component, computed,
+  Component,
+  computed,
   Inject,
   OnInit,
   PLATFORM_ID,
@@ -10,7 +11,7 @@ import {
 } from '@angular/core';
 import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
-import {isPlatformBrowser} from "@angular/common";
+import {AsyncPipe, isPlatformBrowser} from "@angular/common";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {StoredImage} from "../../types/db/stored-image";
 import {TranslocoPipe} from "@ngneat/transloco";
@@ -20,6 +21,8 @@ import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {DataStorage} from "../../services/image-storage/data-storage";
 import {DatabaseService} from "../../services/database.service";
 import {PostProcessor} from "../../types/horde/post-processor";
+import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -33,7 +36,10 @@ interface StoredImageWithLink extends StoredImage {
     LoaderComponent,
     TranslocoPipe,
     FormatNumberPipe,
-    YesNoComponent
+    YesNoComponent,
+    LoraNamePipe,
+    AsyncPipe,
+    LoraTextRowComponent
   ],
   templateUrl: './images.component.html',
   styleUrl: './images.component.scss'
@@ -122,16 +128,16 @@ export class ImagesComponent implements OnInit {
   }
 
   public async openModal(modal: TemplateRef<Element>): Promise<void> {
-    this.modalService.open(this.view, modal);
+    this.modalService.open(modal);
   }
 
   public async deleteImage(image: StoredImageWithLink): Promise<void> {
     this.loading.set(true);
 
+    await this.modalService.close();
     const storage = await this.storageManager.currentStorage;
     await storage.deleteImage(image);
     URL.revokeObjectURL(image.link);
-    await this.modalService.close();
     await this.loadData(storage);
 
     this.loading.set(false);
@@ -147,7 +153,9 @@ export class ImagesComponent implements OnInit {
   }
 
   public async sendToTxt2Img(image: StoredImageWithLink): Promise<void> {
-    await this.database.storeGenerationOptions(image);
+    const storage = await this.storageManager.currentStorage;
+    await storage.storeGenerationOptions(image);
+    await this.modalService.close();
     await this.router.navigateByUrl('/generate');
   }
 }

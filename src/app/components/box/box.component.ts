@@ -1,9 +1,25 @@
-import {Component, input, InputSignal, OnInit, signal, WritableSignal} from '@angular/core';
+import {Component, input, InputSignal, OnInit, output, signal, WritableSignal} from '@angular/core';
+import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
+import {Resolvable} from "../../helper/resolvable";
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {ToObservablePipe} from "../../pipes/to-observable.pipe";
+import {AsyncPipe} from "@angular/common";
+
+export interface BoxButton {
+  icon: IconDefinition;
+  enabled: Resolvable<boolean>;
+  action: (event: Event) => void;
+  title: Resolvable<string>;
+}
 
 @Component({
   selector: 'app-box',
   standalone: true,
-  imports: [],
+  imports: [
+    FaIconComponent,
+    ToObservablePipe,
+    AsyncPipe
+  ],
   templateUrl: './box.component.html',
   styleUrl: './box.component.scss'
 })
@@ -12,10 +28,15 @@ export class BoxComponent implements OnInit {
   public collapsible: InputSignal<boolean> = input(false);
   public collapsedByDefault: InputSignal<boolean> = input(true);
 
-  public collapsed: WritableSignal<boolean> = signal(true);
+  public isCollapsed: WritableSignal<boolean> = signal(true);
+
+  public buttons = input<BoxButton[]>([]);
+
+  public collapsed = output<void>();
+  public expanded = output<void>();
 
   public ngOnInit(): void {
-    this.collapsed.set(this.collapsedByDefault());
+    this.isCollapsed.set(this.collapsedByDefault());
   }
 
   public toggleCollapsed(): void {
@@ -23,6 +44,11 @@ export class BoxComponent implements OnInit {
       return;
     }
 
-    this.collapsed.update(value => !value);
+    this.isCollapsed.update(value => !value);
+    if (this.isCollapsed()) {
+      this.collapsed.emit();
+    } else {
+      this.expanded.emit();
+    }
   }
 }

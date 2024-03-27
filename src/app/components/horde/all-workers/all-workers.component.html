@@ -1,0 +1,11 @@
+<app-box [title]="'app.workers.horde_workers' | transloco" [collapsible]="true" (expanded)="loadAllWorkers()" (collapsed)="pauseWorkerUpdates()">
+  @if (workers() === null) {
+    <app-loader />
+  } @else {
+    <div class="workers">
+      @for (worker of workers(); track worker.id) {
+        <app-worker-detail [worker]="worker" [collapsible]="true" [collapsedByDefault]="true" />
+      }
+    </div>
+  }
+</app-box>

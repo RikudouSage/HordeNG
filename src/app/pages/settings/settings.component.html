@@ -83,6 +83,12 @@
               >{{'app.settings.google_drive.authorize' | transloco}}</button>
 
           }
+        } @else if (form.controls.storage.value === 'dropbox') {
+          <div class="form-group">
+            <!--suppress XmlInvalidId -->
+            <label for="inputDropboxAccessKey">{{'app.settings.dropbox.access_key' | transloco}}</label>
+            <app-toggleable-password-input formControlName="dropbox_accessKey" inputId="inputDropboxAccessKey" />
+          </div>
         }
 
         <button class="btn btn-primary" type="submit" [disabled]="!form.valid">{{'app.save' | transloco}}</button>

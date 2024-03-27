@@ -1,0 +1,19 @@
+{
+  "pencil sketch": {
+    "prompt": "pencil sketch of a {p}###{np}",
+    "model": "Deliberate 3.0",
+    "steps": 20,
+    "cfg_scale": 7,
+    "sampler_name": "k_dpmpp_sde",
+    "width": 512,
+    "height": 768,
+    "loras": [
+      {
+        "name": "110842",
+        "is_version": true,
+        "model": 1,
+        "clip": 1
+      }
+    ]
+  }
+}

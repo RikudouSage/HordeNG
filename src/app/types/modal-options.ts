@@ -17,4 +17,5 @@ export interface ModalOptions {
     height?: string;
     maxHeight?: string;
   };
+  zIndex?: number;
 }

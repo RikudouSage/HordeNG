@@ -1,0 +1,13 @@
+@if (lora().strengthModel === undefined && lora().strengthClip === undefined) {
+  {{lora().id | loraName:(lora().isVersionId ?? false) | async }}@if (comma()){,}
+} @else if (lora().strengthModel !== undefined && lora().strengthClip !== undefined) {
+  {{lora().id | loraName:(lora().isVersionId ?? false) | async }}
+  ({{'app.generate.lora.model_strength' | transloco}}: {{lora().strengthModel! | formatNumber}},
+  {{'app.generate.lora.clip_strength' | transloco}}: {{lora().strengthClip! | formatNumber}})@if (comma()){,}
+} @else if (lora().strengthModel !== undefined) {
+  {{lora().id | loraName:(lora().isVersionId ?? false) | async }}
+  ({{'app.generate.lora.model_strength' | transloco}}: {{lora().strengthModel! | formatNumber}})@if (comma()){,}
+} @else if (lora().strengthClip !== undefined) {
+  {{lora().id | loraName:(lora().isVersionId ?? false) | async }},
+  ({{'app.generate.lora.clip_strength' | transloco}}: {{lora().strengthClip! | formatNumber}})@if (comma()){,}
+}

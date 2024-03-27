@@ -2,318 +2,36 @@
   <app-loader />
 } @else {
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12 text-center">
       <h1><transloco key="app.logged_in_as" [params]="{username: currentUser()!.username}" /></h1>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-12 flex smallBoxGap">
-      <app-small-box [title]="'app.kudos' | transloco" color="#67c23a" [icon]="kudosIcon()">
-        {{currentUser()!.kudos | formatNumber}}
-      </app-small-box>
-      <app-small-box [title]="'app.requested' | transloco" color="#f56c6c" [icon]="requestedIcon()">
-        {{currentUser()!.records.request.image | formatNumber}}
-      </app-small-box>
-      <app-small-box [title]="'app.generated' | transloco" color="#409eff" [icon]="generatedIcon()">
-        {{currentUser()!.records.fulfillment.image | formatNumber}}
-      </app-small-box>
-    </div>
+  <div class="row mt-2">
+    <app-current-user-status [currentUser]="currentUser()!" (refreshRequested)="refreshCurrentUser()" />
   </div>
-  <div class="row">
-    <div class="col-md-6">
-      <app-box [title]="'app.horde.status' | transloco">
-        <p>
-          <transloco key="app.horde.stats" [params]="{
-            requests: performanceStatus()!.queued_requests | formatNumber,
-            mps: performanceStatus()!.queued_megapixelsteps | formatNumber:2,
-            workers: performanceStatus()!.worker_count | formatNumber,
-            threads: performanceStatus()!.thread_count | formatNumber,
-          }" />
-        </p>
-        <p>
-          <transloco key="app.horde.stats_minute" [params]="{mps: performanceStatus()!.past_minute_megapixelsteps | formatNumber}"/>
-        </p>
-      </app-box>
+  <div class="row mt-2">
+    <div class="col-md-6 mr-1">
+      <app-horde-status />
     </div>
     <div class="col-md-6">
-      <app-box [title]="'app.workers.yours' | transloco">
-        @for (worker of workers(); track worker.id) {
-          <app-box title="{{worker.name}} ({{worker.online ? ('app.worker.online' | transloco) : ('app.worker.offline' | transloco)}})" [collapsible]="true" [collapsedByDefault]="true">
-            <table class="table key-value">
-              <tr>
-                <td>{{'app.worker.type' | transloco}}</td>
-                <td>{{worker.type}}</td>
-              </tr>
-              <tr>
-                <td>{{'app.worker.online' | transloco}}</td>
-                <td><app-yes-no [value]="worker.online" /></td>
-              </tr>
-              <tr>
-                <td>{{'app.worker.maintenance_mode' | transloco}}</td>
-                <td><app-yes-no [value]="worker.maintenance_mode" /></td>
-              </tr>
-              <tr>
-                <td>{{'app.worker.paused' | transloco}}</td>
-                <td><app-yes-no [value]="worker.paused" /></td>
-              </tr>
-              <tr>
-                <td>{{'app.worker.requests_fulfilled' | transloco}}</td>
-                <td>{{worker.requests_fulfilled | formatNumber}}</td>
-              </tr>
-              <tr>
-                <td>{{'app.worker.kudos_earned' | transloco}}</td>
-                <td>{{worker.kudos_rewards | formatNumber}}</td>
-              </tr>
-              <tr>
-                <td class="font-weight-normal">{{'app.worker.kudos_generated' | transloco}}</td>
-                <td>{{worker.kudos_details.generated | formatNumber}}</td>
-              </tr>
-              <tr>
-                <td class="font-weight-normal">{{'app.worker.kudos_uptime' | transloco}}</td>
-                <td>{{worker.kudos_details.uptime | formatNumber}}</td>
-              </tr>
-              <tr>
-                <td>{{'app.worker.threads' | transloco}}</td>
-                <td>{{worker.threads | formatNumber}}</td>
-              </tr>
-              <tr>
-                <td>{{'app.worker.uptime' | transloco}}</td>
-                <td>{{worker.uptime | printSeconds | async}}</td>
-              </tr>
-              @if (worker.type === WorkerType.image) {
-                <tr>
-                  <td>{{'app.worker.image_size' | transloco}}</td>
-                  <td>
-                    {{'app.unit.px' | transloco:{value: worker.max_pixels | formatNumber} }}
-                    ({{worker.max_pixels | mathSqrt | formatNumber}}x{{worker.max_pixels | mathSqrt | formatNumber}})
-                  </td>
-                </tr>
-                <tr>
-                  <td>{{'app.worker.mps_generated' | transloco}}</td>
-                  <td>{{'app.unit.mps' | transloco:{value: worker.megapixelsteps_generated | formatNumber} }}</td>
-                </tr>
-                <tr>
-                  <td>{{'app.worker.nsfw' | transloco}}</td>
-                  <td><app-yes-no [value]="worker.nsfw" /></td>
-                </tr>
-                <tr>
-                  <td>{{'app.worker.img2img' | transloco}}</td>
-                  <td><app-yes-no [value]="worker.img2img" /></td>
-                </tr>
-                <tr>
-                  <td>{{'app.worker.painting' | transloco}}</td>
-                  <td><app-yes-no [value]="worker.painting" /></td>
-                </tr>
-                <tr>
-                  <td>{{'app.worker.post_processing' | transloco}}</td>
-                  <td><app-yes-no [value]="worker['post-processing']" /></td>
-                </tr>
-                <tr>
-                  <td>{{'app.worker.lora' | transloco}}</td>
-                  <td><app-yes-no [value]="worker.lora" /></td>
-                </tr>
-                <tr>
-                  <td>{{'app.worker.models' | transloco}} ({{worker.models.length | formatNumber}})</td>
-                  <td>
-                    <ul>
-                      @for (model of worker.models; track model) {
-                        <li>{{model}}</li>
-                      } @empty {
-                        <li>{{'app.worker.no_models' | transloco}}</li>
-                      }
-                    </ul>
-                  </td>
-                </tr>
-              } @else if (worker.type === WorkerType.text) {
-                <tr>
-                  <td>{{'app.worker.max_length' | transloco}}</td>
-                  <td>{{worker.max_length | formatNumber}}</td>
-                </tr>
-                <tr>
-                  <td>{{'app.worker.max_context_length' | transloco}}</td>
-                  <td>{{worker.max_context_length | formatNumber}}</td>
-                </tr> <tr>
-                  <td>{{'app.worker.tokens_generated' | transloco}}</td>
-                  <td>{{worker.tokens_generated | formatNumber}}</td>
-                </tr>
-              }
-            </table>
-          </app-box>
-        } @empty {
-          <p>{{'app.workers.no_workers' | transloco}}</p>
-        }
-      </app-box>
+      <app-your-workers [currentUser]="currentUser()!" />
     </div>
   </div>
   @if (!isAnonymous() && !isSharedKey()) {
     <div class="row mt-2">
       <div class="col-md-6 mr-1">
-        <app-box [collapsible]="true" [title]="'app.transfer_kudos' | transloco">
-          <form [formGroup]="transferKudosForm" (ngSubmit)="transferKudos()">
-            <div class="form-group">
-              <label for="inputTransferTargetUser">{{'app.transfer_kudos.target_user' | transloco}}</label>
-              <input class="form-control" type="text" id="inputTransferTargetUser" formControlName="targetUser" aria-describedby="inputTransferTargetUserDescription" />
-              <small id="inputTransferTargetUserDescription">
-                <transloco key="app.transfer_kudos.target_user.description" [params]="{example: currentUser()!.username}" />
-              </small>
-            </div>
-            <div class="form-group">
-              <label for="inputTransferAmount">{{'app.transfer_kudos.amount' | transloco}}</label>
-              <input class="form-control" type="number" id="inputTransferAmount" min="1" step="1" [max]="currentUser()?.kudos ?? 0" formControlName="amount" />
-            </div>
-
-            <button class="btn btn-primary" type="submit" [disabled]="!transferKudosForm.valid">{{'app.transfer_kudos.transfer' | transloco}}</button>
-          </form>
-        </app-box>
+        <app-transfer-kudos [currentUser]="currentUser()!" (kudosTransferred)="refreshCurrentUser()" />
       </div>
       <div class="col-md-6">
-        <app-box [collapsible]="true" [title]="'app.shared_keys' | transloco" class="position-relative" #box>
-          @if (sharedKeyDetails().length !== sharedKeys().length && !box.collapsed()) {
-            <app-loader />
-          } @else {
-            @for (sharedKey of sharedKeyDetails(); track sharedKey.id) {
-              <app-box [collapsible]="true" [title]="sharedKey.name" class="shared-key-box">
-                <table class="table key-value">
-                  <tr>
-                    <td>{{'app.shared_key.key' | transloco}}</td>
-                    <td>
-                      {{sharedKey.id}}
-                      <app-copy-button class="ml-1" [text]="sharedKey.id" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>{{'app.shared_key.owner' | transloco}}</td>
-                    <td>
-                      {{sharedKey.username}}
-                      @if (sharedKey.username === currentUser()?.username) {
-                        <small>
-                          ({{'app.shared_key.owner.you' | transloco}})
-                        </small>
-                      }
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>{{'app.shared_key.kudos_budget' | transloco}}</td>
-                    <td>
-                      @if (sharedKey.kudos + sharedKey.utilized > -1) {
-                        {{sharedKey.kudos + sharedKey.utilized | formatNumber}}
-                      } @else {
-                        <code>{{'app.not_applicable' | transloco}}</code>
-                      }
-                    </td>
-                  </tr>
-                  @if (sharedKey.kudos + sharedKey.utilized > -1) {
-                    <tr>
-                      <td class="font-weight-normal">{{'app.shared_key.kudos_remaining' | transloco}}</td>
-                      <td>
-                        {{sharedKey.kudos | formatNumber}}
-                        <small>
-                          ({{(sharedKey.kudos / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
-                        </small>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="font-weight-normal">{{'app.shared_key.kudos_used' | transloco}}</td>
-                      <td>
-                        {{sharedKey.utilized | formatNumber}}
-                        <small>
-                          ({{(sharedKey.utilized / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
-                        </small>
-                      </td>
-                    </tr>
-                  }
-                  <tr>
-                    <td>{{'app.shared_key.expires' | transloco}}</td>
-                    <td>
-                      @if (sharedKey.expiry === undefined) {
-                        <code>{{'app.not_applicable' | transloco}}</code>
-                      } @else {
-                        {{sharedKey.expiry | formatDatetime}}
-                      }
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>{{'app.shared_key.max_image_pixels' | transloco}}</td>
-                    <td>
-                      @if (sharedKey.max_image_pixels >= 0) {
-                        {{sharedKey.max_image_pixels | formatNumber}}
-                      } @else {
-                        <code>{{'app.not_applicable' | transloco}}</code>
-                      }
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>{{'app.shared_key.max_image_steps' | transloco}}</td>
-                    <td>
-                      @if (sharedKey.max_image_steps >= 0) {
-                        {{sharedKey.max_image_steps | formatNumber}}
-                      } @else {
-                        <code>{{'app.not_applicable' | transloco}}</code>
-                      }
-                    </td>
-                  </tr>
-<!--                  <tr>-->
-<!--                    <td>{{'app.shared_key.max_text_tokens' | transloco}}</td>-->
-<!--                    <td>-->
-<!--                      @if (sharedKey.max_text_tokens >= 0) {-->
-<!--                        {{sharedKey.max_text_tokens | formatNumber}}-->
-<!--                      } @else {-->
-<!--                        <code>{{'app.not_applicable' | transloco}}</code>-->
-<!--                      }-->
-<!--                    </td>-->
-<!--                  </tr>-->
-                </table>
-                <button class="btn btn-danger mt-1" (click)="removeSharedKey(sharedKey)">
-                  <fa-icon [icon]="removeIcon()" />
-                  {{'app.delete' | transloco}}
-                </button>
-              </app-box>
-            } @empty {
-              <p>{{'app.shared_keys.no_key' | transloco}}</p>
-            }
-          }
-
-          <div class="row mt-1">
-            <button class="btn btn-primary mr-05" (click)="openModal(createKeyModal)">{{'app.shared_keys.create' | transloco}}</button>
-          </div>
-        </app-box>
+        <app-shared-keys [currentUser]="currentUser()!" (sharedKeyRemoved)="onSharedKeyRemoved($event)" (sharedKeyCreated)="onSharedKeyCreated($event)" />
       </div>
     </div>
   }
-}
 
-<ng-template #createKeyModal>
-  <div class="row create-key-row">
+  <div class="row mt-2">
     <div class="col-md-12">
-      <form [formGroup]="createSharedKeyForm" (ngSubmit)="createSharedKey()">
-        <div class="form-group">
-          <label for="inputSharedKeyName">{{'app.shared_keys.create.name' | transloco}}</label>
-          <input type="text" class="form-control" formControlName="name" id="inputSharedKeyName" />
-        </div>
-        <div class="form-group">
-          <label for="inputSharedKeyKudosLimit">{{'app.shared_keys.create.kudos_limit' | transloco}}</label>
-          <input type="number" min="-1" class="form-control" formControlName="kudosLimit" id="inputSharedKeyKudosLimit" />
-          <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
-        </div>
-        <div class="form-group">
-          <label for="inputSharedKeyExpiry">{{'app.shared_keys.create.expiry' | transloco}}</label>
-          <input type="number" min="-1" class="form-control" formControlName="expiry" id="inputSharedKeyExpiry" />
-          <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
-        </div>
-        <div class="form-group">
-          <label for="inputSharedKeyMaxImagePixels">{{'app.shared_keys.create.max_image_pixels' | transloco}}</label>
-          <input type="number" [step]="createSharedKeyForm.controls.maxImagePixels.value! < 0 ? 1 : 64" max="4194304" class="form-control" formControlName="maxImagePixels" id="inputSharedKeyMaxImagePixels" />
-          <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
-        </div>
-        <div class="form-group">
-          <label for="inputSharedKeyMaxImageSteps">{{'app.shared_keys.create.max_image_steps' | transloco}}</label>
-          <input type="number" min="-1" max="500" class="form-control" formControlName="expiry" id="inputSharedKeyMaxImageSteps" />
-          <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
-        </div>
-
-        <button type="submit" class="btn btn-primary" [disabled]="!createSharedKeyForm.valid">{{'app.shared_keys.create.create' | transloco}}</button>
-      </form>
+      <app-all-workers />
     </div>
   </div>
-</ng-template>
+}
 
