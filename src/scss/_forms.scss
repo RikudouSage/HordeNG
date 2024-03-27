@@ -1,7 +1,8 @@
 @import "colors";
+@import "../scss/breakpoints";
 
 .form-group {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 
   & > * {
     display: block;
@@ -9,6 +10,22 @@
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  label {
+    @include mediaMax($large) {
+    font-size: 12px;
+    }
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
   }
 }
 
@@ -34,7 +51,7 @@
   color: $bodyBackground;
   font-weight: bold;
   padding: 5px 15px;
-  border-radius: 2px;
+  border-radius: 4px;
   cursor: pointer;
 
   &[disabled] {
@@ -57,6 +74,7 @@
 .btn-long {
   display: block;
   width: 100%;
+  padding: 15px;
 }
 
 label:has(+ [required]), label.required {
@@ -67,16 +85,25 @@ label:has(+ [required]), label.required {
   }
 }
 
+textarea {
+  max-width: 718px;
+  min-width: 718px;
+  min-height: 100px;
+  max-height: 300px;
+  font-family: inherit;
+
+  @include mediaMax($extraLarge) {
+    max-width: 550px;
+    min-width: 550px;
+  }
+
+  @include mediaMax($large) {
+    max-width: 100%;
+    min-width: 100%;
+  }
+}
+
 label {
   font-weight: bold;
 }
 
-textarea {
-  font-family: inherit;
-
-  &.form-control {
-    line-height: 1.5;
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
-}

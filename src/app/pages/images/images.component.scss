@@ -1,7 +1,16 @@
 @use "sass:math";
 @import "../../../scss/colors";
+@import "../../../scss/breakpoints";
+
+:host {
+ min-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
 
 .pagination {
+  margin: 20px 0;
+
   a {
     text-decoration: none;
     color: $mainTextColor;
@@ -23,15 +32,19 @@
 .gallery {
   display: flex;
   flex-wrap: wrap;
+  gap: 5px;
 
   & > div {
+    display: inline-flex;
     flex: calc(math.div(100%, 6) - 4.5px) 0 0;
-    margin-right: 5px;
-    margin-top: 1px;
-    margin-bottom: 0;
+    margin: 0;
 
-    &:nth-child(6n) {
-      margin-right: 0;
+    @include mediaMax($large) {
+      flex: calc(math.div(100%, 4) - 4.5px) 0 0;
+    }
+
+    @include mediaMax($small) {
+      flex: calc(math.div(100%, 3) - 4.5px) 0 0;
     }
 
     img {
@@ -55,9 +68,24 @@
   .generation-parameters {
     margin-top: 2vh;
     margin-bottom: 2vh;
+    width: 100%;
 
     p {
-      margin-bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 14px;
+
+      strong {
+        text-align: left;
+      }
+
+      &:last-child {
+        margin-top: 20px;
+      }
     }
   }
 
@@ -73,4 +101,16 @@
       }
     }
   }
+}
+
+.row {
+  width: 100%;
+
+  &:nth-of-type(2) {
+    order: -1;
+  }
+}
+
+.btn {
+  padding: 10px 15px;
 }

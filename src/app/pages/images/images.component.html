@@ -51,6 +51,8 @@
                 <p>{{'app.generate.sampler' | transloco}}: <strong>{{image.sampler}}</strong></p>
                 <p>
                   {{'app.generate.karras' | transloco}}: <strong><app-yes-no [value]="image.karras" /></strong>
+                </p>
+                <p>
                   @if ($any(image.hiresFix) !== undefined) {
                     {{'app.generate.hires_fix' | transloco}}: <strong><app-yes-no [value]="image.hiresFix" /></strong>
                   }
@@ -65,6 +67,8 @@
                 @if (image.postProcessors.length) {
                   <p>
                     {{'app.generate.post_processors' | transloco}}: <strong>{{image.postProcessors.join(', ')}}</strong>
+                  </p>
+                  <p>
                     @if ($any(image.faceFixerStrength) !== undefined && (image.postProcessors.includes(PostProcessor.GFPGAN) || image.postProcessors.includes(PostProcessor.CodeFormers))) {
                       {{'app.generate.face_fixer_strength' | transloco}}: <strong>{{image.faceFixerStrength | formatNumber}}</strong>
                     }
