@@ -1,0 +1,35 @@
+name: Delete Dev Version
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [closed]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GitHub Slug Action
+        uses: rlespinasse/github-slug-action@v4
+      - name: Generate SLS Stage
+        id: generate_sls_stage
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if (context.payload.ref == 'refs/heads/master') {
+              return 'prod';
+            }
+            return process.env.GITHUB_REF_NAME_SLUG_URL;
+      - name: Copy files to S3
+        env:
+          STACK_NAME: HordeNG-${{ env.GITHUB_REF_NAME_SLUG_URL }}
+          AWS_REGION: eu-central-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          - export BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Bucket'].OutputValue" --output=text)
+          - export DEPLOYMENT_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='ServerlessDeploymentBucketName'].OutputValue" --output=text)
+          - aws s3 rm s3://$BUCKET_NAME --recursive
+          - aws s3 rm s3://$DEPLOYMENT_BUCKET_NAME --recursive
+          - aws cloudformation delete-stack --stack-name $STACK_NAME
