@@ -55,7 +55,7 @@ jobs:
         run: ./node_modules/.bin/ng build
       - name: Copy files to S3
         env:
-          STACK_NAME: HordeNG-${{ env.GITHUB_REF_NAME_SLUG_URL }}
+          STACK_NAME: HordeNG-${{ steps.generate_sls_stage.outputs.result }}
           AWS_REGION: eu-central-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -64,7 +64,7 @@ jobs:
           aws s3 sync dist/horde-gui/browser s3://$BUCKET --delete
       - name: Create invalidation
         env:
-          STACK_NAME: HordeNG-${{ env.GITHUB_REF_NAME_SLUG_URL }}
+          STACK_NAME: HordeNG-${{ steps.generate_sls_stage.outputs.result }}
           AWS_REGION: eu-central-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -73,6 +73,7 @@ jobs:
           aws cloudfront create-invalidation --distribution-id $CDN_ID  --paths "/*" 2>&1 > /dev/null
       - name: Post Link
         uses: thollander/actions-comment-pull-request@v2
+        if: github.event_name == 'pull_request'
         with:
           message: This pull request has been deployed to https://${{ steps.generate_domain_name.outputs.result }}
           comment_tag: post_link_comment
