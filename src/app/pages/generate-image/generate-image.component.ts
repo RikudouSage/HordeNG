@@ -62,6 +62,7 @@ import {getFaceFixers, getGenericPostProcessors, getUpscalers} from "../../helpe
 import _ from 'lodash';
 import {BaselineModel} from "../../types/sd-repo/baseline-model";
 import {AutoGrowDirective} from "../../directives/auto-grow.directive";
+import {SliderWithValueComponent} from "../../components/slider-with-value/slider-with-value.component";
 
 interface Result {
   width: number;
@@ -103,7 +104,8 @@ interface Result {
     LoraTextRowComponent,
     IsFaceFixerPipe,
     IsUpscalerPipe,
-    AutoGrowDirective
+    AutoGrowDirective,
+    SliderWithValueComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
