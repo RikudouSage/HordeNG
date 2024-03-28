@@ -2,4 +2,5 @@
   <input class="toggle-checkbox" type="checkbox" id="input{{random()}}" [checked]="value()" (change)="value.set(input.checked)" #input>
   <div class="toggle-switch"></div>
   <span class="toggle-label">{{description()}}</span>
+  <ng-content />
 </label>
