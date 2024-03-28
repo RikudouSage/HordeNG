@@ -6,6 +6,7 @@ import {PaginatedResult} from "../../types/paginated-result";
 import {CacheService} from "../cache.service";
 import {GenerationOptions} from "../../types/db/generation-options";
 import {DatabaseService} from "../database.service";
+import {fromByteArray, toByteArray} from "base64-js";
 
 export abstract class AbstractExternalDataStorage<TCredentials extends Credentials> implements DataStorage<TCredentials> {
   protected get BaseCacheKeys() {
@@ -154,5 +155,19 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
 
   public async storeGenerationOptions(options: GenerationOptions): Promise<void> {
     await this.storeOption('generation_options', options);
+  }
+
+  protected base64encode(string: string): string {
+    const encoder = new TextEncoder();
+    return fromByteArray(encoder.encode(string));
+  }
+
+  protected base64decode(string: string): string {
+    const decoder = new TextDecoder();
+    return decoder.decode(toByteArray(string));
+  }
+
+  protected isBase64encoded(string: string): boolean {
+    return /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/.test(string);
   }
 }
