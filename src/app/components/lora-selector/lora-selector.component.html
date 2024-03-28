@@ -40,6 +40,7 @@
     </div>
   } @else {
     @for (item of items(); track item.id) {
+      <p class="text-danger text-bold">{{'app.lora.broken' | transloco}}</p>
       <div class="row lora-row" [class.mb-1]="!$last">
         <div class="img mr-1">
           @if (item.modelVersions.length && item.modelVersions[0].images.length) {
