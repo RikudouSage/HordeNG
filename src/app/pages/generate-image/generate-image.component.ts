@@ -478,6 +478,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       allowDowngrade: value.allowDowngrade ?? false,
       clipSkip: value.clipSkip ?? 1,
       loraList: value.loraList ?? [],
+      styleName: this.chosenStyle()?.name ?? null,
     };
   }
 

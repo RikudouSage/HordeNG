@@ -31,6 +31,7 @@ export interface GenerationOptions {
   allowDowngrade: boolean;
   clipSkip: number;
   loraList: LoraGenerationOption[];
+  styleName: string | null;
 }
 
 export const DefaultGenerationOptions: GenerationOptions = {
@@ -55,4 +56,5 @@ export const DefaultGenerationOptions: GenerationOptions = {
   allowDowngrade: false,
   clipSkip: 1,
   loraList: [],
+  styleName: null,
 };

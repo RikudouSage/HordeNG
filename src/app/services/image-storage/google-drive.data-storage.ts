@@ -107,6 +107,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       loras: JSON.stringify(image.loraList),
       googleApiId: result.id,
       clipSkip: String(image.clipSkip),
+      styleName: String(image.styleName),
     };
 
     await this.storeOption(`image.metadata.${image.id}`, metadata);
@@ -174,6 +175,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
         nsfw: Boolean(Number(metadata['nsfw'] ?? 0)),
         allowDowngrade: Boolean(Number(metadata['allowDowngrade'] ?? 0)),
         clipSkip: Number(metadata['clipSkip'] ?? 0),
+        styleName: metadata['styleName'] || null,
       }
     }));
   }
