@@ -12,7 +12,7 @@
         <app-box [collapsible]="true" [title]="category">
           @for (style of stylesByCategory()[category]; track style.name) {
             <div class="prompt-style">
-              <div class="card mb-1" [class.collapsed]="collapsed()[style.name] ?? true">
+              <div class="card mb-1" [class.collapsed]="collapsed()[style.name] ?? true" (click)="loadLoraNames(style)">
                 <div class="card-header cursor-pointer" (click)="toggleCollapsed(style)">
                   <div class="prompt-style-name">{{ style.name }}</div>
                   <div class="prompt-style-model">{{ 'app.generate.model' | transloco }}: {{ style.model }}</div>
@@ -25,6 +25,18 @@
                   <strong>{{'app.generate.negative_prompt' | transloco}}</strong>:
                   <app-prompt-style-text [originalPrompt]="originalNegativePrompt() ?? ''" [stylePrompt]="style.prompt" [negative]="true" />
                   <br>
+
+                  @if (style.loras?.length) {
+                    <strong>{{'app.generate.lora_list' | transloco}}</strong>:
+                    @if (loraNames()[style.name]?.length) {
+                      <ul>
+                        @for (lora of loraNames()[style.name]!; track lora) {
+                          <li>{{lora}}</li>
+                        }
+                      </ul>
+                    }
+                    <br>
+                  }
 
                   <button class="btn btn-primary mt-1" (click)="useStyle(style)">{{'app.prompt_style.use' | transloco}}</button>
                 </div>
