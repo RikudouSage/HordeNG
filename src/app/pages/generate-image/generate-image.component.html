@@ -136,7 +136,7 @@
           }
         </div>
         <div class="form-group">
-          <label for="inputFaceFixers">{{'app.generate.face_fixers' | transloco}}</label>
+          <label for="inputFaceFixers">{{'app.generate.face_fixers' | transloco}} <app-tooltip [text]="'app.generate.help.face_fixers' | transloco" /></label>
           <select id="inputFaceFixers" multiple tom-select formControlName="faceFixers">
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
               @if (enumCase.value | isFaceFixer) {
@@ -148,12 +148,12 @@
         @if (form.value.faceFixers?.length) {
           <div class="form-group">
             <!--suppress XmlInvalidId -->
-            <label for="inputFaceFixerStrength">{{ 'app.generate.face_fixer_strength' | transloco }}</label>
+            <label for="inputFaceFixerStrength">{{ 'app.generate.face_fixer_strength' | transloco }} <app-tooltip [text]="'app.generate.help.face_fixer_strength' | transloco" /></label>
             <app-slider-with-value [min]="0" [max]="1" [step]="0.01" formControlName="faceFixerStrength" inputId="inputFaceFixerStrength" />
           </div>
         }
         <div class="form-group">
-          <label for="inputUpscaler">{{'app.generate.upscaler' | transloco}}</label>
+          <label for="inputUpscaler">{{'app.generate.upscaler' | transloco}} <app-tooltip [text]="'app.generate.help.upscaler' | transloco" /></label>
           <select id="inputUpscaler" tom-select formControlName="upscaler" [maxItems]="1">
             <option [value]="null">{{'app.select.empty_option' | transloco}}</option>
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
@@ -164,7 +164,7 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}}</label>
+          <label for="inputPostProcessors">{{'app.generate.post_processors' | transloco}} <app-tooltip [text]="'app.generate.help.post_processors' | transloco" /></label>
           <select id="inputPostProcessors" multiple tom-select formControlName="genericPostProcessors">
             @for (enumCase of PostProcessor | keyvalue; track enumCase.key) {
               @if (!(enumCase.value | isFaceFixer) && !(enumCase.value | isUpscaler)) {
@@ -174,37 +174,37 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="inputWidth">{{ 'app.generate.width' | transloco }}</label>
+          <label for="inputWidth">{{ 'app.generate.width' | transloco }} <app-tooltip [text]="'app.generate.help.width' | transloco" /></label>
           <input type="number" min="64" max="3072" step="64" formControlName="width" id="inputWidth"
                  class="form-control"/>
           <app-effective-value [value]="modifiedOptions()?.width" [original]="form.value.width" />
         </div>
         <div class="form-group">
-          <label for="inputHeight">{{ 'app.generate.height' | transloco }}</label>
+          <label for="inputHeight">{{ 'app.generate.height' | transloco }} <app-tooltip [text]="'app.generate.help.height' | transloco" /></label>
           <input type="number" min="64" max="3072" step="64" formControlName="height" id="inputHeight"
                  class="form-control"/>
           <app-effective-value [value]="modifiedOptions()?.height" [original]="form.value.height" />
         </div>
+<!--        <div class="form-group">-->
+          <!--suppress XmlInvalidId -->
+<!--          <label for="inputDenoisingStrength">{{ 'app.generate.denoising_strength' | transloco }} <app-tooltip [text]="'app.generate.help.denoising_strength' | transloco" /></label>-->
+<!--          <app-slider-with-value [min]="0.01" [max]="1" [step]="0.01" formControlName="denoisingStrength" inputId="inputDenoisingStrength" />-->
+<!--        </div>-->
         <div class="form-group">
           <!--suppress XmlInvalidId -->
-          <label for="inputDenoisingStrength">{{ 'app.generate.denoising_strength' | transloco }})</label>
-          <app-slider-with-value [min]="0.01" [max]="1" [step]="0.01" formControlName="denoisingStrength" inputId="inputDenoisingStrength" />
-        </div>
-        <div class="form-group">
-          <!--suppress XmlInvalidId -->
-          <label for="inputCfgScale">{{ 'app.generate.cfg_scale' | transloco }}</label>
+          <label for="inputCfgScale">{{ 'app.generate.cfg_scale' | transloco }} <app-tooltip [text]="'app.generate.help.cfg_scale' | transloco" /></label>
           <app-slider-with-value [min]="0" [max]="100" [step]="0.5" formControlName="cfgScale" inputId="inputCfgScale" />
           <app-effective-value [value]="modifiedOptions()?.cfgScale" [original]="form.value.cfgScale" />
         </div>
         <div class="form-group">
           <!--suppress XmlInvalidId -->
-          <label for="inputSteps">{{ 'app.generate.steps' | transloco }}</label>
+          <label for="inputSteps">{{ 'app.generate.steps' | transloco }} <app-tooltip [text]="'app.generate.help.steps' | transloco" /></label>
           <app-slider-with-value [min]="1" [max]="500" [step]="1" formControlName="steps" inputId="inputSteps" />
           <app-effective-value [value]="modifiedOptions()?.steps" [original]="form.value.steps" />
         </div>
         <div class="form-group">
           <!--suppress XmlInvalidId -->
-          <label for="inputClipSkip">{{ 'app.generate.clip_skip' | transloco }}</label>
+          <label for="inputClipSkip">{{ 'app.generate.clip_skip' | transloco }} <app-tooltip [text]="'app.generate.help.clip_skip' | transloco" /></label>
           <app-slider-with-value [min]="1" [max]="12" [step]="1" formControlName="clipSkip" inputId="inputClipSkip" />
         </div>
         <div class="row">
