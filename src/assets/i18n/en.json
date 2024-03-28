@@ -209,5 +209,11 @@
   "app.generate.no_commercial": "This model does not allow commercial use, please make sure you only use it in a non-commercial way.",
   "app.worker.pause": "Pause worker",
   "app.worker.resume": "Resume worker",
-  "app.lora.broken": "The CivitAI api is currently broken and you can only see the latest version of a LoRa. This needs to be fixed on CivitAI's side and there's nothing we can do."
+  "app.lora.broken": "The CivitAI api is currently broken and you can only see the latest version of a LoRa. This needs to be fixed on CivitAI's side and there's nothing we can do.",
+  "app.generate.help.prompt": "{{app.generate.prompt}} is where you describe what you want in the picture. Depending on the model it could be one or multiple sentences or, more commonly with Stable Diffusion, a comma separated list of keywords.",
+  "app.generate.help.negative_prompt": "Here you can (optionally) describe what you don't want the image to contain. The format is the same as for the {{app.generate.prompt}}. A good starting point is checking the {{app.generate.model}}'s homepage for any instructions by the author.",
+  "app.generate.help.seed": "The Seed is like a unique ID for your image. If you repeat all the parameters (including the same {{app.generate.seed}}), the AI will generate the same image every time. If you don’t provide a seed, the AI will use a random one, assuring that the image generated will always be unique, even if every other parameter remains the same.",
+  "app.generate.help.sampler": "Consider the {{app.generate.sampler}} as the engine that powers image generation. It's the technical tool that uses your given instructions to create the image. Different samplers follow different strategies to make this happen. There isn't a one-size-fits-all guide to choosing a sampler, so it's best to experiment and find one that works best for you.",
+  "app.generate.help.model": "The {{app.generate.model}} essentially shapes what the final image will look like. Each model has been trained with different images, which means they all interpret prompts differently and produce unique results. For the best outcomes, feel free to experiment with various models.",
+  "app.generate.help.lora_list": "{{app.generate.lora_list}} allow you to tweak the image with capabilities or concepts the base model itself might not have."
 }
