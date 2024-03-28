@@ -210,5 +210,6 @@
   "app.worker.pause": "Pause worker",
   "app.worker.resume": "Resume worker",
   "app.lora.broken": "The CivitAI api is currently broken and you can only see the latest version of a LoRa. This needs to be fixed on CivitAI's side and there's nothing we can do.",
-  "app.generate.style_name": "Style name"
+  "app.generate.style_name": "Style name",
+  "app.lora.unknown": "Unknown LoRA (failed to fetch from CivitAI)"
 }
