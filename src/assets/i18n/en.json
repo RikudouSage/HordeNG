@@ -224,5 +224,12 @@
   "app.generate.help.height": "The target height of the image, must be divisible by 64.",
   "app.generate.help.cfg_scale": "{{app.generate.cfg_scale}} controls how closely the AI follows your prompt. Lower values mean the AI is more creative, while higher values mean it will try to follow your prompt more closely.",
   "app.generate.help.steps": "{{app.generate.steps}} controls how many steps the AI takes to generate your image. In each step the image is generated according to your prompt while taking the image from the previous step into account. In simple terms, after each step it tries to improve the previous image to match your prompt more closely. Note that it can also go overboard and make the image worse. Around 20-30 steps is usually the lower threshold for a good image while going above 60 rarely makes sense.",
-  "app.generate.help.clip_skip": "{{app.generate.clip_skip}} controls how the AI interprets your prompt. In the background your text is converted to a numerical representation that the AI then works with. This parameters allows you to skip some layers, essentially making the prompt different from the point of view of the AI."
+  "app.generate.help.clip_skip": "{{app.generate.clip_skip}} controls how the AI interprets your prompt. In the background your text is converted to a numerical representation that the AI then works with. This parameters allows you to skip some layers, essentially making the prompt different from the point of view of the AI.",
+  "app.generate.help.karras": "{{app.generate.karras}} improves the sampler with a different noise generating function. I can't think of a simple explanation, sorry. Basically there's no reason to turn it off.",
+  "app.generate.help.nsfw": "If you check this, only workers that allow NSFW content will be able to pick up your request.",
+  "app.generate.help.slow_workers": "Toggle whether you want to include slow workers in your request. Costs more kudos if you don't.",
+  "app.generate.help.censor_nsfw": "Whether you want to censor NSFW images. Sometimes even SFW prompts may lead to NSFW results, this will attempt to censor them.",
+  "app.generate.help.trusted_workers": "When enabled, only users that are trusted can process your request. Generally not needed.",
+  "app.generate.help.allow_downgrade": "When enabled, your request can be downgraded to fit within the available criteria if you don't have enough kudos.",
+  "app.generate.help.hires_fix": "HiRes fix works by generating your image at a lower resolution and then upscaling it."
 }

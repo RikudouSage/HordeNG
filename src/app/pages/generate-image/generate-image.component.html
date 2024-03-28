@@ -210,27 +210,41 @@
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
-              <app-toggle-checkbox [description]="'app.generate.karras' | transloco" formControlName="karras" />
+              <app-toggle-checkbox [description]="'app.generate.karras' | transloco" formControlName="karras">
+                <app-tooltip [text]="'app.generate.help.karras' | transloco" />
+              </app-toggle-checkbox>
             </div>
             <div class="form-group">
-              <app-toggle-checkbox [description]="'app.generate.hires_fix' | transloco" formControlName="hiresFix" />
+              <app-toggle-checkbox [description]="'app.generate.hires_fix' | transloco" formControlName="hiresFix">
+                <app-tooltip [text]="'app.generate.help.hires_fix' | transloco" />
+              </app-toggle-checkbox>
             </div>
             <div class="form-group">
-              <app-toggle-checkbox [description]="'app.generate.nsfw' | transloco" formControlName="nsfw" />
+              <app-toggle-checkbox [description]="'app.generate.nsfw' | transloco" formControlName="nsfw">
+                <app-tooltip [text]="'app.generate.help.nsfw' | transloco" />
+              </app-toggle-checkbox>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group">
-              <app-toggle-checkbox [description]="'app.generate.slow_workers' | transloco" formControlName="slowWorkers" />
+              <app-toggle-checkbox [description]="'app.generate.slow_workers' | transloco" formControlName="slowWorkers">
+                <app-tooltip [text]="'app.generate.help.slow_workers' | transloco" />
+              </app-toggle-checkbox>
             </div>
             <div class="form-group">
-              <app-toggle-checkbox [description]="'app.generate.censor_nsfw' | transloco" formControlName="censorNsfw" />
+              <app-toggle-checkbox [description]="'app.generate.censor_nsfw' | transloco" formControlName="censorNsfw">
+                <app-tooltip [text]="'app.generate.help.censor_nsfw' | transloco" />
+              </app-toggle-checkbox>
             </div>
             <div class="form-group">
-              <app-toggle-checkbox [description]="'app.generate.trusted_workers' | transloco" formControlName="trustedWorkers" />
+              <app-toggle-checkbox [description]="'app.generate.trusted_workers' | transloco" formControlName="trustedWorkers">
+                <app-tooltip [text]="'app.generate.help.trusted_workers' | transloco" />
+              </app-toggle-checkbox>
             </div>
             <div class="form-group">
-              <app-toggle-checkbox [description]="'app.generate.allow_downgrade' | transloco" formControlName="allowDowngrade" />
+              <app-toggle-checkbox [description]="'app.generate.allow_downgrade' | transloco" formControlName="allowDowngrade">
+                <app-tooltip [text]="'app.generate.help.allow_downgrade' | transloco" />
+              </app-toggle-checkbox>
             </div>
           </div>
         </div>
