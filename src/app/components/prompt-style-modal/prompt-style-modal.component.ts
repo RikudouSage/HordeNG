@@ -7,6 +7,12 @@ import {TranslocoPipe} from "@ngneat/transloco";
 import {BoxComponent} from "../box/box.component";
 import {PromptStyleTextComponent} from "../prompt-style-text/prompt-style-text.component";
 import {ModalService} from "../../services/modal.service";
+import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {AsyncPipe} from "@angular/common";
+import {CivitAiService} from "../../services/civit-ai.service";
+import {catchError, map, Observable, of, tap} from "rxjs";
+import {CivitAiModel} from "../../types/civit-ai/civit-ai-model";
+import {TranslatorService} from "../../services/translator.service";
 
 @Component({
   selector: 'app-prompt-style-modal',
@@ -15,12 +21,16 @@ import {ModalService} from "../../services/modal.service";
     LoaderComponent,
     TranslocoPipe,
     BoxComponent,
-    PromptStyleTextComponent
+    PromptStyleTextComponent,
+    LoraNamePipe,
+    AsyncPipe
   ],
   templateUrl: './prompt-style-modal.component.html',
   styleUrl: './prompt-style-modal.component.scss'
 })
 export class PromptStyleModalComponent implements OnInit {
+  private loraNameCache: Record<string, CivitAiModel> = {};
+
   public originalPrompt = input.required<string>();
   public originalNegativePrompt = input.required<string | null>();
 
@@ -41,11 +51,15 @@ export class PromptStyleModalComponent implements OnInit {
   public collapsed = signal<{[style:string]: boolean | undefined}>({});
   public loading = signal(true);
 
+  public loraNames = signal<Record<string, string[] | undefined>>({});
+
   public styleChosen = output<EnrichedPromptStyle>();
 
   constructor(
     private readonly repoData: HordeRepoDataService,
     private readonly modalService: ModalService,
+    private readonly civitAi: CivitAiService,
+    private readonly translator: TranslatorService,
   ) {
   }
 
@@ -64,5 +78,37 @@ export class PromptStyleModalComponent implements OnInit {
   public async useStyle(style: EnrichedPromptStyle): Promise<void> {
     this.styleChosen.emit(style);
     await this.modalService.close();
+  }
+
+  public async loadLoraNames(style: EnrichedPromptStyle) {
+    const promises: Promise<string>[] = [];
+    for (const lora of (style.loras ?? [])) {
+      let observable: Observable<CivitAiModel>;
+      const cacheKey = lora.name + String(lora.is_version ?? false);
+      if (this.loraNameCache[cacheKey]) {
+        observable = of(this.loraNameCache[cacheKey]);
+      } else {
+        if (lora.is_version) {
+          observable = this.civitAi.getLoraByVersion(Number(lora.name));
+        } else {
+          observable = this.civitAi.getLoraDetail(Number(lora.name));
+        }
+        observable = observable.pipe(
+          tap (lora => this.loraNameCache[cacheKey] = lora),
+        );
+      }
+
+      promises.push(toPromise(observable.pipe(
+        map (lora => lora.name),
+        catchError(() => this.translator.get('app.lora.unknown')),
+      )));
+    }
+
+    const result = await Promise.all(promises);
+    this.loraNames.update(loraNames => {
+      loraNames[style.name] = result;
+
+      return {...loraNames};
+    });
   }
 }
