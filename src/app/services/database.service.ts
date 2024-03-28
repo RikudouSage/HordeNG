@@ -117,6 +117,7 @@ export class DatabaseService {
       allowDowngrade: <boolean>valuesMap['allowDowngrade'] ?? DefaultGenerationOptions.allowDowngrade,
       clipSkip: <number>valuesMap['clipSkip'] ?? DefaultGenerationOptions.clipSkip,
       loraList: <LoraGenerationOption[]>valuesMap['loraList'] ?? DefaultGenerationOptions.loraList,
+      styleName: <string>valuesMap['styleName'] ?? DefaultGenerationOptions.styleName,
     };
   }
 
