@@ -151,6 +151,19 @@ export class LoraSelectorComponent implements OnInit {
       this.items.update(items => [...items.concat(validModels)]);
     }
 
+    const modelUrlRegex = /https:\/\/civitai\.com\/models\/([0-9]+)/;
+    if (modelUrlRegex.test(value.query!)) {
+      const id = value.query!.match(modelUrlRegex)?.[1] ?? null;
+      if (id !== null) {
+        const model = await toPromise(this.civitAi.getLoraDetail(Number(id)).pipe(
+          catchError(() => of(null)),
+        ));
+        if (model !== null) {
+          this.items.update(items => [...items.concat([model])]);
+        }
+      }
+    }
+
     this.loading.set(false);
   }
 }
