@@ -209,7 +209,6 @@
   "app.generate.no_commercial": "This model does not allow commercial use, please make sure you only use it in a non-commercial way.",
   "app.worker.pause": "Pause worker",
   "app.worker.resume": "Resume worker",
-  "app.lora.broken": "The CivitAI api is currently broken and you can only see the latest version of a LoRa. This needs to be fixed on CivitAI's side and there's nothing we can do.",
   "app.generate.style_name": "Style name",
   "app.lora.unknown": "Unknown LoRA (failed to fetch from CivitAI)",
   "app.generate.help.prompt": "{{app.generate.prompt}} is where you describe what you want in the picture. Depending on the model it could be one or multiple sentences or, more commonly with Stable Diffusion, a comma separated list of keywords.",
