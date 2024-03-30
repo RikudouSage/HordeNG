@@ -17,6 +17,7 @@ import {CivitAiBaseModel} from "../../types/civit-ai/civit-ai-base-model";
 import {ModalService} from "../../services/modal.service";
 import {ConfigureLoraComponent, ConfigureLoraResult} from "../configure-lora/configure-lora.component";
 import {convertToCivitAiBase} from "../../helper/compare-model-bases";
+import {catchError, of} from "rxjs";
 
 interface LoraSearchForm {
   query: string;
@@ -135,6 +136,21 @@ export class LoraSelectorComponent implements OnInit {
       baseModels: value.baseModels ?? [],
     }));
     this.items.set(result.items);
+
+    if (!isNaN(Number(value.query!))) {
+      const models = await Promise.all([
+        toPromise(this.civitAi.getLoraByVersion(Number(value.query!)).pipe(
+          catchError(() => of(null)),
+        )),
+        toPromise(this.civitAi.getLoraDetail(Number(value.query!)).pipe(
+          catchError(() => of(null)),
+        )),
+      ]);
+
+      const validModels = <CivitAiModel[]>models.filter(model => model !== null);
+      this.items.update(items => [...items.concat(validModels)]);
+    }
+
     this.loading.set(false);
   }
 }
