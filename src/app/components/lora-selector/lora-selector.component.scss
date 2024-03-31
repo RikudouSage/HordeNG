@@ -34,4 +34,24 @@
 
 .loader-wrapper {
   height: 4vh;
+  margin: 1vh 0;
+}
+
+.pagination {
+  a {
+    text-decoration: none;
+    color: $mainTextColor;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 5px;
+
+    &.disabled {
+      color: $mainTextDisabledColor;
+      cursor: not-allowed;
+    }
+
+    &.active, &:hover {
+      color: $primaryColor;
+    }
+  }
 }

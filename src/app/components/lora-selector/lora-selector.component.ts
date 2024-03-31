@@ -17,7 +17,10 @@ import {CivitAiBaseModel} from "../../types/civit-ai/civit-ai-base-model";
 import {ModalService} from "../../services/modal.service";
 import {ConfigureLoraComponent, ConfigureLoraResult} from "../configure-lora/configure-lora.component";
 import {convertToCivitAiBase} from "../../helper/compare-model-bases";
-import {catchError, of} from "rxjs";
+import {catchError, of, pairwise, startWith} from "rxjs";
+import {RouterLink} from "@angular/router";
+import {LoraSearchResponse} from "../../types/civit-ai/lora-search-response";
+import _ from 'lodash';
 
 interface LoraSearchForm {
   query: string;
@@ -39,6 +42,7 @@ interface LoraSearchForm {
     AsyncPipe,
     ConfigureLoraComponent,
     KeyValuePipe,
+    RouterLink,
   ],
   templateUrl: './lora-selector.component.html',
   styleUrl: './lora-selector.component.scss'
@@ -46,6 +50,9 @@ interface LoraSearchForm {
 export class LoraSelectorComponent implements OnInit {
   protected readonly Number = Number;
   protected readonly CivitAiBaseModel = CivitAiBaseModel;
+
+  private lastPageReached = signal(false);
+  private cursors = signal<Array<null|string>>([null]);
 
   public selectedLoras = input.required<LoraGenerationOption[]>();
   public selectedModel = input.required<ModelConfiguration>();
@@ -65,6 +72,10 @@ export class LoraSelectorComponent implements OnInit {
 
     return result;
   });
+
+  public pages = signal<number[]>([1]);
+  public currentPage = signal(1);
+  public nextPageLinkEnabled = computed(() => this.currentPage() < Math.max(...this.pages()) || !this.lastPageReached());
 
   public loraSelected = output<LoraGenerationOption>();
 
@@ -95,7 +106,14 @@ export class LoraSelectorComponent implements OnInit {
       });
     }
 
-    this.form.valueChanges.subscribe(changes => {
+    this.form.valueChanges.pipe(
+      startWith(this.form.value),
+      pairwise(),
+    ).subscribe(changeSet => {
+      const [old, changes] = changeSet;
+      if (_.isEqual(old, changes)) {
+        return;
+      }
       this.database.setSetting({
         setting: 'lora_search_form',
         value: changes,
@@ -107,7 +125,8 @@ export class LoraSelectorComponent implements OnInit {
         });
       }
     });
-    await this.search();
+
+    await this.loadPage(1, null, true);
     this.loadingInitial.set(false);
   }
 
@@ -124,9 +143,9 @@ export class LoraSelectorComponent implements OnInit {
     });
   }
 
-  public async search() {
+  public async search(): Promise<LoraSearchResponse | null> {
     if (!this.form.valid) {
-      return;
+      return null;
     }
     this.loading.set(true);
     const value = this.form.value;
@@ -134,10 +153,15 @@ export class LoraSelectorComponent implements OnInit {
       query: value.query!,
       nsfw: value.nsfw!,
       baseModels: value.baseModels ?? [],
+      nextPageCursor: this.cursors()[this.pages().indexOf(this.currentPage())] ?? undefined,
     }));
     this.items.set(result.items);
+    if (this.cursors().length < this.pages().length + 1) {
+      this.cursors.update(cursors => [...cursors, result.metadata.nextCursor ?? null]);
+    }
 
-    if (!isNaN(Number(value.query!))) {
+    const numberRegex = /[0-9]+/;
+    if (numberRegex.test(value.query!)) {
       const models = await Promise.all([
         toPromise(this.civitAi.getLoraByVersion(Number(value.query!)).pipe(
           catchError(() => of(null)),
@@ -165,5 +189,36 @@ export class LoraSelectorComponent implements OnInit {
     }
 
     this.loading.set(false);
+
+    return result;
+  }
+
+  public async loadPage(page: number, event: Event | null = null, force: boolean = false): Promise<void> {
+    event?.preventDefault();
+
+    if (page === this.currentPage() && !force) {
+      return;
+    }
+    this.currentPage.set(page);
+    if (!this.pages().includes(page)) {
+      this.pages.update(pages => [...pages, page]);
+    }
+
+    const response = await this.search();
+    if (response === null) {
+      return;
+    }
+
+    if (!response.metadata.nextCursor) {
+      this.lastPageReached.set(true);
+    }
+  }
+
+  public async submitForm() {
+    this.lastPageReached.set(false);
+    this.cursors.set([null]);
+    this.pages.set([1]);
+    this.currentPage.set(1);
+    await this.search();
   }
 }

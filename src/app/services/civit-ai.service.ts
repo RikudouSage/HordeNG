@@ -11,6 +11,7 @@ interface SearchOptions {
   page?: number;
   nsfw?: boolean;
   baseModels?: CivitAiBaseModel[];
+  nextPageCursor?: string;
 }
 
 @Injectable({
@@ -33,7 +34,12 @@ export class CivitAiService {
     }
 
     const nsfwString = options.nsfw ? 'true' : 'false';
-    return this.httpClient.get<LoraSearchResponse>(`https://civitai.com/api/v1/models?types=LORA&types=LoCon&sort=Highest%20Rated&limit=20&page=${options.page}&nsfw=${nsfwString}&query=${options.query.toLowerCase()}${baseModelsString}`).pipe(
+    let url = `https://civitai.com/api/v1/models?types=LORA&types=LoCon&sort=Highest%20Rated&limit=20&page=${options.page}&nsfw=${nsfwString}&query=${options.query.toLowerCase()}${baseModelsString}`
+    if (options.nextPageCursor) {
+      url += `&cursor=${options.nextPageCursor}`;
+    }
+
+    return this.httpClient.get<LoraSearchResponse>(url).pipe(
       catchError((err): Observable<LoraSearchResponse> => {
         console.error(err);
         return of({items: [], metadata: {pageSize: 20, currentPage: options.page!}});
