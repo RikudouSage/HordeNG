@@ -39,6 +39,7 @@
       <app-loader/>
     </div>
   } @else {
+    <p class="text-danger text-bold">{{'app.lora.broken' | transloco}}</p>
     @for (item of items(); track item.id) {
       <div class="row lora-row" [class.mb-1]="!$last">
         <div class="img mr-1">

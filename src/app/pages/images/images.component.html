@@ -85,6 +85,9 @@
                     </strong>
                   </p>
                 }
+                @if (image.styleName) {
+                  <p>{{'app.generate.style_name' | transloco}}: <strong>{{image.styleName}}</strong></p>
+                }
               </div>
               <div class="buttons">
                 <button class="btn btn-danger" (click)="deleteImage(image)">{{'app.delete' | transloco}}</button>

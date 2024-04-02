@@ -1,0 +1,30 @@
+@import "../../../scss/colors";
+@import "../../../scss/breakpoints";
+
+h1 {
+  margin: 50px 0 10px 0;
+}
+
+.row {
+  gap: 15px;
+  max-width: 716px;
+  margin: 0 auto 15px auto;
+
+  @include mediaMax($large) {
+    flex-wrap: wrap;
+  }
+
+  .col-md-6 {
+    @include mediaMax($large) {
+      width: 100%;
+      flex-basis: unset;
+    }
+  }
+
+  .col-md-12 {
+    @include mediaMax($large) {
+      width: 100%;
+      flex-basis: unset;
+    }
+  }
+}

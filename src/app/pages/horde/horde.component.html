@@ -1,7 +1,7 @@
 @if (loading()) {
   <app-loader />
 } @else {
-  <div class="row">
+  <div class="row text-center">
     <div class="col-md-12 text-center">
       <h1><transloco key="app.logged_in_as" [params]="{username: currentUser()!.username}" /></h1>
     </div>
@@ -10,28 +10,22 @@
     <app-current-user-status [currentUser]="currentUser()!" (refreshRequested)="refreshCurrentUser()" />
   </div>
   <div class="row mt-2">
-    <div class="col-md-6 mr-1">
-      <app-horde-status />
-    </div>
-    <div class="col-md-6">
-      <app-your-workers [currentUser]="currentUser()!" />
-    </div>
+    <app-horde-status />
+  </div>
+  <div class="row mt-2">
+    <app-your-workers [currentUser]="currentUser()!" />
   </div>
   @if (!isAnonymous() && !isSharedKey()) {
     <div class="row mt-2">
-      <div class="col-md-6 mr-1">
-        <app-transfer-kudos [currentUser]="currentUser()!" (kudosTransferred)="refreshCurrentUser()" />
-      </div>
-      <div class="col-md-6">
-        <app-shared-keys [currentUser]="currentUser()!" (sharedKeyRemoved)="onSharedKeyRemoved($event)" (sharedKeyCreated)="onSharedKeyCreated($event)" />
-      </div>
+      <app-transfer-kudos [currentUser]="currentUser()!" (kudosTransferred)="refreshCurrentUser()" />
+    </div>
+    <div class="row mt-2">
+      <app-shared-keys [currentUser]="currentUser()!" (sharedKeyRemoved)="onSharedKeyRemoved($event)" (sharedKeyCreated)="onSharedKeyCreated($event)" />
     </div>
   }
 
   <div class="row mt-2">
-    <div class="col-md-12">
       <app-all-workers />
-    </div>
   </div>
 }
 

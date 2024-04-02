@@ -31,6 +31,7 @@ export interface GenerationOptions {
   allowDowngrade: boolean;
   clipSkip: number;
   loraList: LoraGenerationOption[];
+  styleName: string | null;
 }
 
 export const DefaultGenerationOptions: GenerationOptions = {
@@ -41,7 +42,7 @@ export const DefaultGenerationOptions: GenerationOptions = {
   cfgScale: 5,
   denoisingStrength: 0.75,
   height: 512,
-  width: 52,
+  width: 512,
   steps: 25,
   model: 'AlbedoBase XL (SDXL)',
   karras: true,
@@ -55,4 +56,5 @@ export const DefaultGenerationOptions: GenerationOptions = {
   allowDowngrade: false,
   clipSkip: 1,
   loraList: [],
+  styleName: null,
 };

@@ -26,7 +26,7 @@ body {
   overflow-y: scroll;
 
   @include mediaMax($topMenuBreakpoint) {
-    padding-top: 100px;
+    padding-top: 105px;
   }
 
   @include mediaMax($small) {

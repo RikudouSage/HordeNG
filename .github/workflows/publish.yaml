@@ -5,11 +5,36 @@ on:
   push:
     branches:
       - master
+  pull_request:
 
 jobs:
   publish:
+    permissions:
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
+      - name: GitHub Slug Action
+        uses: rlespinasse/github-slug-action@v4
+      - name: Generate Domain Name
+        id: generate_domain_name
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if (context.payload.ref == 'refs/heads/master') {
+              return 'horde-ng.org';
+            }
+            return process.env.GITHUB_REF_NAME_SLUG_URL + '.dev.horde-ng.org';
+      - name: Generate SLS Stage
+        id: generate_sls_stage
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            if (context.payload.ref == 'refs/heads/master') {
+              return 'prod';
+            }
+            return process.env.GITHUB_REF_NAME_SLUG_URL;
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Setup prod dependencies
@@ -17,20 +42,20 @@ jobs:
       - name: Deploy infrastructure
         uses: serverless/github-action@v3
         with:
-          args: deploy --stage prod --verbose
+          args: deploy --stage ${{ steps.generate_sls_stage.outputs.result }} --verbose
         env:
           AWS_REGION: eu-central-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           DOMAIN_ZONE: ${{ secrets.APP_DOMAIN_HOSTED_ZONE }}
-          DOMAIN_NAME: horde-ng.org
+          DOMAIN_NAME: ${{ steps.generate_domain_name.outputs.result }}
       - name: Create runtime version
         run: echo "window['APP_VERSION'] = '$GITHUB_SHA';" >> src/assets/runtime-variables.js
       - name: Build app
         run: ./node_modules/.bin/ng build
       - name: Copy files to S3
         env:
-          STACK_NAME: HordeNG-prod
+          STACK_NAME: HordeNG-${{ steps.generate_sls_stage.outputs.result }}
           AWS_REGION: eu-central-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -39,10 +64,16 @@ jobs:
           aws s3 sync dist/horde-gui/browser s3://$BUCKET --delete
       - name: Create invalidation
         env:
-          STACK_NAME: HordeNG-prod
+          STACK_NAME: HordeNG-${{ steps.generate_sls_stage.outputs.result }}
           AWS_REGION: eu-central-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           CDN_ID=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='Cdn'].OutputValue" --output=text)
           aws cloudfront create-invalidation --distribution-id $CDN_ID  --paths "/*" 2>&1 > /dev/null
+      - name: Post Link
+        uses: thollander/actions-comment-pull-request@v2
+        if: github.event_name == 'pull_request'
+        with:
+          message: This pull request has been deployed to https://${{ steps.generate_domain_name.outputs.result }}
+          comment_tag: post_link_comment

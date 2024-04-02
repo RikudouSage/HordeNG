@@ -2,7 +2,10 @@
 @import "../scss/breakpoints";
 
 .form-group {
+  padding: 20px;
   margin-bottom: 20px;
+  border-radius: 4px;
+  background: #26252B;
 
   & > * {
     display: block;
@@ -26,6 +29,20 @@
 
   input[type=number] {
     -moz-appearance: textfield;
+  }
+
+  small {
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  .ts-wrapper {
+    margin-bottom: 0;
+    min-height: 40px;
+  }
+
+  .ts-wrapper.single .ts-control {
+    padding-right: 40px !important;
   }
 }
 
@@ -59,6 +76,10 @@
     cursor: not-allowed;
     color: $mainTextDisabledColor;
   }
+
+  &.btnBig {
+    padding: 10px 15px;
+  }
 }
 
 .btn-primary {
@@ -86,21 +107,12 @@ label:has(+ [required]), label.required {
 }
 
 textarea {
-  max-width: 718px;
-  min-width: 718px;
-  min-height: 100px;
-  max-height: 300px;
+  max-width: 100%;
+  min-width: 100%;
+  min-height: 36px;
+  max-height: 500px;
   font-family: inherit;
-
-  @include mediaMax($extraLarge) {
-    max-width: 550px;
-    min-width: 550px;
-  }
-
-  @include mediaMax($large) {
-    max-width: 100%;
-    min-width: 100%;
-  }
+  line-height: 26px !important;
 }
 
 label {

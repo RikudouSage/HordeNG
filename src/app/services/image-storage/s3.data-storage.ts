@@ -59,6 +59,7 @@ export const S3CorsConfig = [
       "x-amz-meta-nsfw",
       "x-amz-meta-clipskip",
       "x-amz-meta-loras",
+      "x-amz-meta-stylename",
     ],
   },
 ];
@@ -182,6 +183,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         nsfw: Boolean(Number(image.Metadata!['nsfw'] ?? 0)),
         allowDowngrade: Boolean(Number(image.Metadata!['allowdowngrade'] ?? 0)),
         clipSkip: Number(image.Metadata!['clipskip'] ?? 1),
+        styleName: image.Metadata!['stylename'] || null,
       }
     });
   }
@@ -225,6 +227,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       trustedWorkers: String(Number(image.trustedWorkers)),
       nsfw: String(Number(image.nsfw)),
       clipSkip: String(image.clipSkip),
+      styleName: String(image.styleName),
     }
 
     await client.send(new PutObjectCommand({

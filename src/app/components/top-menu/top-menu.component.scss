@@ -6,7 +6,6 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid $borderColor;
-  margin-bottom: 20px;
 
   @include mediaMax($topMenuBreakpoint) {
     position: fixed;
@@ -15,7 +14,6 @@
     background: $bodyBackground;
     z-index: 100;
     width: 100%;
-    margin-bottom: 0;
   }
 
   @include mediaMax($small) {

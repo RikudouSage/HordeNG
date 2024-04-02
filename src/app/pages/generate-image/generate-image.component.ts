@@ -8,7 +8,8 @@ import {
   Signal,
   signal,
   TemplateRef,
-  WritableSignal
+  WritableSignal,
+  HostListener
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Sampler} from "../../types/horde/sampler";
@@ -62,6 +63,7 @@ import {getFaceFixers, getGenericPostProcessors, getUpscalers} from "../../helpe
 import _ from 'lodash';
 import {BaselineModel} from "../../types/sd-repo/baseline-model";
 import {AutoGrowDirective} from "../../directives/auto-grow.directive";
+import {SliderWithValueComponent} from "../../components/slider-with-value/slider-with-value.component";
 
 interface Result {
   width: number;
@@ -103,7 +105,8 @@ interface Result {
     LoraTextRowComponent,
     IsFaceFixerPipe,
     IsUpscalerPipe,
-    AutoGrowDirective
+    AutoGrowDirective,
+    SliderWithValueComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -250,6 +253,11 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     ]),
   });
   private readonly isBrowser: boolean;
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.updateIsScrolledClass();
+  }
 
   constructor(
     private readonly database: DatabaseService,
@@ -474,6 +482,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       allowDowngrade: value.allowDowngrade ?? false,
       clipSkip: value.clipSkip ?? 1,
       loraList: value.loraList ?? [],
+      styleName: this.chosenStyle()?.name ?? null,
     };
   }
 
@@ -569,5 +578,19 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       loraList: loras,
     });
     await this.modalService.close();
+  }
+
+  updateIsScrolledClass() {
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const threshold = 85;
+
+    const wrapper = document.querySelector('.setWrapper');
+    if (wrapper) {
+      if (scrollPosition >= threshold) {
+        wrapper.classList.add('is-scrolled');
+      } else {
+        wrapper.classList.remove('is-scrolled');
+      }
+    }
   }
 }

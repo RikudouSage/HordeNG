@@ -78,6 +78,7 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
           nsfw: Boolean(Number(metadata.nsfw ?? 0)),
           allowDowngrade: Boolean(Number(metadata.allowDowngrade ?? 0)),
           clipSkip: Number(metadata.clipSkip ?? 0),
+          styleName: metadata.styleName || null,
         };
       }));
     } catch (e) {
@@ -119,6 +120,7 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
       width: String(image.width),
       id: image.id!,
       worker: `${image.worker.name},${image.worker.id}`,
+      styleName: String(image.styleName),
     };
     await Promise.all([
       this.uploadFile(`images/${image.id}.webp`, image.data, metadata),
