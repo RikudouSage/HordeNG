@@ -112,7 +112,7 @@ export class SharedKeysComponent implements OnInit {
   }
 
   private async loadData(): Promise<void> {
-    const response = await toPromise(this.api.getSharedKeys(this.currentUser().sharedkey_ids));
+    const response = await toPromise(this.api.getSharedKeys(this.currentUser().sharedkey_ids ?? []));
     if (!response.success) {
       await this.messageService.error(this.translator.get('app.error.api_error', {
         message: response.errorResponse!.message,

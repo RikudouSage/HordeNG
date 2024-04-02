@@ -84,9 +84,9 @@ export class HordeComponent implements OnInit {
 
     const newUser: UserDetails = {...this.rawCurrentUser()!};
 
-    newUser.sharedkey_ids = [...newUser.sharedkey_ids, ...this.addedSharedKeys()];
+    newUser.sharedkey_ids = [...(newUser.sharedkey_ids ?? []), ...this.addedSharedKeys()];
     newUser.sharedkey_ids = newUser.sharedkey_ids.filter(id => !this.removedSharedKeys().includes(id));
-    newUser.sharedkey_ids = newUser.sharedkey_ids.filter((value, index) => newUser.sharedkey_ids.indexOf(value) === index);
+    newUser.sharedkey_ids = newUser.sharedkey_ids.filter((value, index) => newUser.sharedkey_ids!.indexOf(value) === index);
 
     return newUser;
   });

@@ -15,7 +15,7 @@ export interface UserDetails {
   kudos_details: UserKudosDetails;
   worker_count: number;
   worker_ids?: string[];
-  sharedkey_ids: string[];
+  sharedkey_ids?: string[];
   monthly_kudos: MonthlyKudos;
   trusted: boolean;
   flagged: boolean;
