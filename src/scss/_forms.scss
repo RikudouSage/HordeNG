@@ -7,6 +7,11 @@
   border-radius: 4px;
   background: #26252B;
 
+  @include mediaMax($small) {
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+
   & > * {
     display: block;
     margin-bottom: 10px;
@@ -16,9 +21,24 @@
   }
 
   label {
+    position: relative;
+
     @include mediaMax($large) {
-    font-size: 12px;
+      font-size: 12px;
     }
+
+    app-tooltip {
+      position: absolute;
+      right: 0;
+
+      @include mediaMax($small) {
+        font-size: 16px;
+      }
+    }
+  }
+
+  input {
+    margin-bottom: 0;
   }
 
   input::-webkit-outer-spin-button,

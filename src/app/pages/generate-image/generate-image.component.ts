@@ -64,6 +64,7 @@ import _ from 'lodash';
 import {BaselineModel} from "../../types/sd-repo/baseline-model";
 import {AutoGrowDirective} from "../../directives/auto-grow.directive";
 import {SliderWithValueComponent} from "../../components/slider-with-value/slider-with-value.component";
+import {TooltipComponent} from "../../components/tooltip/tooltip.component";
 
 interface Result {
   width: number;
@@ -106,7 +107,8 @@ interface Result {
     IsFaceFixerPipe,
     IsUpscalerPipe,
     AutoGrowDirective,
-    SliderWithValueComponent
+    SliderWithValueComponent,
+    TooltipComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'

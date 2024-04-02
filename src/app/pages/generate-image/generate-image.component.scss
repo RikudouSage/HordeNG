@@ -213,11 +213,20 @@
   gap: 20px;
   margin-bottom: 20px;
 
+  @include mediaMax($small) {
+    margin-top: 10px;
+  }
+
   .form-group {
     width: auto;
     margin-bottom: 0;
     background: transparent;
     padding: 0;
+  }
+
+  app-tooltip {
+    position: relative;
+    right: auto;
   }
 }
 
