@@ -155,7 +155,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     let promptParts = style.prompt.split('###');
     if (promptParts.length === 1) {
       promptParts = style.prompt.split('{np}');
-      promptParts[1] = `{np}${promptParts[1]}`;
+      promptParts[1] = `{np}${promptParts[1] ?? ''}`;
     }
 
     const patch: Partial<GenerationOptions> = {
