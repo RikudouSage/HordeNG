@@ -183,6 +183,19 @@
       margin-bottom: 10px;
     }
   }
+
+  &.generateParameters {
+    @include mediaMax($large) {
+      order: 2;
+    }
+  }
+
+  &.displayResultWrapper {
+    @include mediaMax($large) {
+      z-index: 1000;
+      margin-bottom: 1vh;
+    }
+  }
 }
 
 .formGroup {
@@ -298,17 +311,5 @@
     justify-content: center;
     border-radius: 4px;
     background: white;
-  }
-}
-
-.generateParameters {
-  @include mediaMax($large) {
-    order: 2;
-  }
-}
-
-.displayResultWrapper {
-  @include mediaMax($large) {
-    z-index: 1000;
   }
 }
