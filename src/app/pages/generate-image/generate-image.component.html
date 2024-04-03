@@ -26,86 +26,81 @@
           <textarea type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt" auto-grow></textarea>
           <app-effective-value [value]="modifiedOptions()?.negativePrompt" [original]="form.value.negativePrompt" />
         </div>
-        <div class="row formGroup">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label for="inputModel">{{ 'app.generate.model' | transloco }} <app-tooltip [text]="'app.generate.help.model' | transloco" /></label>
-              <select id="inputModel" formControlName="model" required tom-select [maxItems]="1" [maxOptions]="null">
-                @for (item of groupedModels() | keyvalue; track item.key) {
-                  <optgroup [label]="item.key">
-                    @for (model of item.value; track model.name) {
-                      <option [value]="model.name">
-                        {{ model.name }}
-                        @if (model.tags) {
-                          ({{'app.generate.tags' | transloco}}: {{model.tags.join(', ')}})
-                        }
-                        ({{'app.generate.workers_count' | transloco}}: {{liveModelDetails()[model.name]}})
-                      </option>
+        <div class="form-group">
+          <label for="inputModel">{{ 'app.generate.model' | transloco }} <app-tooltip [text]="'app.generate.help.model' | transloco" /></label>
+          <select id="inputModel" formControlName="model" required tom-select [maxItems]="1" [maxOptions]="null">
+            @for (item of groupedModels() | keyvalue; track item.key) {
+              <optgroup [label]="item.key">
+                @for (model of item.value; track model.name) {
+                  <option [value]="model.name">
+                    {{ model.name }}
+                    @if (model.tags) {
+                      ({{'app.generate.tags' | transloco}}: {{model.tags.join(', ')}})
                     }
-                  </optgroup>
+                    ({{'app.generate.workers_count' | transloco}}: {{liveModelDetails()[model.name]}})
+                  </option>
                 }
-              </select>
-              @if (currentModelDetail()?.baseline === BaselineModel.StableCascade) {
-                <p class="text-warning">{{'app.generate.no_commercial' | transloco}}</p>
+              </optgroup>
+            }
+          </select>
+          @if (currentModelDetail()?.baseline === BaselineModel.StableCascade) {
+            <p class="text-warning">{{'app.generate.no_commercial' | transloco}}</p>
+          }
+          @if (validationErrors().length) {
+            <p class="text-warning">{{'app.generate.validation.errors' | transloco}}</p>
+            <ul class="text-warning">
+              @for (error of validationErrors(); track error) {
+                <li>
+                  @if (error === OptionsValidationError.ClipSkip) {
+                    {{'app.generation.validation.clip_skip' | transloco:{expected: currentModelDetail()!.requirements!.clip_skip!} }}
+                  } @else if (error === OptionsValidationError.Karras) {
+                    {{'app.generation.validation.karras' | transloco}}
+                  } @else if (error === OptionsValidationError.Sampler) {
+                    {{'app.generation.validation.samplers' | transloco:{expected: currentModelDetail()!.requirements!.samplers!.join(', ')} }}
+                  } @else if (error === OptionsValidationError.Steps) {
+                    {{'app.generation.validation.steps' | transloco:{min: currentModelDetail()!.requirements!.min_steps, max: currentModelDetail()!.requirements!.max_steps} }}
+                  } @else if (error === OptionsValidationError.ModelNotFound) {
+                    {{'app.generation.validation.model_not_found' | transloco }}
+                  } @else if (error === OptionsValidationError.CfgScale) {
+                    {{'app.generation.validation.cfg_scale' | transloco:{expected: currentModelDetail()!.requirements!.cfg_scale!} }}
+                  }
+                </li>
               }
-              @if (validationErrors().length) {
-                <p class="text-warning">{{'app.generate.validation.errors' | transloco}}</p>
-                <ul class="text-warning">
-                  @for (error of validationErrors(); track error) {
-                    <li>
-                      @if (error === OptionsValidationError.ClipSkip) {
-                        {{'app.generation.validation.clip_skip' | transloco:{expected: currentModelDetail()!.requirements!.clip_skip!} }}
-                      } @else if (error === OptionsValidationError.Karras) {
-                        {{'app.generation.validation.karras' | transloco}}
-                      } @else if (error === OptionsValidationError.Sampler) {
-                        {{'app.generation.validation.samplers' | transloco:{expected: currentModelDetail()!.requirements!.samplers!.join(', ')} }}
-                      } @else if (error === OptionsValidationError.Steps) {
-                        {{'app.generation.validation.steps' | transloco:{min: currentModelDetail()!.requirements!.min_steps, max: currentModelDetail()!.requirements!.max_steps} }}
-                      } @else if (error === OptionsValidationError.ModelNotFound) {
-                        {{'app.generation.validation.model_not_found' | transloco }}
-                      } @else if (error === OptionsValidationError.CfgScale) {
-                        {{'app.generation.validation.cfg_scale' | transloco:{expected: currentModelDetail()!.requirements!.cfg_scale!} }}
-                      }
-                    </li>
-                  }
-                </ul>
-              }
-              <app-effective-value [value]="modifiedOptions()?.model" [original]="form.value.model" />
-              @if (effectiveModel()) {
-                <small>
-                  <strong>{{'app.model.baseline' | transloco}}</strong>: {{availableModels()[effectiveModel()].baseline}}<br>
-                  <strong>{{'app.model.description' | transloco}}</strong>: {{availableModels()[effectiveModel()].description}}<br>
-                  @if (availableModels()[effectiveModel()].showcases) {
-                    <strong>{{'app.model.examples' | transloco}}</strong>:
-                    @for (showcase of availableModels()[effectiveModel()].showcases; track showcase) {
-                      <a href="{{showcase}}" target="_blank">{{'app.model.example_number' | transloco:{number: $index + 1} }}</a>
-                      @if (!$last) {, }
-                    }
-                    <br>
-                  }
-                  <strong>{{'app.model.style' | transloco}}</strong>: {{availableModels()[effectiveModel()].style}}<br>
-                  <strong>{{'app.model.nsfw' | transloco}}</strong>: <app-yes-no [value]="availableModels()[effectiveModel()].nsfw" /><br>
-                  @if (availableModels()[effectiveModel()].tags) {
-                    <strong>{{'app.model.tags' | transloco}}</strong>: {{availableModels()[effectiveModel()].tags!.join(', ')}}<br>
-                  }
-                  @if (availableModels()[effectiveModel()].trigger) {
-                    <strong>{{'app.model.trigger' | transloco}}</strong>: {{availableModels()[effectiveModel()].trigger}}<br>
-                  }
-                </small>
-              }
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label for="inputSampler">{{ 'app.generate.sampler' | transloco }} <app-tooltip [text]="'app.generate.help.sampler' | transloco" /></label>
-              <select id="inputSampler" tom-select [maxItems]="1" formControlName="sampler" required>
-                @for (enumCase of Sampler | keyvalue; track enumCase.key) {
-                  <option [value]="enumCase.value">{{ enumCase.value }}</option>
+            </ul>
+          }
+          <app-effective-value [value]="modifiedOptions()?.model" [original]="form.value.model" />
+          @if (effectiveModel()) {
+            <small>
+              <strong>{{'app.model.baseline' | transloco}}</strong>: {{availableModels()[effectiveModel()].baseline}}<br>
+              <strong>{{'app.model.description' | transloco}}</strong>: {{availableModels()[effectiveModel()].description}}<br>
+              @if (availableModels()[effectiveModel()].showcases) {
+                <strong>{{'app.model.examples' | transloco}}</strong>:
+                @for (showcase of availableModels()[effectiveModel()].showcases; track showcase) {
+                  <a href="{{showcase}}" target="_blank">{{'app.model.example_number' | transloco:{number: $index + 1} }}</a>
+                  @if (!$last) {, }
                 }
-              </select>
-              <app-effective-value [value]="modifiedOptions()?.sampler" [original]="form.value.sampler" />
-            </div>
-          </div>
+                <br>
+              }
+              <strong>{{'app.model.style' | transloco}}</strong>: {{availableModels()[effectiveModel()].style}}<br>
+              <strong>{{'app.model.nsfw' | transloco}}</strong>: <app-yes-no [value]="availableModels()[effectiveModel()].nsfw" /><br>
+              @if (availableModels()[effectiveModel()].tags) {
+                <strong>{{'app.model.tags' | transloco}}</strong>: {{availableModels()[effectiveModel()].tags!.join(', ')}}<br>
+              }
+              @if (availableModels()[effectiveModel()].trigger) {
+                <strong>{{'app.model.trigger' | transloco}}</strong>: {{availableModels()[effectiveModel()].trigger}}<br>
+              }
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="inputSampler">{{ 'app.generate.sampler' | transloco }} <app-tooltip [text]="'app.generate.help.sampler' | transloco" /></label>
+          <select id="inputSampler" tom-select [maxItems]="1" formControlName="sampler" required>
+            @for (enumCase of Sampler | keyvalue; track enumCase.key) {
+              <option [value]="enumCase.value">{{ enumCase.value }}</option>
+            }
+          </select>
+          <app-effective-value [value]="modifiedOptions()?.sampler" [original]="form.value.sampler" />
         </div>
         <div class="row formGroup">
           <div class="col-md-6">
@@ -145,7 +140,7 @@
 
         <div class="form-group loraList">
           <label>{{'app.generate.lora_list' | transloco}} <app-tooltip [text]="'app.generate.help.lora_list' | transloco" /></label>
-          <button [disabled]="(form.value.loraList?.length ?? 0) >= 5" class="btn" type="button"
+          <button [disabled]="(form.value.loraList?.length ?? 0) >= 5" class="btn btnBig" type="button"
                   (click)="openModal(addLoraModal)">{{'app.generate.add_loras' | transloco}}</button>
           <ng-template #addLoraModal>
             <app-lora-selector [selectedLoras]="form.value.loraList ?? []" [selectedModel]="currentModelDetail()!" (loraSelected)="addLora($event)" />
