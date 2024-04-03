@@ -13,6 +13,7 @@ import {CivitAiService} from "../../services/civit-ai.service";
 import {catchError, map, Observable, of, tap} from "rxjs";
 import {CivitAiModel} from "../../types/civit-ai/civit-ai-model";
 import {TranslatorService} from "../../services/translator.service";
+import {DebounceInputDirective} from "../../directives/debounce-input.directive";
 
 @Component({
   selector: 'app-prompt-style-modal',
@@ -23,25 +24,29 @@ import {TranslatorService} from "../../services/translator.service";
     BoxComponent,
     PromptStyleTextComponent,
     LoraNamePipe,
-    AsyncPipe
+    AsyncPipe,
+    DebounceInputDirective
   ],
   templateUrl: './prompt-style-modal.component.html',
   styleUrl: './prompt-style-modal.component.scss'
 })
 export class PromptStyleModalComponent implements OnInit {
   private loraNameCache: Record<string, CivitAiModel> = {};
+  private rawStyles = signal<EnrichedPromptStyle[]>([]);
+  private filteredStyles = computed(() => {
+    return this.rawStyles().filter(style => style.name.startsWith(this.currentFilter()));
+  });
 
   public originalPrompt = input.required<string>();
   public originalNegativePrompt = input.required<string | null>();
 
-  public styles = signal<EnrichedPromptStyle[]>([]);
   public categories = computed(() => {
-    const categories = this.styles().map(style => style.category);
+    const categories = this.filteredStyles().map(style => style.category);
     return categories.filter((value, index) => categories.indexOf(value) === index);
   });
   public stylesByCategory = computed(() => {
     const result: {[category: string]: EnrichedPromptStyle[]} = {};
-    for (const style of this.styles()) {
+    for (const style of this.filteredStyles()) {
       result[style.category ?? 'no category'] ??= [];
       result[style.category ?? 'no category'].push(style);
     }
@@ -52,6 +57,8 @@ export class PromptStyleModalComponent implements OnInit {
   public loading = signal(true);
 
   public loraNames = signal<Record<string, string[] | undefined>>({});
+
+  public currentFilter = signal('');
 
   public styleChosen = output<EnrichedPromptStyle>();
 
@@ -64,7 +71,7 @@ export class PromptStyleModalComponent implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
-    this.styles.set(await toPromise(this.repoData.getStyles()));
+    this.rawStyles.set(await toPromise(this.repoData.getStyles()));
     this.loading.set(false);
   }
 

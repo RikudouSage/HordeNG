@@ -7,6 +7,14 @@
     </div>
   </div>
   <div class="row mt-2">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label for="inputFilter">{{'app.style_select.filter' | transloco}}</label>
+        <input id="inputFilter" type="text" class="form-control" [value]="currentFilter()" (debounceInput)="currentFilter.set(self.value)" #self />
+      </div>
+    </div>
+  </div>
+  <div class="row mt-2">
     <div class="col-xs-12">
       @for (category of categories(); track category) {
         <app-box [collapsible]="true" [title]="category">

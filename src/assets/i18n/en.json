@@ -233,5 +233,6 @@
   "app.generate.help.trusted_workers": "When enabled, only users that are trusted can process your request. Generally not needed.",
   "app.generate.help.allow_downgrade": "When enabled, your request can be downgraded to fit within the available criteria if you don't have enough kudos.",
   "app.generate.help.hires_fix": "HiRes fix works by generating your image at a lower resolution and then upscaling it.",
-  "app.download": "Download"
+  "app.download": "Download",
+  "app.style_select.filter": "Filter by name"
 }
