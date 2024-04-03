@@ -232,5 +232,6 @@
   "app.generate.help.censor_nsfw": "Whether you want to censor NSFW images. Sometimes even SFW prompts may lead to NSFW results, this will attempt to censor them.",
   "app.generate.help.trusted_workers": "When enabled, only users that are trusted can process your request. Generally not needed.",
   "app.generate.help.allow_downgrade": "When enabled, your request can be downgraded to fit within the available criteria if you don't have enough kudos.",
-  "app.generate.help.hires_fix": "HiRes fix works by generating your image at a lower resolution and then upscaling it."
+  "app.generate.help.hires_fix": "HiRes fix works by generating your image at a lower resolution and then upscaling it.",
+  "app.download": "Download"
 }
