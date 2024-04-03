@@ -34,7 +34,7 @@ export class PromptStyleModalComponent implements OnInit {
   private loraNameCache: Record<string, CivitAiModel> = {};
   private rawStyles = signal<EnrichedPromptStyle[]>([]);
   private filteredStyles = computed(() => {
-    return this.rawStyles().filter(style => style.name.startsWith(this.currentFilter()));
+    return this.rawStyles().filter(style => style.name.toLowerCase().startsWith(this.currentFilter().toLowerCase()));
   });
 
   public originalPrompt = input.required<string>();
