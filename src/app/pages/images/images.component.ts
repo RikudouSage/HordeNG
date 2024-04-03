@@ -154,5 +154,6 @@ export class ImagesComponent implements OnInit {
     a.href = image.link;
     a.download = `${image.prompt.trim()}.webp`;
     a.click();
+    a.remove();
   }
 }
