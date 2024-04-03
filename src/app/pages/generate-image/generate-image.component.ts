@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  HostListener,
   Inject,
   OnDestroy,
   OnInit,
@@ -8,15 +9,14 @@ import {
   Signal,
   signal,
   TemplateRef,
-  WritableSignal,
-  HostListener
+  WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {TranslocoPipe} from "@ngneat/transloco";
-import {AsyncPipe, isPlatformBrowser, JsonPipe, KeyValuePipe, NgOptimizedImage} from "@angular/common";
+import {AsyncPipe, DOCUMENT, isPlatformBrowser, JsonPipe, KeyValuePipe, NgOptimizedImage} from "@angular/common";
 import {AppValidators} from "../../helper/app-validators";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {KudosCostCalculator} from "../../services/kudos-cost-calculator.service";
@@ -78,6 +78,7 @@ interface Result {
   censored: boolean;
   kudos: number;
   postProcessors: string;
+  prompt: string;
 }
 
 @Component({
@@ -272,6 +273,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     private readonly hordeRepoData: HordeRepoDataService,
     private readonly generationOptionsValidator: GenerationOptionsValidatorService,
     private readonly modalService: ModalService,
+    @Inject(DOCUMENT) private readonly document: Document,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -522,6 +524,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       id: generations[0].id,
       kudos: result.kudos,
       postProcessors: metadata.postProcessors.join(', '),
+      prompt: metadata.prompt,
     });
     const storeData: UnsavedStoredImage = {
       id: generations[0].id,
@@ -594,5 +597,15 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
         wrapper.classList.remove('is-scrolled');
       }
     }
+  }
+
+  public async download(result: Result) {
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    this.document.body.appendChild(a);
+    a.href = result.source
+    a.download = `${result.prompt}.webp`;
+    a.click();
+    a.remove();
   }
 }
