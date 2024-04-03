@@ -257,6 +257,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   });
   private readonly isBrowser: boolean;
 
+  // todo fix this
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.updateIsScrolledClass();
