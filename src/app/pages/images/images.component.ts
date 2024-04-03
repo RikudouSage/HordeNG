@@ -1,17 +1,7 @@
-import {
-  Component,
-  computed,
-  Inject,
-  OnInit,
-  PLATFORM_ID,
-  signal,
-  TemplateRef,
-  ViewContainerRef,
-  WritableSignal
-} from '@angular/core';
+import {Component, computed, Inject, OnInit, PLATFORM_ID, signal, TemplateRef, WritableSignal} from '@angular/core';
 import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
-import {AsyncPipe, isPlatformBrowser} from "@angular/common";
+import {AsyncPipe, DOCUMENT, isPlatformBrowser} from "@angular/common";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {StoredImage} from "../../types/db/stored-image";
 import {TranslocoPipe} from "@ngneat/transloco";
@@ -19,7 +9,6 @@ import {ModalService} from "../../services/modal.service";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {DataStorage} from "../../services/image-storage/data-storage";
-import {DatabaseService} from "../../services/database.service";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {LoraNamePipe} from "../../pipes/lora-name.pipe";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
@@ -89,8 +78,7 @@ export class ImagesComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
     private readonly modalService: ModalService,
-    private readonly view: ViewContainerRef,
-    private readonly database: DatabaseService,
+    @Inject(DOCUMENT) private readonly document: Document,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -157,5 +145,15 @@ export class ImagesComponent implements OnInit {
     await storage.storeGenerationOptions(image);
     await this.modalService.close();
     await this.router.navigateByUrl('/generate');
+  }
+
+  public async download(image: StoredImageWithLink): Promise<void> {
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    this.document.body.appendChild(a);
+    a.href = image.link;
+    a.download = `${image.prompt.trim()}.webp`;
+    a.click();
+    a.remove();
   }
 }

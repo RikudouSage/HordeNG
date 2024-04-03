@@ -319,6 +319,8 @@
                   </p>
                   @if (result()!.censored) {
                     <p>{{'app.generate.result.censored' | transloco}}</p>
+                  } @else {
+                    <p><button type="button" class="btn btn-primary" (click)="download(result()!)">{{'app.download' | transloco}}</button></p>
                   }
                 </div>
               } @else if (inProgress()) {
