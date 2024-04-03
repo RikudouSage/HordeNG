@@ -270,7 +270,7 @@
     }
 
     &:first-child {
-     margin-top:20px;
+     margin-top:12px;
     }
 
     strong {
@@ -279,10 +279,29 @@
     }
   }
 
+  p {
+    @include mediaMax($large) {
+      font-size: 14px;
+    }
+
+    @include mediaMax($small) {
+      font-size: 12px;
+    }
+  }
+
   .btnBig {
     position: absolute;
     top: 20px;
     right: 20px;
+
+    @include mediaMax($small) {
+      top: 15px;
+      right: 15px;
+    }
+  }
+
+  app-tooltip {
+    right: 120px;
   }
 
   .icon-button {
