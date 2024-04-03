@@ -8,7 +8,7 @@ import {YesNoComponent} from "../yes-no/yes-no.component";
 import {MathSqrtPipe} from "../../pipes/math-sqrt.pipe";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {AsyncPipe} from "@angular/common";
-import {faPause, faPlay} from "@fortawesome/free-solid-svg-icons";
+import {faPauseCircle, faPlayCircle} from "@fortawesome/free-solid-svg-icons";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
 
@@ -47,7 +47,7 @@ export class WorkerDetailComponent {
 
     if (!this.paused()) {
       return [{
-        icon: faPause,
+        icon: faPauseCircle,
         enabled: true,
         action: async event => {
           event.preventDefault();
@@ -60,7 +60,7 @@ export class WorkerDetailComponent {
       }];
     } else {
       return [{
-        icon: faPlay,
+        icon: faPlayCircle,
         enabled: true,
         action: async event => {
           event.preventDefault();
