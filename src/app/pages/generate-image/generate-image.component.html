@@ -213,23 +213,6 @@
           <div class="col-md-6">
             <div class="form-group">
               <!--suppress XmlInvalidId -->
-              <label for="inputDenoisingStrength">{{ 'app.generate.denoising_strength' | transloco }})</label>
-              <app-slider-with-value [min]="0.01" [max]="1" [step]="0.01" formControlName="denoisingStrength" inputId="inputDenoisingStrength" />
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <!--suppress XmlInvalidId -->
-              <label for="inputCfgScale">{{ 'app.generate.cfg_scale' | transloco }} <app-tooltip [text]="'app.generate.help.cfg_scale' | transloco" /></label>
-              <app-slider-with-value [min]="0" [max]="100" [step]="0.5" formControlName="cfgScale" inputId="inputCfgScale" />
-              <app-effective-value [value]="modifiedOptions()?.cfgScale" [original]="form.value.cfgScale" />
-            </div>
-          </div>
-        </div>
-        <div class="row formGroup">
-          <div class="col-md-6">
-            <div class="form-group">
-              <!--suppress XmlInvalidId -->
               <label for="inputSteps">{{ 'app.generate.steps' | transloco }} <app-tooltip [text]="'app.generate.help.steps' | transloco" /></label>
               <app-slider-with-value [min]="1" [max]="500" [step]="1" formControlName="steps" inputId="inputSteps" />
               <app-effective-value [value]="modifiedOptions()?.steps" [original]="form.value.steps" />
@@ -240,6 +223,23 @@
               <!--suppress XmlInvalidId -->
               <label for="inputClipSkip">{{ 'app.generate.clip_skip' | transloco }} <app-tooltip [text]="'app.generate.help.clip_skip' | transloco" /></label>
               <app-slider-with-value [min]="1" [max]="12" [step]="1" formControlName="clipSkip" inputId="inputClipSkip" />
+            </div>
+          </div>
+        </div>
+        <div class="row formGroup">
+          <!--          <div class="col-md-6">-->
+          <!--            <div class="form-group">-->
+          <!--              &lt;!&ndash;suppress XmlInvalidId &ndash;&gt;-->
+          <!--              <label for="inputDenoisingStrength">{{ 'app.generate.denoising_strength' | transloco }})</label>-->
+          <!--              <app-slider-with-value [min]="0.01" [max]="1" [step]="0.01" formControlName="denoisingStrength" inputId="inputDenoisingStrength" />-->
+          <!--            </div>-->
+          <!--          </div>-->
+          <div class="col-md-6">
+            <div class="form-group">
+              <!--suppress XmlInvalidId -->
+              <label for="inputCfgScale">{{ 'app.generate.cfg_scale' | transloco }} <app-tooltip [text]="'app.generate.help.cfg_scale' | transloco" /></label>
+              <app-slider-with-value [min]="0" [max]="100" [step]="0.5" formControlName="cfgScale" inputId="inputCfgScale" />
+              <app-effective-value [value]="modifiedOptions()?.cfgScale" [original]="form.value.cfgScale" />
             </div>
           </div>
         </div>
