@@ -15,5 +15,20 @@
         "clip": 1
       }
     ]
+  },
+  "Lay's Potato Chips": {
+    "prompt": "{p}, 4k, uhd, masterpiece",
+    "model": "AlbedoBase XL (SDXL)",
+    "steps": 30,
+    "cfg_scale": 4.5,
+    "sampler_name": "k_dpmpp_2m",
+    "loras": [
+      {
+        "name": "413122",
+        "is_version": true,
+        "model": 1,
+        "clip": 1
+      }
+    ]
   }
 }
