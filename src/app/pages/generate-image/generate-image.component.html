@@ -3,7 +3,7 @@
 } @else {
   <form [formGroup]="form" (ngSubmit)="generateImage()">
     <div class="row setWrapper">
-      <div class="setContainer">
+      <div class="setContainer generateParameters">
         <div class="form-group">
           <label for="inputPrompt">{{ 'app.generate.prompt' | transloco }} <app-tooltip [text]="'app.generate.help.prompt' | transloco" /></label>
           <textarea required type="text" class="form-control" formControlName="prompt" id="inputPrompt" auto-grow></textarea>
@@ -281,7 +281,7 @@
           </div>
         </div>
       </div>
-      <div class="setContainer">
+      <div class="setContainer displayResultWrapper">
         <div class="row mb-1">
           <div class="col-md-11 mr-05">
             <button [disabled]="!form.valid || inProgress()" type="submit" class="btn btn-primary btn-long">

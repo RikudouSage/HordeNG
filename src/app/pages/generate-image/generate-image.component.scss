@@ -300,3 +300,15 @@
     background: white;
   }
 }
+
+.generateParameters {
+  @include mediaMax($large) {
+    order: 2;
+  }
+}
+
+.displayResultWrapper {
+  @include mediaMax($large) {
+    z-index: 1000;
+  }
+}
