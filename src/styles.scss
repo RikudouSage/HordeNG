@@ -24,11 +24,35 @@ body {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-variation-settings: "slnt" 0;
-  overflow-x: hidden;
+  overflow-y: scroll;
+
+  @include mediaMax($topMenuBreakpoint) {
+    padding-top: 105px;
+  }
+
+  @include mediaMax($small) {
+    padding-top: 0;
+  }
+
+  &::-webkit {
+    &-scrollbar {
+      width: 10px;
+    }
+
+    &-scrollbar {
+      &-track {
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+      }
+      &-thumb {
+        background-color: white;
+      }
+    }
+  }
 }
 
 p {
   line-height: 1.5;
+  font-size: 16px;
   margin-bottom: 20px;
 }
 
@@ -61,8 +85,14 @@ h1, h2, h3 {
   font-weight: normal !important;
 }
 
+ul.about {
+  margin: 10px 0 20px 10px;
+}
+
 li {
   margin-left: 15px;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .position-relative {

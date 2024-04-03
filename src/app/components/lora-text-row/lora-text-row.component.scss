@@ -1,0 +1,17 @@
+@import "../../../scss/colors";
+@import "../../../scss/breakpoints";
+
+:host {
+  display: block;
+  width: calc(100% - 50px);
+  font-size: 14px;
+  line-height: 26px;
+  font-weight: 400;
+}
+
+span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

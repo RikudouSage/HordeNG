@@ -1,10 +1,31 @@
+@import "../../../../scss/colors";
+@import "../../../../scss/breakpoints";
+
 :host {
   width: 100%;
 }
 
 app-small-box {
-  margin-right: 15px;
-  &:last-of-type {
-    margin-right: 0;
+  @include mediaMax($large) {
+    flex-grow: 1;
+  }
+
+  .svg-inline--fa {
+    max-width: 20px;
+    max-height: 20px;
+    height: 100%;
+    width: 100%;
+    align-self: center;
+  }
+}
+
+.smallBoxGap {
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 50px;
+
+  @include mediaMax($large) {
+    flex-wrap: wrap;
+    margin-bottom: 0;
   }
 }

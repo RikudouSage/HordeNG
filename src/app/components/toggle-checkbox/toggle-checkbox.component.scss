@@ -8,8 +8,8 @@
   display: inline-block;
   background: #ccc;
   border-radius: 16px;
-  width: 58px;
-  height: 32px;
+  width: 48px;
+  height: 26px;
   position: relative;
   vertical-align: middle;
   transition: background 0.25s;
@@ -21,22 +21,21 @@
     display: block;
     background: linear-gradient(to bottom, $mainTextColor 0%, lighten($mainTextColor, 10%) 100%);
     border-radius: 50%;
-    box-shadow: 0 0 0 1px rgba(red($shadowColor), green($shadowColor), blue($shadowColor), 0.25);
-    width: 24px;
-    height: 24px;
+    box-shadow: 0 0 0 1px rgba(red($shadowColor), green($shadowColor), blue($shadowColor), 0.15);
+    width: 20px;
+    height: 20px;
     position: absolute;
-    top: 4px;
-    left: 4px;
+    top: 3px;
+    left: 3px;
     transition: left 0.25s;
   }
   .toggle:hover &:before {
     background: linear-gradient(to bottom, $mainTextColor 0%, $mainTextColor 100%);
-    box-shadow: 0 0 0 1px $shadowColor;
   }
   .toggle-checkbox:checked + & {
     background: $successColor;
     &:before {
-      left: 30px;
+      left: 24px;
     }
   }
 }
@@ -48,5 +47,6 @@
   margin-left: 5px;
   position: relative;
   top: 2px;
+  font-size: 14px;
   margin-right: 4px;
 }

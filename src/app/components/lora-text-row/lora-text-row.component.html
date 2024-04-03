@@ -1,3 +1,4 @@
+<span>
 @if (lora().strengthModel === undefined && lora().strengthClip === undefined) {
   {{lora().id | loraName:(lora().isVersionId ?? false) | async }}@if (comma()){,}
 } @else if (lora().strengthModel !== undefined && lora().strengthClip !== undefined) {
@@ -11,3 +12,4 @@
   {{lora().id | loraName:(lora().isVersionId ?? false) | async }},
   ({{'app.generate.lora.clip_strength' | transloco}}: {{lora().strengthClip! | formatNumber}})@if (comma()){,}
 }
+</span>

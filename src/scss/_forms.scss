@@ -1,7 +1,16 @@
 @import "colors";
+@import "../scss/breakpoints";
 
 .form-group {
-  margin-bottom: 30px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  background: #26252B;
+
+  @include mediaMax($small) {
+    padding: 15px;
+    margin-bottom: 10px;
+  }
 
   & > * {
     display: block;
@@ -9,6 +18,51 @@
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  label {
+    position: relative;
+
+    @include mediaMax($large) {
+      font-size: 12px;
+    }
+
+    app-tooltip {
+      position: absolute;
+      right: 0;
+
+      @include mediaMax($small) {
+        font-size: 16px;
+      }
+    }
+  }
+
+  input {
+    margin-bottom: 0;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  small {
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  .ts-wrapper {
+    margin-bottom: 0;
+    min-height: 40px;
+  }
+
+  .ts-wrapper.single .ts-control {
+    padding-right: 40px !important;
   }
 }
 
@@ -34,13 +88,17 @@
   color: $bodyBackground;
   font-weight: bold;
   padding: 5px 15px;
-  border-radius: 2px;
+  border-radius: 4px;
   cursor: pointer;
 
   &[disabled] {
     background: $borderColor;
     cursor: not-allowed;
     color: $mainTextDisabledColor;
+  }
+
+  &.btnBig {
+    padding: 10px 15px;
   }
 }
 
@@ -57,6 +115,7 @@
 .btn-long {
   display: block;
   width: 100%;
+  padding: 15px;
 }
 
 label:has(+ [required]), label.required {
@@ -67,16 +126,16 @@ label:has(+ [required]), label.required {
   }
 }
 
+textarea {
+  max-width: 100%;
+  min-width: 100%;
+  min-height: 36px;
+  max-height: 500px;
+  font-family: inherit;
+  line-height: 26px !important;
+}
+
 label {
   font-weight: bold;
 }
 
-textarea {
-  font-family: inherit;
-
-  &.form-control {
-    line-height: 1.5;
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
-}

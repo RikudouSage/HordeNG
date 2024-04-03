@@ -9,18 +9,9 @@
   max-width: 1536px;
   min-height: 100%;
   margin: 0 auto;
-  padding: 0 3vw 3vh;
-
-  @include mediaMax($topMenuBreakpoint) {
-    padding-top: 3vh;
-  }
+  padding: 0 20px;
 
   @include mediaMax($small) {
-    padding-top: 0;
-    padding-bottom: 3vh;
+    padding: 4vw 4vw 18vw 4vw;
   }
-}
-
-.spacer {
-  height: 30px;
 }
