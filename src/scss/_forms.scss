@@ -24,6 +24,10 @@
     position: relative;
 
     @include mediaMax($large) {
+      font-size: 14px;
+    }
+
+    @include mediaMax($small) {
       font-size: 12px;
     }
 
