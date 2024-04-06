@@ -27,7 +27,7 @@ import {WorkerType} from "../../types/horde/worker-type";
 import {JobInProgress} from "../../types/db/job-in-progress";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
-import {GenerationOptions, LoraGenerationOption} from "../../types/db/generation-options";
+import {DefaultGenerationOptions, GenerationOptions, LoraGenerationOption} from "../../types/db/generation-options";
 import {RequestStatusCheck} from "../../types/horde/request-status-check";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {HttpClient, HttpResponse} from "@angular/common/http";
@@ -632,5 +632,17 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.form.patchValue({
       loraList: loras,
     });
+  }
+
+  public async resetForm(): Promise<void> {
+    this.form.patchValue(DefaultGenerationOptions);
+    this.form.patchValue({
+      faceFixers: [],
+      genericPostProcessors: [],
+      upscaler: null,
+    });
+    this.result.set(null);
+    this.requestStatus.set(null);
+    this.chosenStyle.set(null);
   }
 }
