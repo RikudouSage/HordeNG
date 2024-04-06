@@ -20,6 +20,7 @@
     "@angular/platform-browser-dynamic": "^17.1.0",
     "@angular/platform-server": "^17.1.0",
     "@angular/router": "^17.1.0",
+    "@angular/service-worker": "^17.1.0",
     "@angular/ssr": "^17.1.2",
     "@aws-sdk/client-s3": "^3.529.1",
     "@fortawesome/angular-fontawesome": "0.14",
