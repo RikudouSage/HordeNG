@@ -184,6 +184,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         allowDowngrade: Boolean(Number(image.Metadata!['allowdowngrade'] ?? 0)),
         clipSkip: Number(image.Metadata!['clipskip'] ?? 1),
         styleName: image.Metadata!['stylename'] || null,
+        onlyMyWorkers: false,
       }
     });
   }
@@ -203,7 +204,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       throw new Error("S3 storage requires providing IDs beforehand.");
     }
 
-    const metadata: Record<(keyof Omit<GenerationOptions, 'worker' | 'data' | 'loraList'>) | 'workerId' | 'workerName' | 'loras', string> = {
+    const metadata: Record<(keyof Omit<GenerationOptions, 'worker' | 'data' | 'loraList' | 'onlyMyWorkers'>) | 'workerId' | 'workerName' | 'loras', string> = {
       workerId: image.worker.id,
       workerName: image.worker.name,
       model: image.model,

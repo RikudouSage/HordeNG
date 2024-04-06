@@ -32,6 +32,7 @@ export interface GenerationOptions {
   clipSkip: number;
   loraList: LoraGenerationOption[];
   styleName: string | null;
+  onlyMyWorkers: boolean;
 }
 
 export const DefaultGenerationOptions: GenerationOptions = {
@@ -57,4 +58,5 @@ export const DefaultGenerationOptions: GenerationOptions = {
   clipSkip: 1,
   loraList: [],
   styleName: null,
+  onlyMyWorkers: false,
 };

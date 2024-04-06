@@ -260,6 +260,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     loraList: new FormControl<LoraGenerationOption[]>([], [
       Validators.maxLength(5),
     ]),
+    onlyMyWorkers: new FormControl<boolean>(false),
   });
   private readonly isBrowser: boolean;
 
@@ -495,6 +496,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       clipSkip: value.clipSkip ?? 1,
       loraList: value.loraList ?? [],
       styleName: this.chosenStyle()?.name ?? null,
+      onlyMyWorkers: value.onlyMyWorkers ?? false,
     };
   }
 

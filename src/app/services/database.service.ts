@@ -118,6 +118,7 @@ export class DatabaseService {
       clipSkip: <number>valuesMap['clipSkip'] ?? DefaultGenerationOptions.clipSkip,
       loraList: <LoraGenerationOption[]>valuesMap['loraList'] ?? DefaultGenerationOptions.loraList,
       styleName: <string>valuesMap['styleName'] ?? DefaultGenerationOptions.styleName,
+      onlyMyWorkers: <boolean>valuesMap['onlyMyWorkers'] ?? DefaultGenerationOptions.onlyMyWorkers,
     };
   }
 

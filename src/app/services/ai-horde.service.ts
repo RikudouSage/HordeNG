@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {HttpMethod} from "../types/http-method";
-import {catchError, forkJoin, map, Observable, of} from "rxjs";
+import {catchError, filter, forkJoin, map, Observable, of, switchMap} from "rxjs";
 import {ApiResponse} from "../types/api-response";
 import {environment} from "../../environments/environment";
 import {ErrorResponse} from "../types/error-response";
@@ -19,6 +19,8 @@ import {SharedKey, UncreatedSharedKey} from "../types/horde/shared-key";
 import {KudosCostResponse} from "../types/horde/kudos-cost-response";
 import {UpdateWorkerRequest} from "../types/horde/update-worker-request";
 import {CacheHelperService} from "./cache-helper.service";
+import {RequestErrorCode} from "../types/horde/request-error-code";
+import {WorkerType} from "../types/horde/worker-type";
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +60,7 @@ export class AiHorde {
   public generateImage(options: GenerationOptions): Observable<ApiResponse<AsyncGenerationResponse>>;
   public generateImage<TDryRun extends boolean>(options: GenerationOptions, dryRun: TDryRun): Observable<ApiResponse<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>>;
   public generateImage<TDryRun extends boolean>(options: GenerationOptions, dryRun: TDryRun = <TDryRun>false): Observable<ApiResponse<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>> {
-    return this.sendRequest(HttpMethod.Post, `generate/async`, {
+    const resultFactory = (workers: string[] | null = null) => this.sendRequest<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>(HttpMethod.Post, `generate/async`, {
       prompt: options.negativePrompt ? `${options.prompt} ### ${options.negativePrompt}` : options.prompt,
       params: {
         sampler_name: options.sampler,
@@ -79,16 +81,56 @@ export class AiHorde {
           clip: lora.strengthClip,
           inject_trigger: lora.injectTrigger,
           is_version: lora.isVersionId,
-        }))
+        })),
       },
       nsfw: options.nsfw,
-      trusted_workers: options.trustedWorkers,
-      slow_workers: options.slowWorkers,
+      trusted_workers: workers !== null ? false : options.trustedWorkers,
+      slow_workers: workers !== null ? true : options.slowWorkers,
       censor_nsfw: options.censorNsfw,
       models: [options.model],
       dry_run: dryRun,
       allow_downgrade: options.allowDowngrade,
+      workers: workers !== null ? workers : undefined,
     });
+
+    if (!options.onlyMyWorkers) {
+      return resultFactory();
+    }
+
+    return this.currentUser().pipe(
+      switchMap(response => {
+        if (!response.success) {
+          return of(null);
+        }
+
+        const workerIds = response.successResponse!.worker_ids ?? [];
+        return forkJoin(workerIds.map(id => this.getWorkerDetail(id).pipe(
+          filter(item => item.success),
+          map(item => item.successResponse!),
+        )));
+      }),
+      map(result => {
+        if (result === null) {
+          return null;
+        }
+
+        return result.filter(worker => worker.type === WorkerType.image);
+      }),
+      switchMap(result => {
+        if (result === null) {
+          return of({
+            success: false,
+            statusCode: 500,
+            errorResponse: {
+              message: 'Failed fetching the current user',
+              rc: RequestErrorCode.UserNotFound,
+            },
+          });
+        }
+
+        return resultFactory(result.map(worker => worker.id));
+      }),
+    );
   }
 
   public checkGenerationStatus(job: JobInProgress): Observable<ApiResponse<RequestStatusCheck>> {
