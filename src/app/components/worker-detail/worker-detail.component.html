@@ -1,101 +1,110 @@
-<app-box [title]="title()" [collapsible]="collapsible()" [collapsedByDefault]="collapsedByDefault()" [buttons]="buttons()">
-  <table class="table key-value">
-    <tr>
-      <td>{{'app.worker.type' | transloco}}</td>
-      <td>{{worker().type}}</td>
-    </tr>
-    <tr>
-      <td>{{'app.worker.online' | transloco}}</td>
-      <td><app-yes-no [value]="worker().online" /></td>
-    </tr>
-    <tr>
-      <td>{{'app.worker.maintenance_mode' | transloco}}</td>
-      <td><app-yes-no [value]="worker().maintenance_mode" /></td>
-    </tr>
-    <tr>
-      <td>{{'app.worker.paused' | transloco}}</td>
-      <td><app-yes-no [value]="worker().paused" /></td>
-    </tr>
-    <tr>
-      <td>{{'app.worker.requests_fulfilled' | transloco}}</td>
-      <td>{{worker().requests_fulfilled | formatNumber}}</td>
-    </tr>
-    <tr>
-      <td>{{'app.worker.kudos_earned' | transloco}}</td>
-      <td>{{worker().kudos_rewards | formatNumber}}</td>
-    </tr>
-    <tr>
-      <td class="font-weight-normal">{{'app.worker.kudos_generated' | transloco}}</td>
-      <td>{{worker().kudos_details.generated | formatNumber}}</td>
-    </tr>
-    <tr>
-      <td class="font-weight-normal">{{'app.worker.kudos_uptime' | transloco}}</td>
-      <td>{{worker().kudos_details.uptime | formatNumber}}</td>
-    </tr>
-    <tr>
-      <td>{{'app.worker.threads' | transloco}}</td>
-      <td>{{worker().threads | formatNumber}}</td>
-    </tr>
-    <tr>
-      <td>{{'app.worker.uptime' | transloco}}</td>
-      <td>{{worker().uptime | printSeconds | async}}</td>
-    </tr>
-    @if (worker().type === WorkerType.image) {
+@if (!isDeleted()) {
+  <app-box [title]="title()" [collapsible]="collapsible()" [collapsedByDefault]="collapsedByDefault()" [buttons]="buttons()">
+    <table class="table key-value">
       <tr>
-        <td>{{'app.worker.image_size' | transloco}}</td>
-        <td>
-          {{'app.unit.px' | transloco:{value: worker().max_pixels | formatNumber} }}
-          ({{worker().max_pixels | mathSqrt | formatNumber}}x{{worker().max_pixels | mathSqrt | formatNumber}})
-        </td>
+        <td>{{'app.worker.type' | transloco}}</td>
+        <td>{{worker().type}}</td>
       </tr>
       <tr>
-        <td>{{'app.worker.mps_generated' | transloco}}</td>
-        <td>{{'app.unit.mps' | transloco:{value: worker().megapixelsteps_generated | formatNumber} }}</td>
+        <td>{{'app.worker.online' | transloco}}</td>
+        <td><app-yes-no [value]="worker().online" /></td>
       </tr>
       <tr>
-        <td>{{'app.worker.nsfw' | transloco}}</td>
-        <td><app-yes-no [value]="worker().nsfw" /></td>
+        <td>{{'app.worker.maintenance_mode' | transloco}}</td>
+        <td><app-yes-no [value]="worker().maintenance_mode" /></td>
       </tr>
       <tr>
-        <td>{{'app.worker.img2img' | transloco}}</td>
-        <td><app-yes-no [value]="worker().img2img" /></td>
+        <td>{{'app.worker.paused' | transloco}}</td>
+        <td><app-yes-no [value]="worker().paused" /></td>
       </tr>
       <tr>
-        <td>{{'app.worker.painting' | transloco}}</td>
-        <td><app-yes-no [value]="worker().painting" /></td>
+        <td>{{'app.worker.requests_fulfilled' | transloco}}</td>
+        <td>{{worker().requests_fulfilled | formatNumber}}</td>
       </tr>
       <tr>
-        <td>{{'app.worker.post_processing' | transloco}}</td>
-        <td><app-yes-no [value]="worker()['post-processing']" /></td>
+        <td>{{'app.worker.kudos_earned' | transloco}}</td>
+        <td>{{worker().kudos_rewards | formatNumber}}</td>
       </tr>
       <tr>
-        <td>{{'app.worker.lora' | transloco}}</td>
-        <td><app-yes-no [value]="worker().lora" /></td>
+        <td class="font-weight-normal">{{'app.worker.kudos_generated' | transloco}}</td>
+        <td>{{worker().kudos_details.generated | formatNumber}}</td>
       </tr>
       <tr>
-        <td>{{'app.worker.models' | transloco}} ({{worker().models.length | formatNumber}})</td>
-        <td>
-          <ul>
-            @for (model of worker().models; track model) {
-              <li>{{model}}</li>
-            } @empty {
-              <li>{{'app.worker.no_models' | transloco}}</li>
-            }
-          </ul>
-        </td>
-      </tr>
-    } @else if (worker().type === WorkerType.text) {
-      <tr>
-        <td>{{'app.worker.max_length' | transloco}}</td>
-        <td>{{worker().max_length | formatNumber}}</td>
+        <td class="font-weight-normal">{{'app.worker.kudos_uptime' | transloco}}</td>
+        <td>{{worker().kudos_details.uptime | formatNumber}}</td>
       </tr>
       <tr>
-        <td>{{'app.worker.max_context_length' | transloco}}</td>
-        <td>{{worker().max_context_length | formatNumber}}</td>
-      </tr> <tr>
-        <td>{{'app.worker.tokens_generated' | transloco}}</td>
-        <td>{{worker().tokens_generated | formatNumber}}</td>
+        <td>{{'app.worker.threads' | transloco}}</td>
+        <td>{{worker().threads | formatNumber}}</td>
       </tr>
-    }
-  </table>
-</app-box>
+      <tr>
+        <td>{{'app.worker.uptime' | transloco}}</td>
+        <td>{{worker().uptime | printSeconds | async}}</td>
+      </tr>
+      @if (worker().type === WorkerType.image) {
+        <tr>
+          <td>{{'app.worker.image_size' | transloco}}</td>
+          <td>
+            {{'app.unit.px' | transloco:{value: worker().max_pixels | formatNumber} }}
+            ({{worker().max_pixels | mathSqrt | formatNumber}}x{{worker().max_pixels | mathSqrt | formatNumber}})
+          </td>
+        </tr>
+        <tr>
+          <td>{{'app.worker.mps_generated' | transloco}}</td>
+          <td>{{'app.unit.mps' | transloco:{value: worker().megapixelsteps_generated | formatNumber} }}</td>
+        </tr>
+        <tr>
+          <td>{{'app.worker.nsfw' | transloco}}</td>
+          <td><app-yes-no [value]="worker().nsfw" /></td>
+        </tr>
+        <tr>
+          <td>{{'app.worker.img2img' | transloco}}</td>
+          <td><app-yes-no [value]="worker().img2img" /></td>
+        </tr>
+        <tr>
+          <td>{{'app.worker.painting' | transloco}}</td>
+          <td><app-yes-no [value]="worker().painting" /></td>
+        </tr>
+        <tr>
+          <td>{{'app.worker.post_processing' | transloco}}</td>
+          <td><app-yes-no [value]="worker()['post-processing']" /></td>
+        </tr>
+        <tr>
+          <td>{{'app.worker.lora' | transloco}}</td>
+          <td><app-yes-no [value]="worker().lora" /></td>
+        </tr>
+        <tr>
+          <td>{{'app.worker.models' | transloco}} ({{worker().models.length | formatNumber}})</td>
+          <td>
+            <ul>
+              @for (model of worker().models; track model) {
+                <li>{{model}}</li>
+              } @empty {
+                <li>{{'app.worker.no_models' | transloco}}</li>
+              }
+            </ul>
+          </td>
+        </tr>
+      } @else if (worker().type === WorkerType.text) {
+        <tr>
+          <td>{{'app.worker.max_length' | transloco}}</td>
+          <td>{{worker().max_length | formatNumber}}</td>
+        </tr>
+        <tr>
+          <td>{{'app.worker.max_context_length' | transloco}}</td>
+          <td>{{worker().max_context_length | formatNumber}}</td>
+        </tr> <tr>
+          <td>{{'app.worker.tokens_generated' | transloco}}</td>
+          <td>{{worker().tokens_generated | formatNumber}}</td>
+        </tr>
+      }
+      @if (editable()) {
+        <tr>
+          <td colspan="2">
+            <button type="button" class="btn btn-danger" (click)="deleteWorker()">{{'app.delete' | transloco}}</button>
+          </td>
+        </tr>
+      }
+    </table>
+  </app-box>
+}

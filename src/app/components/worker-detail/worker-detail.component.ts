@@ -1,4 +1,4 @@
-import {Component, computed, input, output} from '@angular/core';
+import {Component, computed, input, output, signal} from '@angular/core';
 import {WorkerDetails} from "../../types/horde/worker-details";
 import {WorkerType} from "../../types/horde/worker-type";
 import {BoxButton, BoxComponent} from "../box/box.component";
@@ -11,6 +11,8 @@ import {AsyncPipe} from "@angular/common";
 import {faPauseCircle, faPlayCircle} from "@fortawesome/free-solid-svg-icons";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
+import {MessageService} from "../../services/message.service";
+import {TranslatorService} from "../../services/translator.service";
 
 @Component({
   selector: 'app-worker-detail',
@@ -36,12 +38,13 @@ export class WorkerDetailComponent {
   public collapsedByDefault = input(false);
 
   public onlineInTitle = input(false);
-  public pausable = input(false);
+  public editable = input(false);
 
   public paused = computed(() => this.worker().paused || this.worker().maintenance_mode);
+  public isDeleted = signal(false);
 
   public buttons = computed((): BoxButton[] => {
-    if (!this.pausable()) {
+    if (!this.editable()) {
       return [];
     }
 
@@ -84,10 +87,29 @@ export class WorkerDetailComponent {
   });
 
   public pauseStatusUpdated = output<boolean>();
+  public deleted = output<void>();
 
   constructor(
     private readonly transloco: TranslocoService,
     private readonly api: AiHorde,
+    private readonly messenger: MessageService,
+    private readonly translator: TranslatorService,
   ) {
+  }
+
+  public async deleteWorker(): Promise<void> {
+    const response = await toPromise(this.api.deleteWorker(this.worker().id));
+    if (!response.success) {
+      await this.messenger.error(this.translator.get('app.error.api_error', {
+        message: response.errorResponse!.message,
+        code: response.errorResponse!.rc
+      }));
+      return;
+    }
+
+    await this.messenger.success(this.translator.get('app.worker.deleted'));
+
+    this.isDeleted.set(true);
+    this.deleted.emit();
   }
 }

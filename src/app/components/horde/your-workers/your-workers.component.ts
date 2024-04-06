@@ -57,7 +57,7 @@ export class YourWorkersComponent implements OnInit, OnDestroy {
     const promises = this.currentUser().worker_ids?.map(id => toPromise(this.api.getWorkerDetail(id))) ?? [];
     const responses = await Promise.all(promises);
     for (const response of responses) {
-      if (!response.success) {
+      if (!response.success && response.statusCode !== 404) {
         await this.messageService.error(this.translator.get('app.error.api_error', {
           message: response.errorResponse!.message,
           code: response.errorResponse!.rc
@@ -66,7 +66,11 @@ export class YourWorkersComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.workers.set(responses.map(response => response.successResponse!));
+    this.workers.set(
+      responses
+        .filter(response => response.success)
+        .map(response => response.successResponse!)
+    );
   }
 
   public async refreshWorkerPauseStatus(targetWorker: WorkerDetails, paused: boolean): Promise<void> {

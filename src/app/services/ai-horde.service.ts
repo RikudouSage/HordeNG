@@ -140,6 +140,10 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Put, `workers/${id}`, workerSettings);
   }
 
+  public deleteWorker(id: string): Observable<ApiResponse<any>> {
+    return this.sendRequest(HttpMethod.Delete, `workers/${id}`);
+  }
+
   private sendRequest<T>(
     method: HttpMethod,
     endpoint: string,

@@ -234,5 +234,6 @@
   "app.generate.help.allow_downgrade": "When enabled, your request can be downgraded to fit within the available criteria if you don't have enough kudos.",
   "app.generate.help.hires_fix": "HiRes fix works by generating your image at a lower resolution and then upscaling it.",
   "app.download": "Download",
-  "app.style_select.filter": "Filter by name"
+  "app.style_select.filter": "Filter by name",
+  "app.worker.deleted": "The worker has been successfully deleted"
 }
