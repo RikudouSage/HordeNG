@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "org.horde_ng.twa",
+        "sha256_cert_fingerprints": ["EC:22:41:CA:5E:AF:20:FD:46:31:C5:CF:5F:F2:F7:2B:9A:BB:9B:65:A2:3A:36:16:25:FA:C9:5F:51:C2:E0:30"]
+      }
+    }]
