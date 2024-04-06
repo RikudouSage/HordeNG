@@ -15,5 +15,23 @@
         "clip": 1
       }
     ]
+  },
+  "Logo": {
+    "prompt": "logo, A logo for {p}, LogoRedAF ### {np}, bad art, ugly, deformed, watermark, duplicated",
+    "model": "AlbedoBase XL (SDXL)",
+    "steps": 30,
+    "cfg_scale": 7,
+    "sampler_name": "k_dpmpp_2m",
+    "width": 1024,
+    "height": 1024,
+    "loras": [
+      {
+        "name": "177492",
+        "is_version": true,
+        "model": 1,
+        "clip": 1
+      }
+    ],
+    "karras": true
   }
 }
