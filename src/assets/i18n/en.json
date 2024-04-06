@@ -237,5 +237,6 @@
   "app.style_select.filter": "Filter by name",
   "app.worker.deleted": "The worker has been successfully deleted",
   "app.generate.only_my_workers": "Only my workers",
-  "app.generate.help.only_my_workers": "When enabled, only your own workers will be servicing this request. If you also pause your worker on the {{app.horde}} page, you'll effectively only be generating images for yourself."
+  "app.generate.help.only_my_workers": "When enabled, only your own workers will be servicing this request. If you also pause your worker on the {{app.horde}} page, you'll effectively only be generating images for yourself.",
+  "app.generate.reset": "Reset"
 }
