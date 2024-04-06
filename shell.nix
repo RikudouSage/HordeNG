@@ -10,5 +10,6 @@ pkgs.mkShell {
     ];
     shellHook = ''
       source <(ng completion script)
+      alias bubblewrap="docker run --rm -ti -v $(pwd):/app -w /app ghcr.io/googlechromelabs/bubblewrap:latest";
     '';
 }
