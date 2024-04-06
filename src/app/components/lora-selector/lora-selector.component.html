@@ -73,7 +73,7 @@
           </div>
           <div class="mt-1 bottom-row">
             <ng-template #configureModal>
-              <app-configure-lora [lora]="item" [versionId]="Number(versionSelect.value)" (configured)="onConfigured($event)" />
+              <app-configure-lora [loraName]="item.name" [versionId]="Number(versionSelect.value)" (configured)="onConfigured($event)" />
             </ng-template>
             <button class="btn btn-primary" type="button"
                     [disabled]="selectedLoraIds().includes(Number(versionSelect.value))"

@@ -53,7 +53,7 @@ import {ModalService} from "../../services/modal.service";
 import {EnrichedPromptStyle} from "../../types/sd-repo/prompt-style";
 import {EffectiveValueComponent} from "../../components/effective-value/effective-value.component";
 import {LoraNamePipe} from "../../pipes/lora-name.pipe";
-import {faRemove} from "@fortawesome/free-solid-svg-icons";
+import {faPencil, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {LoraSelectorComponent} from "../../components/lora-selector/lora-selector.component";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
@@ -65,6 +65,9 @@ import {BaselineModel} from "../../types/sd-repo/baseline-model";
 import {AutoGrowDirective} from "../../directives/auto-grow.directive";
 import {SliderWithValueComponent} from "../../components/slider-with-value/slider-with-value.component";
 import {TooltipComponent} from "../../components/tooltip/tooltip.component";
+import {ConfigureLoraComponent, ConfigureLoraResult} from "../../components/configure-lora/configure-lora.component";
+import {CivitAiService} from "../../services/civit-ai.service";
+import {LoraVersionIdPipe} from "../../pipes/lora-version-id.pipe";
 
 interface Result {
   width: number;
@@ -109,7 +112,9 @@ interface Result {
     IsUpscalerPipe,
     AutoGrowDirective,
     SliderWithValueComponent,
-    TooltipComponent
+    TooltipComponent,
+    ConfigureLoraComponent,
+    LoraVersionIdPipe
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -192,6 +197,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   });
   public effectiveModel = computed(() => this.modifiedOptions()?.model ?? this.currentModelName());
 
+  public iconEdit = signal(faPencil);
   public iconDelete = signal(faRemove);
 
   public form = new FormGroup({
@@ -274,6 +280,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     private readonly hordeRepoData: HordeRepoDataService,
     private readonly generationOptionsValidator: GenerationOptionsValidatorService,
     private readonly modalService: ModalService,
+    private readonly civitAi: CivitAiService,
     @Inject(DOCUMENT) private readonly document: Document,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
@@ -608,5 +615,20 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     a.download = `${result.prompt}.webp`;
     a.click();
     a.remove();
+  }
+
+  public async loraUpdated(result: ConfigureLoraResult): Promise<void> {
+    const loras = this.form.value.loraList ?? [];
+    for (const lora of loras) {
+      const versionId = lora.isVersionId ? lora.id : (await toPromise(this.civitAi.getLoraDetail(lora.id))).modelVersions[0].id;
+      if (versionId === result.versionId) {
+        lora.strengthModel = result.model;
+        lora.strengthClip = result.clip;
+        break;
+      }
+    }
+    this.form.patchValue({
+      loraList: loras,
+    });
   }
 }

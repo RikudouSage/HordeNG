@@ -160,9 +160,21 @@
             @for (lora of form.value.loraList!; track lora.id) {
               <li>
                 <strong><app-lora-text-row [lora]="lora" /></strong>
+                <button (click)="openModal(editLora)" class="text-primary icon-button ml-1" type="button" [title]="'app.edit' | transloco" style="right: 40px;">
+                  <fa-icon [title]="'app.edit' | transloco" [icon]="iconEdit()" size="2xl" />
+                </button>
                 <button (click)="removeLora(lora.id)" class="text-danger icon-button ml-1" type="button" title="{{'app.delete' | transloco}}">
                   <fa-icon title="{{'app.delete' | transloco}}" [icon]="iconDelete()" size="2xl" />
                 </button>
+                <ng-template #editLora>
+                  <app-configure-lora
+                    [loraName]="(lora.id | loraName:(lora.isVersionId ?? false) | async)!"
+                    [versionId]="(lora.isVersionId ?? false) ? lora.id : (lora.id | loraVersionId | async)!"
+                    [clipStrength]="lora.strengthClip ?? 1"
+                    [modelStrength]="lora.strengthModel ?? 1"
+                    (configured)="loraUpdated($event)"
+                  />
+                </ng-template>
               </li>
             }
             </ul>
