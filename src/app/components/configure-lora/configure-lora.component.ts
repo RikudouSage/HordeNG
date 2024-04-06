@@ -1,5 +1,4 @@
-import {Component, input, output} from '@angular/core';
-import {CivitAiModel} from "../../types/civit-ai/civit-ai-model";
+import {Component, input, OnInit, output} from '@angular/core';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ModalService} from "../../services/modal.service";
@@ -22,9 +21,12 @@ export interface ConfigureLoraResult {
   templateUrl: './configure-lora.component.html',
   styleUrl: './configure-lora.component.scss'
 })
-export class ConfigureLoraComponent {
-  public lora = input.required<CivitAiModel>();
+export class ConfigureLoraComponent implements OnInit {
+  public loraName = input.required<string>();
   public versionId = input.required<number>();
+
+  public modelStrength = input(1);
+  public clipStrength = input(1);
 
   public configured = output<ConfigureLoraResult>();
 
@@ -42,6 +44,13 @@ export class ConfigureLoraComponent {
   constructor(
     private readonly modalService: ModalService,
   ) {
+  }
+
+  public async ngOnInit(): Promise<void> {
+    this.form.patchValue({
+      model: this.modelStrength(),
+      clip: this.clipStrength(),
+    });
   }
 
   public async onFormSubmitted(): Promise<void> {
