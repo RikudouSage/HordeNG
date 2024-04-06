@@ -222,6 +222,13 @@
   dependencies:
     tslib "^2.3.0"
 
+"@angular/service-worker@^17.1.0":
+  version "17.3.3"
+  resolved "https://registry.yarnpkg.com/@angular/service-worker/-/service-worker-17.3.3.tgz#cd8c83793771e93e0a98192428d956d92e9cb487"
+  integrity sha512-ZS7MPNPdvIoNKuPfK2pukKiyn+OXVMUALBjSH6k2ayiKxhMiNBCybA4KkQf6DZ9NIlKiGoBc46wf7FZybWAYbQ==
+  dependencies:
+    tslib "^2.3.0"
+
 "@angular/ssr@^17.1.2":
   version "17.3.3"
   resolved "https://registry.yarnpkg.com/@angular/ssr/-/ssr-17.3.3.tgz#2d559b75d1adaec66f40cd378b83de77fd9aba5e"
@@ -7698,6 +7705,7 @@ wildcard@^2.0.0:
   integrity sha512-CC1bOL87PIWSBhDcTrdeLo6eGT7mCFtrg0uIJtqJUFyK+eJnzl8A1niH56uu7KMa5XFrtiV+AQuHO3n7DsHnLQ==
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
