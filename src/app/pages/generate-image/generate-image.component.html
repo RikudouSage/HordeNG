@@ -1,8 +1,8 @@
 @if (loading()) {
   <app-loader/>
 } @else {
-  <form [formGroup]="form" (ngSubmit)="generateImage()">
-    <div class="row setWrapper">
+  <form [formGroup]="form">
+    <div class="row setWrapper" [class.is-scrolled]="isScrolled">
       <div class="setContainer">
         <div class="form-group">
           <label for="inputPrompt">{{ 'app.generate.prompt' | transloco }} <app-tooltip [text]="'app.generate.help.prompt' | transloco" /></label>
@@ -297,22 +297,16 @@
         </div>
       </div>
       <div class="setContainer">
-        <div class="row mb-1">
-          <div class="col-md-1 mr-05">
-            <button [disabled]="inProgress()" type="button" class="btn btn-danger btn-long" (click)="resetForm()">{{'app.generate.reset' | transloco}}</button>
-          </div>
-          <div class="col-md-10 mr-05">
-            <button [disabled]="!form.valid || inProgress()" type="submit" class="btn btn-primary btn-long">
-              @if (kudosCost() === null) {
-                {{ 'app.generate.do_generate.calculating' | transloco }}
-              } @else {
-                {{ 'app.generate.do_generate' | transloco:{kudos: (kudosCost() ?? 0) | formatNumber} }}
-              }
-            </button>
-          </div>
-          <div class="col-md-1">
-            <button [disabled]="inProgress() === null" type="button" class="btn btn-danger btn-long" (click)="cancelGeneration()">{{'app.generate.cancel' | transloco}}</button>
-          </div>
+        <div class="buttonGroup">
+          <button [disabled]="inProgress()" type="button" class="btn btn-danger btn-long" (click)="resetForm()">{{'app.generate.reset' | transloco}}</button>
+          <button [disabled]="!form.valid || inProgress()" type="submit" class="btn btn-primary btn-long">
+            @if (kudosCost() === null) {
+              {{ 'app.generate.do_generate.calculating' | transloco }}
+            } @else {
+              {{ 'app.generate.do_generate' | transloco:{kudos: (kudosCost() ?? 0) | formatNumber} }}
+            }
+          </button>
+          <button [disabled]="inProgress() === null" type="button" class="btn btn-danger btn-long" (click)="cancelGeneration()">{{'app.generate.cancel' | transloco}}</button>
         </div>
         <div class="row">
           <div class="col-md-12">
