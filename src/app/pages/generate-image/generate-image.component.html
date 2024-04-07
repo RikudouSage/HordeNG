@@ -1,7 +1,7 @@
 @if (loading()) {
   <app-loader/>
 } @else {
-  <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="generateImage()">
     <div class="row setWrapper" [class.is-scrolled]="isScrolled">
       <div class="setContainer">
         <div class="form-group">
