@@ -36,5 +36,4 @@ export interface WorkerDetails {
   lora: boolean;
   max_length: number;
   max_context_length: number;
-  tokens_generated: number;
 }

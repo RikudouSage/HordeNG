@@ -26,7 +26,13 @@
         <td>{{worker().kudos_rewards | formatNumber}}</td>
       </tr>
       <tr>
-        <td class="font-weight-normal">{{'app.worker.kudos_generated' | transloco}}</td>
+        <td class="font-weight-normal">
+          @if (worker().type === WorkerType.image) {
+            {{'app.worker.kudos_generated.image' | transloco}}
+          } @else {
+            {{'app.worker.kudos_generated.text' | transloco}}
+          }
+        </td>
         <td>{{worker().kudos_details.generated | formatNumber}}</td>
       </tr>
       <tr>
@@ -40,6 +46,18 @@
       <tr>
         <td>{{'app.worker.uptime' | transloco}}</td>
         <td>{{worker().uptime | printSeconds | async}}</td>
+      </tr>
+      <tr>
+        <td>{{'app.worker.models' | transloco}} ({{worker().models.length | formatNumber}})</td>
+        <td>
+          <ul>
+            @for (model of worker().models; track model) {
+              <li>{{model}}</li>
+            } @empty {
+              <li>{{'app.worker.no_models' | transloco}}</li>
+            }
+          </ul>
+        </td>
       </tr>
       @if (worker().type === WorkerType.image) {
         <tr>
@@ -73,18 +91,6 @@
           <td>{{'app.worker.lora' | transloco}}</td>
           <td><app-yes-no [value]="worker().lora" /></td>
         </tr>
-        <tr>
-          <td>{{'app.worker.models' | transloco}} ({{worker().models.length | formatNumber}})</td>
-          <td>
-            <ul>
-              @for (model of worker().models; track model) {
-                <li>{{model}}</li>
-              } @empty {
-                <li>{{'app.worker.no_models' | transloco}}</li>
-              }
-            </ul>
-          </td>
-        </tr>
       } @else if (worker().type === WorkerType.text) {
         <tr>
           <td>{{'app.worker.max_length' | transloco}}</td>
@@ -93,9 +99,6 @@
         <tr>
           <td>{{'app.worker.max_context_length' | transloco}}</td>
           <td>{{worker().max_context_length | formatNumber}}</td>
-        </tr> <tr>
-          <td>{{'app.worker.tokens_generated' | transloco}}</td>
-          <td>{{worker().tokens_generated | formatNumber}}</td>
         </tr>
       }
       @if (editable()) {
