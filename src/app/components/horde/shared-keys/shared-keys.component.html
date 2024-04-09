@@ -23,17 +23,17 @@
               }
             </td>
           </tr>
-          <tr>
-            <td>{{'app.shared_key.kudos_budget' | transloco}}</td>
-            <td>
-              @if (sharedKey.kudos + sharedKey.utilized > -1) {
-                {{sharedKey.kudos + sharedKey.utilized | formatNumber}}
-              } @else {
-                <code>{{'app.not_applicable' | transloco}}</code>
-              }
-            </td>
-          </tr>
-          @if (sharedKey.kudos + sharedKey.utilized > -1) {
+          @if (sharedKey.kudos > -1) {
+            <tr>
+              <td>{{'app.shared_key.kudos_budget' | transloco}}</td>
+              <td>
+                @if (sharedKey.kudos + sharedKey.utilized > -1) {
+                  {{sharedKey.kudos + sharedKey.utilized | formatNumber}}
+                } @else {
+                  <code>{{'app.not_applicable' | transloco}}</code>
+                }
+              </td>
+            </tr>
             <tr>
               <td class="font-weight-normal">{{'app.shared_key.kudos_remaining' | transloco}}</td>
               <td>
@@ -50,6 +50,13 @@
                 <small>
                   ({{(sharedKey.utilized / (sharedKey.kudos + sharedKey.utilized)) * 100 | formatNumber:2}}%)
                 </small>
+              </td>
+            </tr>
+          } @else {
+            <tr>
+              <td>{{'app.shared_key.kudos_used_standalone' | transloco}}</td>
+              <td>
+                {{sharedKey.utilized | formatNumber}}
               </td>
             </tr>
           }

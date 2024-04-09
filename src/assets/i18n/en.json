@@ -115,6 +115,7 @@
   "app.shared_key.kudos_budget": "Kudos budget",
   "app.shared_key.kudos_remaining": "- remaining",
   "app.shared_key.kudos_used": "- used",
+  "app.shared_key.kudos_used_standalone": "Kudos used",
   "app.shared_key.expires": "Expiration",
   "app.shared_key.max_image_pixels": "Max pixels",
   "app.shared_key.max_image_steps": "Max steps (image)",
