@@ -1,4 +1,4 @@
-import {Component, OnInit, signal, ViewContainerRef} from '@angular/core';
+import {Component, Inject, OnInit, PLATFORM_ID, signal, ViewContainerRef} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {TopMenuComponent} from "./components/top-menu/top-menu.component";
 import {AiHorde} from "./services/ai-horde.service";
@@ -6,6 +6,8 @@ import {AuthManagerService} from "./services/auth-manager.service";
 import {toPromise} from "./helper/resolvable";
 import {globalAppView} from "./global-app-view";
 import {SwUpdate} from "@angular/service-worker";
+import {ToastrService} from "ngx-toastr";
+import {TranslatorService} from "./services/translator.service";
 
 @Component({
   selector: 'app-root',
@@ -16,12 +18,15 @@ import {SwUpdate} from "@angular/service-worker";
 })
 export class AppComponent implements OnInit {
   private updateChecked = signal(false);
-  private updateAvailable = signal(false);
 
   constructor(
     private readonly aiHorde: AiHorde,
     private readonly authManager: AuthManagerService,
     private readonly updates: SwUpdate,
+    private readonly toastr: ToastrService,
+    private readonly translator: TranslatorService,
+    @Inject(PLATFORM_ID)
+    private readonly platform: string,
     view: ViewContainerRef,
   ) {
     globalAppView.set(view);
@@ -29,13 +34,23 @@ export class AppComponent implements OnInit {
 
   public async ngOnInit(): Promise<void> {
     if (this.updates.isEnabled) {
-      this.updates.versionUpdates.subscribe(event => {
+      this.updates.versionUpdates.subscribe(async event => {
         if (this.updateChecked()) {
           return;
         }
         if (event.type === 'VERSION_READY') {
-          this.updateAvailable.set(true);
-          window.location.reload();
+          const toast = this.toastr.info(
+            await toPromise(this.translator.get('app.new_version.available')),
+            await toPromise(this.translator.get('app.new_version.title')),
+            {
+              closeButton: true,
+              disableTimeOut: true,
+              tapToDismiss: false,
+            }
+          );
+          toast.onTap.subscribe(() => {
+            window.location.reload();
+          });
         }
       });
 
