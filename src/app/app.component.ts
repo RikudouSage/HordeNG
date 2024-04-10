@@ -8,11 +8,12 @@ import {globalAppView} from "./global-app-view";
 import {SwUpdate} from "@angular/service-worker";
 import {ToastrService} from "ngx-toastr";
 import {TranslatorService} from "./services/translator.service";
+import {FooterComponent} from "./components/footer/footer.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, TopMenuComponent],
+  imports: [RouterOutlet, TopMenuComponent, FooterComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

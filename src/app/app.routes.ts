@@ -21,4 +21,8 @@ export const routes: Routes = [
     path: 'images',
     loadComponent: () => import('./pages/images/images.component').then(m => m.ImagesComponent),
   },
+  {
+    path: 'privacy-policy',
+    loadComponent: () => import('./pages/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent),
+  },
 ];

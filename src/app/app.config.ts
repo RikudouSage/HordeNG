@@ -5,7 +5,7 @@ import {routes} from './app.routes';
 import {provideHttpClient, withFetch} from '@angular/common/http';
 import {TranslocoHttpLoader} from './transloco-loader';
 import {provideTransloco} from '@ngneat/transloco';
-import {defaultTranslocoMarkupTranspilers} from "ngx-transloco-markup";
+import {defaultTranslocoMarkupTranspilers, provideTranslationMarkupTranspiler} from "ngx-transloco-markup";
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {provideToastr} from "ngx-toastr";
 import {DataStorage} from "./services/image-storage/data-storage";
@@ -15,6 +15,7 @@ import {Credentials} from "./types/credentials/credentials";
 import {GoogleDriveDataStorage} from "./services/image-storage/google-drive.data-storage";
 import {DropboxDataStorage} from "./services/image-storage/dropbox.data-storage";
 import {provideServiceWorker} from '@angular/service-worker';
+import {ParagraphTranspiler} from "./services/transloco/paragraph-transpiler";
 
 export const DATA_STORAGE = new InjectionToken<DataStorage<Credentials>>('ImageStorage');
 
@@ -35,6 +36,7 @@ export const appConfig: ApplicationConfig = {
       loader: TranslocoHttpLoader,
     }),
     defaultTranslocoMarkupTranspilers(),
+    provideTranslationMarkupTranspiler(ParagraphTranspiler),
     provideAnimations(),
     provideToastr({
       maxOpened: 3,

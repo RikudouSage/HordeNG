@@ -242,5 +242,7 @@
   "app.generate.help.only_my_workers": "When enabled, only your own workers will be servicing this request. If you also pause your worker on the {{app.horde}} page, you'll effectively only be generating images for yourself.",
   "app.generate.reset": "Reset",
   "app.new_version.available": "New version of {{app.title.simple}} is available! Tap this notification to load it.",
-  "app.new_version.title": "New version available"
+  "app.new_version.title": "New version available",
+  "app.privacy_policy.content": "[p]Our privacy policy is quite simple: [b]We don't track any data, we don't store any data and we don't want any of your data[/b].[/p][p]If only all privacy policies were this simple, huh?[/p]",
+  "app.privacy_policy.title": "Privacy policy"
 }
