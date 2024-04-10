@@ -243,6 +243,6 @@
   "app.generate.reset": "Reset",
   "app.new_version.available": "New version of {{app.title.simple}} is available! Tap this notification to load it.",
   "app.new_version.title": "New version available",
-  "app.privacy_policy.content": "[p]Our privacy policy is quite simple: [b]We don't track any data, we don't store any data and we don't want any of your data[/b].[/p][p]If only all privacy policies were this simple, huh?[/p][p][b]By using {{app.title.simple}} you're also using AI Horde (which {{app.title.simple}} is a frontend for) and thus you're subject to their privacy policy as well.[/b] It can be found at [link:hordePolicy]{{hordePolicy}}[/link].[/p]",
+  "app.privacy_policy.content": "[p]Our privacy policy is quite simple: [b]We don't track any data, we don't store any data and we don't want any of your data[/b].[/p][p]If only all privacy policies were this simple, huh?[/p][p]Because {{app.title.simple}} is a frontend for AI Horde, you might also be interested in their [link:hordePolicy]privacy policy[/link].[/p]",
   "app.privacy_policy.title": "Privacy policy"
 }
