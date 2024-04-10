@@ -9,6 +9,7 @@ import {SwUpdate} from "@angular/service-worker";
 import {ToastrService} from "ngx-toastr";
 import {TranslatorService} from "./services/translator.service";
 import {FooterComponent} from "./components/footer/footer.component";
+import {MessageService} from "./services/message.service";
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit {
     private readonly updates: SwUpdate,
     private readonly toastr: ToastrService,
     private readonly translator: TranslatorService,
+    private readonly messenger: MessageService,
     @Inject(PLATFORM_ID)
     private readonly platform: string,
     view: ViewContainerRef,
@@ -62,7 +64,7 @@ export class AppComponent implements OnInit {
     if (this.authManager.apiKey() !== this.authManager.anonymousApiKey) {
       const user = await toPromise(this.aiHorde.currentUser());
       if (!user.success) {
-        this.authManager.apiKey = this.authManager.anonymousApiKey;
+        await this.messenger.error(this.translator.get('app.error.invalid_api_key_global'));
       }
     }
   }

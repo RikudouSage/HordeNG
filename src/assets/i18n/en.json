@@ -244,5 +244,6 @@
   "app.new_version.available": "New version of {{app.title.simple}} is available! Tap this notification to load it.",
   "app.new_version.title": "New version available",
   "app.privacy_policy.content": "[p]Our privacy policy is quite simple: [b]We don't track any data, we don't store any data and we don't want any of your data[/b].[/p][p]If only all privacy policies were this simple, huh?[/p][p]Because {{app.title.simple}} is a frontend for AI Horde, you might also be interested in their [link:hordePolicy]privacy policy[/link].[/p]",
-  "app.privacy_policy.title": "Privacy policy"
+  "app.privacy_policy.title": "Privacy policy",
+  "app.error.invalid_api_key_global": "It appears that your api key is not valid, perhaps you'd like to go to {{app.settings}} and set a new one?"
 }
