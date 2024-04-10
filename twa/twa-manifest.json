@@ -1,0 +1,47 @@
+{
+  "packageId": "org.horde_ng.twa",
+  "host": "horde-ng.org",
+  "name": "HordeNG",
+  "launcherName": "HordeNG",
+  "display": "standalone",
+  "themeColor": "#409EFF",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#1C1B22",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://horde-ng.org/assets/icons/icon-512x512.png",
+  "maskableIconUrl": "https://horde-ng.org/assets/icons/icon-512x512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "/app/horde_ng.keystore",
+    "alias": "horde_ng"
+  },
+  "appVersionName": "1",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://horde-ng.org/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://horde-ng.org/",
+  "minSdkVersion": 19,
+  "orientation": "default",
+  "fingerprints": [
+    {
+      "value": "EC:22:41:CA:5E:AF:20:FD:46:31:C5:CF:5F:F2:F7:2B:9A:BB:9B:65:A2:3A:36:16:25:FA:C9:5F:51:C2:E0:30"
+    }
+  ],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersion": "1"
+}

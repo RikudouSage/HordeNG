@@ -32,7 +32,12 @@
                 "glob": "*",
                 "output": "."
               },
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              {
+                "input": "twa",
+                "glob": "assetlinks.json",
+                "output": ".well-known"
+              }
             ],
             "styles": [
               "src/styles.scss"
