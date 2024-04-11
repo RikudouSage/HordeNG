@@ -83,7 +83,7 @@
   "app.generate.result.censored": "The image generation has been censored by the AI horde.",
   "app.image_storage": "Image storage",
   "app.storage.s3": "AWS S3 (or compatible)",
-  "app.storage.browser": "Browser",
+  "app.storage.browser": "Device",
   "app.settings.s3.access_key": "S3 Access Key",
   "app.settings.s3.secret_key": "S3 Secret Key",
   "app.settings.s3.bucket": "S3 bucket",
