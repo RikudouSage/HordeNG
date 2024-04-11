@@ -6,6 +6,7 @@
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
+  "iarc_rating_id": "c4524f43-7611-408b-89ac-8e81b552a4d3",
   "icons": [
     {
       "src": "assets/icons/icon-72x72.png",
@@ -54,6 +55,13 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable any"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=org.horde_ng.twa",
+      "id": "org.horde_ng.twa"
     }
   ]
 }
