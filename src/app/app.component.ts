@@ -69,9 +69,7 @@ export class AppComponent implements OnInit {
     }
 
     if (typeof navigator !== 'undefined' && !await navigator.storage.persisted()) {
-      if (!await navigator.storage.persist()) {
-        await this.messenger.error(this.translator.get('app.error.persistent_storage'));
-      }
+      await navigator.storage.persist();
     }
   }
 }
