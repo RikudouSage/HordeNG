@@ -6,19 +6,28 @@
       <form [formGroup]="form" (ngSubmit)="submitForm()">
         <div class="settingContent">
         <div class="settingContent--left">
-        <div class="form-group">
-          <!--suppress XmlInvalidId -->
-          <label for="inputApiKey" class="required">{{'app.api_key' | transloco}}</label>
-          <app-toggleable-password-input inputId="inputApiKey" formControlName="apiKey" />
-        </div>
-        <div class="form-group">
-          <label for="inputStorage">{{'app.image_storage' | transloco}}</label>
-          <select class="form-control" formControlName="storage" id="inputStorage">
-            @for (storage of storageNames() | keyvalue; track storage.key) {
-              <option [value]="storage.key">{{storage.value}}</option>
-            }
-          </select>
-        </div>
+          <div class="form-group">
+            <!--suppress XmlInvalidId -->
+            <label for="inputApiKey" class="required">{{'app.api_key' | transloco}}</label>
+            <app-toggleable-password-input inputId="inputApiKey" formControlName="apiKey" />
+          </div>
+          <div class="form-group">
+            <label for="inputStorage">{{'app.image_storage' | transloco}}</label>
+            <select class="form-control" formControlName="storage" id="inputStorage">
+              @for (storage of storageNames() | keyvalue; track storage.key) {
+                <option [value]="storage.key">{{storage.value}}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="inputHomepage">{{'app.homepage' | transloco}}</label>
+            <select class="form-control" formControlName="homepage" id="inputHomepage">
+              <option value="about">{{'app.about' | transloco}}</option>
+              <option value="generate">{{'app.generate' | transloco}}</option>
+              <option value="images">{{'app.images' | transloco}}</option>
+              <option value="horde">{{'app.horde' | transloco}}</option>
+            </select>
+          </div>
         </div>
         <div class="settingContent--right">
         @if (form.controls.storage.value === 's3') {

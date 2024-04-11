@@ -58,6 +58,9 @@ export class SettingsComponent implements OnInit {
     storage: new FormControl<string>('indexed_db', [
       Validators.required,
     ]),
+    homepage: new FormControl<string>('about', [
+      Validators.required,
+    ]),
     s3_accessKey: new FormControl<string>(''),
     s3_secretKey: new FormControl<string>(''),
     s3_bucket: new FormControl<string>(''),
@@ -146,6 +149,7 @@ export class SettingsComponent implements OnInit {
 
       this.form.patchValue({
         storage: storage,
+        homepage: (await this.database.getSetting('homepage', 'about')).value,
       });
 
       const storages: {[key: string]: string} = {};
@@ -169,11 +173,17 @@ export class SettingsComponent implements OnInit {
       return;
     }
 
-    await this.database.setSetting({
-      setting: 'image_storage',
-      value: this.form.controls.storage.value!,
-    });
-    await this.storeImageStorageSettings();
+    await Promise.all([
+      this.database.setSetting({
+        setting: 'image_storage',
+        value: this.form.controls.storage.value!,
+      }),
+      this.database.setSetting({
+        setting: 'homepage',
+        value: this.form.controls.homepage.value!,
+      }),
+      this.storeImageStorageSettings(),
+    ]);
 
     const previous = this.authManager.apiKey();
     this.authManager.apiKey = this.form.controls.apiKey.value!;
