@@ -3,30 +3,32 @@
 } @else {
   <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-10 text-center pagination">
-      @if (currentPage() > 1) {
-        <a routerLink="/images?page={{currentPage() - 1}}" (click)="goToPage(currentPage() - 1)">&lt;</a>
-      } @else {
-        <a [routerLink]="" class="disabled">&lt;</a>
-      }
-      @for (page of pages(); track page) {
-        @if (page === currentPage()) {
-          <a [routerLink]="" class="active">{{page}}</a>
+    @if (pages().length) {
+      <div class="col-md-10 text-center pagination">
+        @if (currentPage() > 1) {
+          <a routerLink="/images?page={{currentPage() - 1}}" (click)="goToPage(currentPage() - 1)">&lt;</a>
         } @else {
-          <a routerLink="/images?page={{page}}" (click)="goToPage(page)">{{page}}</a>
+          <a [routerLink]="" class="disabled">&lt;</a>
         }
-      }
-      @if (currentPage() < lastPage()) {
-        <a routerLink="/images?page={{currentPage() + 1}}" (click)="goToPage(currentPage() + 1)">&gt;</a>
-      } @else {
-        <a [routerLink]="" class="disabled">&gt;</a>
-      }
-    </div>
-    <div class="col-md-1 text-right">
-      @if (imagesSize()) {
-        <small>{{'app.images.size' | transloco:{size: imagesSize()! | formatNumber:2, unit: imagesSizeUnit()!} }}</small>
-      }
-    </div>
+        @for (page of pages(); track page) {
+          @if (page === currentPage()) {
+            <a [routerLink]="" class="active">{{page}}</a>
+          } @else {
+            <a routerLink="/images?page={{page}}" (click)="goToPage(page)">{{page}}</a>
+          }
+        }
+        @if (currentPage() < lastPage()) {
+          <a routerLink="/images?page={{currentPage() + 1}}" (click)="goToPage(currentPage() + 1)">&gt;</a>
+        } @else {
+          <a [routerLink]="" class="disabled">&gt;</a>
+        }
+      </div>
+      <div class="col-md-1 text-right">
+        @if (imagesSize()) {
+          <small>{{'app.images.size' | transloco:{size: imagesSize()! | formatNumber:2, unit: imagesSizeUnit()!} }}</small>
+        }
+      </div>
+    }
   </div>
 
   <div class="row">
@@ -97,6 +99,8 @@
             </div>
           </ng-template>
         </div>
+      } @empty {
+        <p>{{'app.images.no_image' | transloco}}</p>
       }
     </div>
   </div>
