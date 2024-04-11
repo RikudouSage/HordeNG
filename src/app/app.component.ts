@@ -67,5 +67,11 @@ export class AppComponent implements OnInit {
         await this.messenger.error(this.translator.get('app.error.invalid_api_key_global'));
       }
     }
+
+    if (typeof navigator !== 'undefined' && !await navigator.storage.persisted()) {
+      if (!await navigator.storage.persist()) {
+        await this.messenger.error(this.translator.get('app.error.persistent_storage'));
+      }
+    }
   }
 }
