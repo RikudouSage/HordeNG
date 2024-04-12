@@ -83,7 +83,7 @@ export class YourWorkersComponent implements OnInit, OnDestroy {
 
       for (const worker of workers) {
         const newWorker = {...worker};
-        if (newWorker.id === newWorker.id) {
+        if (newWorker.id === targetWorker.id) {
           newWorker.maintenance_mode = paused;
         }
 
