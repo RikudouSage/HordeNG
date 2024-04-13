@@ -25,6 +25,14 @@ export class DatabaseService {
     Cache: 'cache',
   };
 
+  public get storedLanguage(): string | null {
+    if (typeof localStorage === 'undefined') {
+      return null;
+    }
+
+    return localStorage.getItem('language');
+  }
+
   public async getCacheItem<T>(key: string): Promise<PartialCacheItem<T> | undefined> {
     return this.getValue(this.ObjectStores.Cache, key);
   }
