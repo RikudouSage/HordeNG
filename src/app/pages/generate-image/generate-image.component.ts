@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  effect,
   HostListener,
   Inject,
   OnDestroy,
@@ -286,6 +287,20 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
+
+    let firstChosenStyleLoad = true;
+    effect(() => {
+      const style = this.chosenStyle();
+      if (firstChosenStyleLoad) {
+        firstChosenStyleLoad = false;
+        return;
+      }
+
+      this.database.setSetting({
+        setting: 'chosen_style',
+        value: style,
+      });
+    });
   }
 
   public async ngOnInit(): Promise<void> {
@@ -374,6 +389,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
         return results;
       }),
     )));
+    this.chosenStyle.set((await this.database.getSetting<EnrichedPromptStyle | null>('chosen_style', null)).value)
     this.loading.set(false);
 
     this.checkInterval ??= interval(1_000).subscribe(async () => {
