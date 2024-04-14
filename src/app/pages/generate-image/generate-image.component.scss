@@ -104,6 +104,10 @@
   width: 60%;
   padding: 20px 0 0 0;
 
+  @include mediaMax($extraLarge) {
+    width: 55%;
+  }
+
   @include mediaMax($large) {
     width: 100%;
     flex-basis: unset;
@@ -138,6 +142,10 @@
     @include mediaMin($large) {
       min-height: calc(100vh - 125px);
       max-height: calc(100vh - 125px);
+    }
+
+    @include mediaMax($extraLarge) {
+      width: 45%;
     }
 
     &:has(img) {
@@ -396,7 +404,7 @@
     padding: 0;
 
     &:nth-of-type(1) {
-      background: #409eff;
+      background: $primaryColor;
       margin-right: 5px;
 
       fa-icon {
@@ -405,7 +413,7 @@
     }
 
     &:nth-of-type(2) {
-      background: red;
+      background: $dangerColor;
     }
 
     fa-icon {
