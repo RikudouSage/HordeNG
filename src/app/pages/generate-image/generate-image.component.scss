@@ -119,6 +119,11 @@
     @include mediaMax($large) {
       padding-right: 0;
     }
+
+    @include mediaMax($small) {
+      padding-top: 17vw;
+    }
+
   }
 
   &:nth-of-type(2) {
@@ -144,7 +149,7 @@
     @include mediaMax($large) {
       width: 100%;
       margin-top: 0;
-      margin-bottom: 20px;
+      margin-bottom: 105px;
     }
 
     @include mediaMax($small) {
@@ -170,6 +175,52 @@
         }
       }
     }
+
+     .buttonGroup {
+       display: flex;
+       flex-wrap: wrap;
+       align-items: center;
+       justify-content: space-between;
+       gap: 10px;
+       width: 100%;
+       margin-bottom: 10px;
+
+       @include mediaMax($large) {
+         margin-bottom: 0;
+         position: fixed;
+         padding: 20px;
+         background: #26252d;
+         bottom: 0;
+         left: 0;
+         z-index: 1000;
+       }
+
+       @include mediaMax($small) {
+         bottom: auto;
+         top: 0;
+         padding: 4vw;
+         gap: 2vw;
+       }
+
+       .btn {
+         max-width: 75px;
+         min-width: 75px;
+         flex-grow: 1;
+
+         @include mediaMax($small) {
+           max-width: 18vw;
+           min-width: 18vw;
+           padding-top: 2vw;
+           padding-bottom: 2vw;
+         }
+
+         &:nth-child(2) {
+           width: auto;
+           max-width: unset;
+           min-width: unset;
+         }
+       }
+     }
   }
 
   .col-md-12 {
@@ -189,6 +240,10 @@
     @include mediaMax($large) {
       width: 100px;
       padding-left: 10px;
+    }
+
+    &.mr-05 {
+      padding-left: 0;
     }
   }
 

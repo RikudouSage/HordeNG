@@ -65,6 +65,10 @@
   .ts-wrapper.single .ts-control {
     padding-right: 40px !important;
   }
+
+  .ts-control {
+    z-index: 0;
+  }
 }
 
 .form-control {
@@ -92,6 +96,13 @@
   border-radius: 4px;
   cursor: pointer;
 
+  @include mediaMax($small) {
+    padding: 1vw 3vw;
+    font-size: 3vw;
+    line-height: 1;
+    border-radius: 1vw;
+  }
+
   &[disabled] {
     background: $borderColor;
     cursor: not-allowed;
@@ -117,6 +128,10 @@
   display: block;
   width: 100%;
   padding: 15px;
+
+  @include mediaMax($small) {
+    padding: 1vw 3vw;
+  }
 }
 
 label:has(+ [required]), label.required {
