@@ -161,10 +161,10 @@
               <li>
                 <strong><app-lora-text-row [lora]="lora" /></strong>
                 <button (click)="openModal(editLora)" class="text-primary icon-button ml-1" type="button" [title]="'app.edit' | transloco" style="right: 40px;">
-                  <fa-icon [title]="'app.edit' | transloco" [icon]="iconEdit()" size="2xl" />
+                  <fa-icon [title]="'app.edit' | transloco" [icon]="iconEdit()" size="xl" />
                 </button>
                 <button (click)="removeLora(lora.id)" class="text-danger icon-button ml-1" type="button" title="{{'app.delete' | transloco}}">
-                  <fa-icon title="{{'app.delete' | transloco}}" [icon]="iconDelete()" size="2xl" />
+                  <fa-icon title="{{'app.delete' | transloco}}" [icon]="iconDelete()" size="xl" />
                 </button>
                 <ng-template #editLora>
                   <app-configure-lora
@@ -338,7 +338,7 @@
                   @if (result()!.censored) {
                     <p>{{'app.generate.result.censored' | transloco}}</p>
                   } @else {
-                    <p><button type="button" class="btn btn-primary" (click)="download(result()!)">{{'app.download' | transloco}}</button></p>
+                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()!)">{{'app.download' | transloco}}</button></p>
                   }
                 </div>
               } @else if (inProgress()) {

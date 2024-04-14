@@ -56,6 +56,10 @@
   }
 }
 
+.card.collapsible .card-header:before {
+  display: block;
+}
+
 .card-header {
   position: relative;
   font-weight: bold;
@@ -72,6 +76,7 @@
   }
 
   &:before {
+    display: none;
     content: "";
     position: absolute;
     top: -1px;
