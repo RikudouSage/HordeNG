@@ -12,6 +12,7 @@ import {DataStorage} from "../../services/image-storage/data-storage";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {LoraNamePipe} from "../../pipes/lora-name.pipe";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
+import {DatabaseService} from "../../services/database.service";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -78,6 +79,7 @@ export class ImagesComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
     private readonly modalService: ModalService,
+    private readonly database: DatabaseService,
     @Inject(DOCUMENT) private readonly document: Document,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
@@ -143,6 +145,10 @@ export class ImagesComponent implements OnInit {
   public async sendToTxt2Img(image: StoredImageWithLink): Promise<void> {
     const storage = await this.storageManager.currentStorage;
     await storage.storeGenerationOptions(image);
+    await this.database.setSetting({
+      setting: 'chosen_style',
+      value: null,
+    });
     await this.modalService.close();
     await this.router.navigateByUrl('/generate');
   }
