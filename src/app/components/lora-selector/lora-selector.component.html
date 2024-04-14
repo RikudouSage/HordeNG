@@ -2,37 +2,27 @@
   <app-loader/>
 } @else {
   <form [formGroup]="form" (ngSubmit)="submitForm()">
-    <div class="row">
-      <div class="col-md-6 mr-1">
-        <div class="form-group">
-          <input class="form-control" formControlName="query" id="inputSearchTerm"
-                 placeholder="{{ 'app.lora_selector.search_term' | transloco }}"/>
-        </div>
+
+    <div class="loraModal">
+      <div class="form-group">
+        <label for="inputModelBase">{{'app.model.baseline' | transloco}}</label>
+        <select id="inputModelBase" multiple tom-select [create]="false" formControlName="baseModels">
+          @for (option of CivitAiBaseModel | keyvalue; track option.key) {
+            <option [value]="option.value">{{option.key}}</option>
+          }
+        </select>
       </div>
-      <div class="col-md-3 mr-1">
-        <div class="form-group">
-          <app-toggle-checkbox [description]="'app.lora_selector.nsfw' | transloco" formControlName="nsfw"/>
-        </div>
+      <div class="form-group">
+        <input class="form-control" formControlName="query" id="inputSearchTerm" placeholder="{{ 'app.lora_selector.search_term' | transloco }}" />
       </div>
-      <div class="col-md-2 mr-1">
-        <div class="form-group">
-          <label for="inputModelBase">{{'app.model.baseline' | transloco}}</label>
-          <select id="inputModelBase" multiple tom-select [create]="false" formControlName="baseModels">
-            @for (option of CivitAiBaseModel | keyvalue; track option.key) {
-              <option [value]="option.value">{{option.key}}</option>
-            }
-          </select>
-        </div>
-      </div>
-      <div class="col-md-1">
-        <button [disabled]="!form.valid" type="submit"
-                class="btn btn-primary">{{ 'app.lora_selector.search' | transloco }}
-        </button>
+      <div class="form-group">
+        <app-toggle-checkbox [description]="'app.lora_selector.nsfw' | transloco" formControlName="nsfw"/>
+        <button [disabled]="!form.valid" type="submit" class="btn btn-primary btnBig">{{ 'app.lora_selector.search' | transloco }}</button>
       </div>
     </div>
   </form>
 
-  <hr class="mt-2 mb-2">
+  <div class="hr"></div>
 
   @if (loading()) {
     <div class="position-relative mt-2 loader-wrapper">
@@ -40,8 +30,8 @@
     </div>
   } @else {
     @for (item of items(); track item.id) {
-      <div class="row lora-row" [class.mb-1]="!$last">
-        <div class="img mr-1">
+      <div class="loraItem">
+        <div class="loraImg">
           @if (item.modelVersions.length && item.modelVersions[0].images.length) {
             <a [href]="item.modelVersions[0].images[0].url" target="_blank">
               <img [src]="item.modelVersions[0].images[0].url" alt="{{'app.image.model_image' | transloco}}"/>
@@ -50,36 +40,38 @@
             <span class="no-image">{{ 'app.image.no_image' | transloco }}</span>
           }
         </div>
-        <div class="model">
-          <h3 class="text-bold">{{ item.name }}</h3>
-          <app-box class="mt-2 display-block" [collapsible]="true" [title]="'app.model.description' | transloco">
-            <span [innerHTML]="item.description"></span>
-          </app-box>
-          <div [hidden]="item.modelVersions.length <= 1" class="mt-2 form-group">
-            <label for="inputVersion{{item.id}}">{{ 'app.model.version' | transloco }}</label>
-            <select #versionSelect tom-select id="inputVersion{{item.id}}" [maxItems]="1" [create]="false">
-              @for (version of item.modelVersions; track version.id) {
-                <option [value]="version.id">{{ version.name }}</option>
+        <div class="loraModel">
+          <div class="loraModel--top">
+            <h3 class="text-bold">{{ item.name }}</h3>
+            <app-box [collapsible]="true" [title]="'app.model.description' | transloco">
+              <span [innerHTML]="item.description"></span>
+            </app-box>
+            <div [hidden]="item.modelVersions.length <= 1" class="form-group">
+              <label for="inputVersion{{item.id}}">{{ 'app.model.version' | transloco }}</label>
+              <select #versionSelect tom-select id="inputVersion{{item.id}}" [maxItems]="1" [create]="false">
+                @for (version of item.modelVersions; track version.id) {
+                  <option [value]="version.id">{{ version.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="loraModel--desc">
+              <strong>{{'app.model.baseline' | transloco}}</strong>: {{versionBases()[Number(versionSelect.value)]}}
+              @if (versionBases()[Number(versionSelect.value)]|modelBasesMatchWarning:selectedModel().baseline) {
+                <p class="text-warning">
+                  {{versionBases()[Number(versionSelect.value)]|modelBasesMatchWarning:selectedModel().baseline | async}}
+                </p>
               }
-            </select>
+            </div>
           </div>
-          <div class="mt-2">
-            <strong>{{'app.model.baseline' | transloco}}</strong>: {{versionBases()[Number(versionSelect.value)]}}
-            @if (versionBases()[Number(versionSelect.value)]|modelBasesMatchWarning:selectedModel().baseline) {
-              <p class="text-warning">
-                {{versionBases()[Number(versionSelect.value)]|modelBasesMatchWarning:selectedModel().baseline | async}}
-              </p>
-            }
-          </div>
-          <div class="mt-1 bottom-row">
+          <div class="loraModel--bottom">
             <ng-template #configureModal>
               <app-configure-lora [loraName]="item.name" [versionId]="Number(versionSelect.value)" (configured)="onConfigured($event)" />
             </ng-template>
-            <button class="btn btn-primary" type="button"
+            <a href="https://civitai.com/models/{{item.id}}" target="_blank">{{'app.lora_selector.view_on_civitai' | transloco}}</a>
+            <button class="btn btn-primary btnBig" type="button"
                     [disabled]="selectedLoraIds().includes(Number(versionSelect.value))"
                     (click)="selectLora(configureModal)">{{ 'app.lora_selector.use_lora' | transloco }}
             </button>
-            <a href="https://civitai.com/models/{{item.id}}" target="_blank">{{'app.lora_selector.view_on_civitai' | transloco}}</a>
           </div>
         </div>
       </div>

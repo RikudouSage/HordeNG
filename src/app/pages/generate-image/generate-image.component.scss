@@ -34,6 +34,7 @@
 
   a {
     width: 100%;
+    display: flex;
   }
 
   & > div {
@@ -61,6 +62,14 @@
   display: flex;
   flex-direction: column;
   justify-content: top;
+
+  p {
+    margin-bottom: 15px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .image-link {
@@ -95,6 +104,10 @@
   width: 60%;
   padding: 20px 0 0 0;
 
+  @include mediaMax($extraLarge) {
+    width: 55%;
+  }
+
   @include mediaMax($large) {
     width: 100%;
     flex-basis: unset;
@@ -110,6 +123,11 @@
     @include mediaMax($large) {
       padding-right: 0;
     }
+
+    @include mediaMax($small) {
+      padding-top: 17vw;
+    }
+
   }
 
   &:nth-of-type(2) {
@@ -124,13 +142,22 @@
     @include mediaMin($large) {
       min-height: calc(100vh - 125px);
       max-height: calc(100vh - 125px);
-      overflow: auto;
+    }
+
+    @include mediaMax($extraLarge) {
+      width: 45%;
+    }
+
+    &:has(img) {
+      @include mediaMin($large) {
+        overflow: auto;
+      }
     }
 
     @include mediaMax($large) {
       width: 100%;
       margin-top: 0;
-      margin-bottom: 20px;
+      margin-bottom: 105px;
     }
 
     @include mediaMax($small) {
@@ -156,6 +183,52 @@
         }
       }
     }
+
+     .buttonGroup {
+       display: flex;
+       flex-wrap: wrap;
+       align-items: center;
+       justify-content: space-between;
+       gap: 10px;
+       width: 100%;
+       margin-bottom: 10px;
+
+       @include mediaMax($large) {
+         margin-bottom: 0;
+         position: fixed;
+         padding: 20px;
+         background: #26252d;
+         bottom: 0;
+         left: 0;
+         z-index: 1000;
+       }
+
+       @include mediaMax($small) {
+         bottom: auto;
+         top: 0;
+         padding: 4vw;
+         gap: 2vw;
+       }
+
+       .btn {
+         max-width: 75px;
+         min-width: 75px;
+         flex-grow: 1;
+
+         @include mediaMax($small) {
+           max-width: 18vw;
+           min-width: 18vw;
+           padding-top: 2vw;
+           padding-bottom: 2vw;
+         }
+
+         &:nth-child(2) {
+           width: auto;
+           max-width: unset;
+           min-width: unset;
+         }
+       }
+     }
   }
 
   .col-md-12 {
@@ -175,6 +248,10 @@
     @include mediaMax($large) {
       width: 100px;
       padding-left: 10px;
+    }
+
+    &.mr-05 {
+      padding-left: 0;
     }
   }
 
@@ -317,5 +394,31 @@
     justify-content: center;
     border-radius: 4px;
     //background: white;
+  }
+
+  button.icon-button {
+    background: #232323;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+
+    &:nth-of-type(1) {
+      background: $primaryColor;
+      margin-right: 5px;
+
+      fa-icon {
+        font-size: 12px;
+      }
+    }
+
+    &:nth-of-type(2) {
+      background: $dangerColor;
+    }
+
+    fa-icon {
+      color: white;
+      font-size: 14px;
+    }
   }
 }

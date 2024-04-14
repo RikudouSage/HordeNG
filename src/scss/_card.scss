@@ -2,38 +2,105 @@
 
 .card {
   background: $cardBackground;
-  box-shadow: $shadowColor 0 0 12px 0;
   border-radius: 4px;
   border: 1px solid $borderColor;
   overflow: hidden;
   height: auto;
 
   &.collapsed {
-    height: 47px;
+    height: 45px;
+
+    .card-header {
+      &:before {
+        transform: rotate(0deg);
+      }
+    }
   }
 
   p {
     margin-bottom: 8px;
+    font-size: 14px;
+    color: #bababa;
+
     &:last-child {
       margin-bottom: 0;
     }
   }
+
+  h1, h2, h3 {
+    color: #bababa;
+    margin: 0 0 20px 0;
+    padding: 0;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  ul {
+    padding: 0 0 0 20px;
+    margin: 0 0 20px;
+
+    li {
+      font-size: 14px;
+      color: #bababa;
+    }
+  }
+}
+
+.card.collapsible .card-header:before {
+  display: block;
 }
 
 .card-header {
+  position: relative;
   font-weight: bold;
-  font-size: 15px;
-  line-height: 15px;
-  padding: 15px;
+  font-size: 14px;
+  line-height: 1;
+  padding: 15px 60px 15px 15px;
   border-bottom: 1px solid $borderColor;
   display: flex;
   justify-content: space-between;
+
+  h3 {
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  &:before {
+    display: none;
+    content: "";
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 48px;
+    height: calc(100% + 2px);
+    background-color: #4c4d4f;
+    background-image: url("/assets/svg/arrow.svg");
+    background-repeat: no-repeat;
+    background-size: 10px auto;
+    background-position: center center;
+    transform: rotate(180deg);
+  }
 }
 
 .card-title {
-  font-weight: bold;
+  font-weight: 500;
+  margin: 0 !important;
 }
 
 .card-body {
   padding: 15px;
+
+  app-worker-detail {
+    margin-bottom: 15px;
+  }
 }
