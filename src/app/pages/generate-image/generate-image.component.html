@@ -2,7 +2,7 @@
   <app-loader/>
 } @else {
   <form [formGroup]="form" (ngSubmit)="generateImage()">
-    <div class="row setWrapper">
+    <div class="row setWrapper" [class.is-scrolled]="isScrolledPastThreshold()">
       <div class="setContainer">
         <div class="form-group">
           <label for="inputPrompt">{{ 'app.generate.prompt' | transloco }} <app-tooltip [text]="'app.generate.help.prompt' | transloco" /></label>
@@ -161,10 +161,10 @@
               <li>
                 <strong><app-lora-text-row [lora]="lora" /></strong>
                 <button (click)="openModal(editLora)" class="text-primary icon-button ml-1" type="button" [title]="'app.edit' | transloco" style="right: 40px;">
-                  <fa-icon [title]="'app.edit' | transloco" [icon]="iconEdit()" size="2xl" />
+                  <fa-icon [title]="'app.edit' | transloco" [icon]="iconEdit()" size="xl" />
                 </button>
                 <button (click)="removeLora(lora.id)" class="text-danger icon-button ml-1" type="button" title="{{'app.delete' | transloco}}">
-                  <fa-icon title="{{'app.delete' | transloco}}" [icon]="iconDelete()" size="2xl" />
+                  <fa-icon title="{{'app.delete' | transloco}}" [icon]="iconDelete()" size="xl" />
                 </button>
                 <ng-template #editLora>
                   <app-configure-lora
@@ -297,22 +297,16 @@
         </div>
       </div>
       <div class="setContainer">
-        <div class="row mb-1">
-          <div class="col-md-1 mr-05">
-            <button [disabled]="inProgress()" type="button" class="btn btn-danger btn-long" (click)="resetForm()">{{'app.generate.reset' | transloco}}</button>
-          </div>
-          <div class="col-md-10 mr-05">
-            <button [disabled]="!form.valid || inProgress()" type="submit" class="btn btn-primary btn-long">
-              @if (kudosCost() === null) {
-                {{ 'app.generate.do_generate.calculating' | transloco }}
-              } @else {
-                {{ 'app.generate.do_generate' | transloco:{kudos: (kudosCost() ?? 0) | formatNumber} }}
-              }
-            </button>
-          </div>
-          <div class="col-md-1">
-            <button [disabled]="inProgress() === null" type="button" class="btn btn-danger btn-long" (click)="cancelGeneration()">{{'app.generate.cancel' | transloco}}</button>
-          </div>
+        <div class="buttonGroup">
+          <button [disabled]="inProgress()" type="button" class="btn btn-danger btn-long" (click)="resetForm()">{{'app.generate.reset' | transloco}}</button>
+          <button [disabled]="!form.valid || inProgress()" type="submit" class="btn btn-primary btn-long">
+            @if (kudosCost() === null) {
+              {{ 'app.generate.do_generate.calculating' | transloco }}
+            } @else {
+              {{ 'app.generate.do_generate' | transloco:{kudos: (kudosCost() ?? 0) | formatNumber} }}
+            }
+          </button>
+          <button [disabled]="inProgress() === null" type="button" class="btn btn-danger btn-long" (click)="cancelGeneration()">{{'app.generate.cancel' | transloco}}</button>
         </div>
         <div class="row">
           <div class="col-md-12">
@@ -338,7 +332,7 @@
                   @if (result()!.censored) {
                     <p>{{'app.generate.result.censored' | transloco}}</p>
                   } @else {
-                    <p><button type="button" class="btn btn-primary" (click)="download(result()!)">{{'app.download' | transloco}}</button></p>
+                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()!)">{{'app.download' | transloco}}</button></p>
                   }
                 </div>
               } @else if (inProgress()) {

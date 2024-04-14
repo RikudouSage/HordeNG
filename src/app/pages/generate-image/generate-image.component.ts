@@ -121,6 +121,8 @@ interface Result {
   styleUrl: './generate-image.component.scss'
 })
 export class GenerateImageComponent implements OnInit, OnDestroy {
+  private readonly isBrowser: boolean;
+
   protected readonly Sampler = Sampler;
   protected readonly PostProcessor = PostProcessor;
   protected readonly OptionsValidationError = OptionsValidationError;
@@ -131,6 +133,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   private currentModelName: WritableSignal<string> = signal('');
   private currentPrompt: WritableSignal<string> = signal('');
   private currentNegativePrompt: WritableSignal<string | null> = signal(null);
+
+  private scrollThreshold = signal(85);
+  private currentScrollPosition = signal(0);
 
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
@@ -263,13 +268,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     ]),
     onlyMyWorkers: new FormControl<boolean>(false),
   });
-  private readonly isBrowser: boolean;
-
-  // todo fix this
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    this.updateIsScrolledClass();
-  }
+  public isScrolledPastThreshold = computed(() => this.currentScrollPosition() > this.scrollThreshold());
 
   constructor(
     private readonly database: DatabaseService,
@@ -611,20 +610,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     await this.modalService.close();
   }
 
-  updateIsScrolledClass() {
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    const threshold = 85;
-
-    const wrapper = document.querySelector('.setWrapper');
-    if (wrapper) {
-      if (scrollPosition >= threshold) {
-        wrapper.classList.add('is-scrolled');
-      } else {
-        wrapper.classList.remove('is-scrolled');
-      }
-    }
-  }
-
   public async download(result: Result) {
     const a = document.createElement('a');
     a.style.display = 'none';
@@ -660,5 +645,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.result.set(null);
     this.requestStatus.set(null);
     this.chosenStyle.set(null);
+  }
+
+  @HostListener('window:scroll')
+  public onWindowsScroll() {
+    this.currentScrollPosition.set(window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0);
   }
 }
