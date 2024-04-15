@@ -80,7 +80,8 @@ export class WorkerDetailComponent {
   public title = computed(() => {
     let title = this.worker().name;
     if (this.onlineInTitle()) {
-      title += ' (' + (this.worker().online ? this.transloco.translate('app.worker.online') : this.transloco.translate('app.worker.offline')) + ')';
+      const onlineText = (this.worker().online ? this.transloco.translate('app.worker.online') : this.transloco.translate('app.worker.offline'));
+      title += ` (<span class="${this.worker().online ? 'text-success' : 'text-warning'}">${onlineText}</span>)`;
     }
 
     return title;
