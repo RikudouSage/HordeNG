@@ -28,6 +28,14 @@
               <option value="horde">{{'app.horde' | transloco}}</option>
             </select>
           </div>
+          <div class="form-group">
+            <label for="inputLanguage">{{'app.language' | transloco}}</label>
+            <select class="form-control" formControlName="language" id="inputLanguage">
+              @for (language of availableLanguages(); track language) {
+                <option [value]="language">{{language | languageName}}</option>
+              }
+            </select>
+          </div>
         </div>
         <div class="settingContent--right">
         @if (form.controls.storage.value === 's3') {

@@ -25,12 +25,15 @@ export class DatabaseService {
     Cache: 'cache',
   };
 
-  public get storedLanguage(): string | null {
-    if (typeof localStorage === 'undefined') {
-      return null;
-    }
+  public async getAppLanguage(): Promise<string | null> {
+    return (await this.getSetting<string | null>('language', null)).value;
+  }
 
-    return localStorage.getItem('language');
+  public async setAppLanguage(language: string): Promise<void> {
+    await this.setSetting({
+      setting: 'language',
+      value: language,
+    });
   }
 
   public async getCacheItem<T>(key: string): Promise<PartialCacheItem<T> | undefined> {

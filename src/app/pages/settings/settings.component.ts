@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, PLATFORM_ID, Signal, signal, WritableSignal} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe, TranslocoService} from "@ngneat/transloco";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthManagerService} from "../../services/auth-manager.service";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
@@ -24,6 +24,8 @@ import {GoogleDriveDataStorage} from "../../services/image-storage/google-drive.
 import {GoogleDriveCredentials} from "../../types/credentials/google-drive.credentials";
 import {DropboxCredentials} from "../../types/credentials/dropbox.credentials";
 import {DropboxDataStorage} from "../../services/image-storage/dropbox.data-storage";
+import {findBrowserLanguage} from "../../helper/language";
+import {LanguageNamePipe} from "../../pipes/language-name.pipe";
 
 @Component({
   selector: 'app-settings',
@@ -37,7 +39,8 @@ import {DropboxDataStorage} from "../../services/image-storage/dropbox.data-stor
     ToggleablePasswordInputComponent,
     JsonPipe,
     CopyButtonComponent,
-    TranslocoMarkupComponent
+    TranslocoMarkupComponent,
+    LanguageNamePipe
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
@@ -45,11 +48,16 @@ import {DropboxDataStorage} from "../../services/image-storage/dropbox.data-stor
 export class SettingsComponent implements OnInit {
   private readonly isBrowser: boolean;
 
+  private languageChanged = signal(false);
+  private originalLanguage = signal<string|null>(null);
+
   public storageNames: WritableSignal<{[key: string]: string}> = signal({});
   public loading = signal(true);
 
   public s3CorsCheckResult = signal<undefined|null|boolean>(undefined);
   public s3CorsConfig: Signal<any> = signal(S3CorsConfig);
+
+  public availableLanguages: Signal<string[]>;
 
   public form = new FormGroup({
     apiKey: new FormControl<string>(this.authManager.anonymousApiKey, [
@@ -59,6 +67,9 @@ export class SettingsComponent implements OnInit {
       Validators.required,
     ]),
     homepage: new FormControl<string>('about', [
+      Validators.required,
+    ]),
+    language: new FormControl<string>('language', [
       Validators.required,
     ]),
     s3_accessKey: new FormControl<string>(''),
@@ -102,9 +113,11 @@ export class SettingsComponent implements OnInit {
     private readonly translator: TranslatorService,
     private readonly storageManager: DataStorageManagerService,
     private readonly database: DatabaseService,
+    private readonly transloco: TranslocoService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
+    this.availableLanguages = signal(transloco.getAvailableLangs().map(language => typeof language === 'string' ? language : language.id));
   }
 
   public async ngOnInit(): Promise<void> {
@@ -147,9 +160,11 @@ export class SettingsComponent implements OnInit {
         }
       }
 
+      this.originalLanguage.set((await this.database.getAppLanguage()) ?? findBrowserLanguage(this.availableLanguages()) ?? 'en');
       this.form.patchValue({
         storage: storage,
         homepage: (await this.database.getSetting('homepage', 'about')).value,
+        language: this.originalLanguage()!,
       });
 
       const storages: {[key: string]: string} = {};
@@ -158,6 +173,10 @@ export class SettingsComponent implements OnInit {
       }
       this.storageNames.set(storages);
     }
+
+    this.form.controls.language.valueChanges.subscribe(language => {
+      this.languageChanged.set(language !== this.originalLanguage());
+    });
 
     this.loading.set(false);
   }
@@ -173,6 +192,11 @@ export class SettingsComponent implements OnInit {
       return;
     }
 
+    if (this.languageChanged()) {
+      this.transloco.setActiveLang(this.form.value.language!);
+      this.originalLanguage.set(this.form.value.language!);
+    }
+
     await Promise.all([
       this.database.setSetting({
         setting: 'image_storage',
@@ -183,6 +207,7 @@ export class SettingsComponent implements OnInit {
         value: this.form.controls.homepage.value!,
       }),
       this.storeImageStorageSettings(),
+      this.database.setAppLanguage(this.form.value.language!),
     ]);
 
     const previous = this.authManager.apiKey();

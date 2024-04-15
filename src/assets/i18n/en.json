@@ -249,5 +249,6 @@
   "app.error.invalid_api_key_global": "It appears that your api key is not valid, perhaps you'd like to go to {{app.settings}} and set a new one?",
   "app.images.no_image": "You haven't generated any images yet. Once you generate some, they will appear here.",
   "app.homepage": "Homepage",
-  "app.error.persistent_storage": "You have declined the persistent storage permission, {{app.title.simple}} might not have enough space to save all your generated images."
+  "app.error.persistent_storage": "You have declined the persistent storage permission, {{app.title.simple}} might not have enough space to save all your generated images.",
+  "app.language": "Language"
 }

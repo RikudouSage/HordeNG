@@ -1,4 +1,4 @@
-import {Component, OnInit, signal, ViewContainerRef} from '@angular/core';
+import {Component, Inject, OnInit, PLATFORM_ID, signal, ViewContainerRef} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {TopMenuComponent} from "./components/top-menu/top-menu.component";
 import {AiHorde} from "./services/ai-horde.service";
@@ -12,6 +12,8 @@ import {FooterComponent} from "./components/footer/footer.component";
 import {MessageService} from "./services/message.service";
 import {TranslocoService} from "@ngneat/transloco";
 import {DatabaseService} from "./services/database.service";
+import {findBrowserLanguage} from "./helper/language";
+import {isPlatformBrowser} from "@angular/common";
 
 @Component({
   selector: 'app-root',
@@ -21,6 +23,7 @@ import {DatabaseService} from "./services/database.service";
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
+  private readonly isBrowser: boolean;
   private updateChecked = signal(false);
 
   constructor(
@@ -32,21 +35,21 @@ export class AppComponent implements OnInit {
     private readonly messenger: MessageService,
     private readonly transloco: TranslocoService,
     private readonly database: DatabaseService,
+    @Inject(PLATFORM_ID) platformId: string,
     view: ViewContainerRef,
   ) {
+    this.isBrowser = isPlatformBrowser(platformId);
     globalAppView.set(view);
   }
 
   public async ngOnInit(): Promise<void> {
-    const availableLanguages = this.transloco.getAvailableLangs().map(value => typeof value === 'string' ? value : value.id);
-    if (this.database.storedLanguage) {
-      this.transloco.setActiveLang(this.database.storedLanguage);
-    } else if (typeof navigator !== 'undefined') {
-      for (const language of navigator.languages.map(language => language.split("-")[0])) {
-        if (availableLanguages.includes(language)) {
-          this.transloco.setActiveLang(language);
-          break;
-        }
+    if (this.isBrowser) {
+      const availableLanguages = this.transloco.getAvailableLangs().map(value => typeof value === 'string' ? value : value.id);
+      const storedLanguage = await this.database.getAppLanguage();
+      if (storedLanguage) {
+        this.transloco.setActiveLang(storedLanguage);
+      } else if (typeof navigator !== 'undefined') {
+        this.transloco.setActiveLang(findBrowserLanguage(availableLanguages) ?? 'en')
       }
     }
 
