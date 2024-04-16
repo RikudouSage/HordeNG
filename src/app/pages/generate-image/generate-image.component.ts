@@ -1,7 +1,9 @@
 import {
+  AfterViewInit,
   Component,
   computed,
   effect,
+  ElementRef,
   HostListener,
   Inject,
   OnDestroy,
@@ -10,6 +12,7 @@ import {
   Signal,
   signal,
   TemplateRef,
+  ViewChild,
   WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -69,6 +72,8 @@ import {TooltipComponent} from "../../components/tooltip/tooltip.component";
 import {ConfigureLoraComponent, ConfigureLoraResult} from "../../components/configure-lora/configure-lora.component";
 import {CivitAiService} from "../../services/civit-ai.service";
 import {LoraVersionIdPipe} from "../../pipes/lora-version-id.pipe";
+import {Swiper} from "swiper";
+import {Navigation} from "swiper/modules";
 
 interface Result {
   width: number;
@@ -120,7 +125,7 @@ interface Result {
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
 })
-export class GenerateImageComponent implements OnInit, OnDestroy {
+export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly isBrowser: boolean;
 
   protected readonly Sampler = Sampler;
@@ -129,6 +134,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   protected readonly BaselineModel = BaselineModel;
 
   private checkInterval: Subscription | null = null;
+  private swiper: Swiper | null = null;
 
   private currentModelName: WritableSignal<string> = signal('');
   private currentPrompt: WritableSignal<string> = signal('');
@@ -269,6 +275,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     onlyMyWorkers: new FormControl<boolean>(false),
   });
   public isScrolledPastThreshold = computed(() => this.currentScrollPosition() > this.scrollThreshold());
+
+  @ViewChild('swiperContainer') swiperContainer: ElementRef<HTMLDivElement> | null = null;
 
   constructor(
     private readonly database: DatabaseService,
@@ -438,6 +446,30 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
         this.loading.set(false);
       }
+    });
+  }
+
+  public async ngAfterViewInit(): Promise<void> {
+    this.swiper = new Swiper(this.swiperContainer!.nativeElement, {
+      modules: [Navigation],
+      // navigation: {
+      //   nextEl: this.nextButton.nativeElement,
+      //   prevEl: this.prevButton.nativeElement,
+      // },
+      breakpoints: {
+        1640: {
+          slidesPerView: 5,
+        },
+        1366: {
+          slidesPerView: 4,
+        },
+        768: {
+          slidesPerView: 3,
+        },
+        0: {
+          slidesPerView: 2,
+        },
+      },
     });
   }
 
