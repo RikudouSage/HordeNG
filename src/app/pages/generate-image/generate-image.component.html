@@ -354,7 +354,20 @@
                   </div>
                 }
               } @else {
-                <div class="empty">{{ 'app.generate.image_placeholder' | transloco }}</div>
+
+
+                <div class="swiper-container" #swiperContainer>
+                  <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide"><img src="https://d39-a.sdn.cz/d_39/c_img_QK_6/HYqFN/ajatollah-ali-sejjed-chamenei-chamenei-iran-rusko-vladimir-putin.jpeg?fl=exf%7Ccro%2C0%2C128%2C2200%2C1237%7Cres%2C580%2C%2C3%7Cwebp%2C70%2C0" style="width:100%;display: block;"></div>
+                    <div class="swiper-slide"><img src="https://d39-a.sdn.cz/d_39/c_img_QK_6/HYqFN/ajatollah-ali-sejjed-chamenei-chamenei-iran-rusko-vladimir-putin.jpeg?fl=exf%7Ccro%2C0%2C128%2C2200%2C1237%7Cres%2C580%2C%2C3%7Cwebp%2C70%2C0" style="width:100%;display: block;"></div>
+                    <div class="swiper-slide"><img src="https://d39-a.sdn.cz/d_39/c_img_QK_6/HYqFN/ajatollah-ali-sejjed-chamenei-chamenei-iran-rusko-vladimir-putin.jpeg?fl=exf%7Ccro%2C0%2C128%2C2200%2C1237%7Cres%2C580%2C%2C3%7Cwebp%2C70%2C0" style="width:100%;display: block;"></div>
+                    <!-- Add more slides as needed -->
+                  </div>
+                </div>
+
+
+                <div class="empty" style="display: none;">{{ 'app.generate.image_placeholder' | transloco }}</div>
               }
             </div>
           </div>
