@@ -143,6 +143,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   private scrollThreshold = signal(85);
   private currentScrollPosition = signal(0);
 
+  private viewInitialized = signal(false);
+  private swiperContainer = signal<ElementRef<HTMLDivElement> | null>(null);
+
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
   public availableModels: WritableSignal<ModelConfigurations> = signal({});
@@ -276,7 +279,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   });
   public isScrolledPastThreshold = computed(() => this.currentScrollPosition() > this.scrollThreshold());
 
-  @ViewChild('swiperContainer') swiperContainer: ElementRef<HTMLDivElement> | null = null;
+  @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
+    this.swiperContainer.set(container ?? null);
+  }
 
   constructor(
     private readonly database: DatabaseService,
@@ -307,6 +312,19 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
         setting: 'chosen_style',
         value: style,
       });
+    });
+
+    // swiper
+    effect(() => {
+      if (!this.viewInitialized()) {
+        return;
+      }
+      if (this.loading() || this.result() || this.inProgress() || !this.swiperContainer()) {
+        this.destroySwiper();
+        return;
+      }
+
+      this.initializeSwiper();
     });
   }
 
@@ -450,27 +468,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   public async ngAfterViewInit(): Promise<void> {
-    this.swiper = new Swiper(this.swiperContainer!.nativeElement, {
-      modules: [Navigation],
-      // navigation: {
-      //   nextEl: this.nextButton.nativeElement,
-      //   prevEl: this.prevButton.nativeElement,
-      // },
-      breakpoints: {
-        1640: {
-          slidesPerView: 5,
-        },
-        1366: {
-          slidesPerView: 4,
-        },
-        768: {
-          slidesPerView: 3,
-        },
-        0: {
-          slidesPerView: 2,
-        },
-      },
-    });
+    this.viewInitialized.set(true);
   }
 
   public async ngOnDestroy(): Promise<void> {
@@ -682,5 +680,34 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   @HostListener('window:scroll')
   public onWindowsScroll() {
     this.currentScrollPosition.set(window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0);
+  }
+
+  private initializeSwiper(): void {
+    this.swiper = new Swiper(this.swiperContainer()!.nativeElement, {
+      modules: [Navigation],
+      // navigation: {
+      //   nextEl: this.nextButton.nativeElement,
+      //   prevEl: this.prevButton.nativeElement,
+      // },
+      breakpoints: {
+        1640: {
+          slidesPerView: 5,
+        },
+        1366: {
+          slidesPerView: 4,
+        },
+        768: {
+          slidesPerView: 3,
+        },
+        0: {
+          slidesPerView: 2,
+        },
+      },
+    });
+  }
+
+  private destroySwiper(): void {
+    this.swiper?.destroy();
+    this.swiper = null;
   }
 }
