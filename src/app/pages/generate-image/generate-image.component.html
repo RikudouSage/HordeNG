@@ -315,7 +315,7 @@
                 <a href="{{result()!.source}}" target="_blank" class="image-link">
                   <img src="{{result()!.source}}"/>
                 </a>
-                <div class="mt-2 image-parameter-result">
+                <div class="image-parameter-result">
                   <p>
                     <transloco key="app.generate.result.info" [params]="{
                       width: result()!.width,
@@ -338,7 +338,7 @@
               } @else if (inProgress()) {
                 <app-loader/>
                 @if (requestStatus()) {
-                  <div class="mt-15 progress">
+                  <div class="progress">
                     {{ 'app.generate.progress.finished' | transloco }}: {{ requestStatus()!.finished }}<br>
                     {{ 'app.generate.progress.kudos_consumed' | transloco }}: {{ requestStatus()!.kudos }}<br>
                     @if (requestStatus()!.queue_position) {
@@ -355,17 +355,87 @@
                 }
               } @else {
 
+                <div class="swiper">
+                  <div class="swiper-container" #swiperContainer>
+                    <div class="swiper-wrapper">
 
-                <div class="swiper-container" #swiperContainer>
-                  <div class="swiper-wrapper">
-                    <!-- Slides -->
-                    <div class="swiper-slide"><img src="https://d39-a.sdn.cz/d_39/c_img_QK_6/HYqFN/ajatollah-ali-sejjed-chamenei-chamenei-iran-rusko-vladimir-putin.jpeg?fl=exf%7Ccro%2C0%2C128%2C2200%2C1237%7Cres%2C580%2C%2C3%7Cwebp%2C70%2C0" style="width:100%;display: block;"></div>
-                    <div class="swiper-slide"><img src="https://d39-a.sdn.cz/d_39/c_img_QK_6/HYqFN/ajatollah-ali-sejjed-chamenei-chamenei-iran-rusko-vladimir-putin.jpeg?fl=exf%7Ccro%2C0%2C128%2C2200%2C1237%7Cres%2C580%2C%2C3%7Cwebp%2C70%2C0" style="width:100%;display: block;"></div>
-                    <div class="swiper-slide"><img src="https://d39-a.sdn.cz/d_39/c_img_QK_6/HYqFN/ajatollah-ali-sejjed-chamenei-chamenei-iran-rusko-vladimir-putin.jpeg?fl=exf%7Ccro%2C0%2C128%2C2200%2C1237%7Cres%2C580%2C%2C3%7Cwebp%2C70%2C0" style="width:100%;display: block;"></div>
-                    <!-- Add more slides as needed -->
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://pixlr.com/images/index/ai-image-generator-three.webp')"></span>
+                        <img src="https://pixlr.com/images/index/ai-image-generator-three.webp" alt="" />
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg')"></span>
+                        <img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg')"></span>
+                        <img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://pixlr.com/images/index/ai-image-generator-three.webp')"></span>
+                        <img src="https://pixlr.com/images/index/ai-image-generator-three.webp" alt="" />
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg')"></span>
+                        <img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg')"></span>
+                        <img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://pixlr.com/images/index/ai-image-generator-three.webp')"></span>
+                        <img src="https://pixlr.com/images/index/ai-image-generator-three.webp" alt="" />
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg')"></span>
+                        <img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg')"></span>
+                        <img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://pixlr.com/images/index/ai-image-generator-three.webp')"></span>
+                        <img src="https://pixlr.com/images/index/ai-image-generator-three.webp" alt="" />
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg')"></span>
+                        <img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg">
+                      </div>
+                      <div class="swiper-slide">
+                        <span style="background-image: url('https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg')"></span>
+                        <img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg">
+                      </div>
+
+                    </div>
+
                   </div>
+                  <div class="tSwiper--next swiper-button-next"></div>
+                  <div class="tSwiper--prev swiper-button-prev"></div>
                 </div>
 
+                <div class="swiper swiper-thumbs">
+                  <div class="swiper-container" #swiperThumbsContainer>
+                    <div class="swiper-wrapper">
+
+
+                      <div class="swiper-slide"><img src="https://pixlr.com/images/index/ai-image-generator-three.webp"></div>
+                      <div class="swiper-slide"><img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg"></div>
+                      <div class="swiper-slide"><img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg"></div>
+                      <div class="swiper-slide"><img src="https://pixlr.com/images/index/ai-image-generator-three.webp"></div>
+                      <div class="swiper-slide"><img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg"></div>
+                      <div class="swiper-slide"><img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg"></div>
+                      <div class="swiper-slide"><img src="https://pixlr.com/images/index/ai-image-generator-three.webp"></div>
+                      <div class="swiper-slide"><img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg"></div>
+                      <div class="swiper-slide"><img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg"></div>
+                      <div class="swiper-slide"><img src="https://pixlr.com/images/index/ai-image-generator-three.webp"></div>
+                      <div class="swiper-slide"><img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg"></div>
+                      <div class="swiper-slide"><img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg"></div>
+
+                    </div>
+                  </div>
+                </div>
 
                 <div class="empty" style="display: none;">{{ 'app.generate.image_placeholder' | transloco }}</div>
               }

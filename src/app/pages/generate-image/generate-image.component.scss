@@ -8,11 +8,10 @@
   background: $cardBackground;
   box-shadow: $shadowColor 0 0 12px 0;
   text-align: center;
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
   position: relative;
+  display: inline-grid;
+  justify-items: center;
+  align-items: flex-start;
 
   @include mediaMin($large) {
     min-height: calc(100vh - 220px);
@@ -37,14 +36,14 @@
     display: flex;
   }
 
-  & > div {
-    padding: 20px;
-    margin-top: 0;
+  app-loader {
+    width: 100%;
+    position: relative;
+    top: 80px;
   }
 
-  app-loader {
-    position: relative;
-    top: -30px;
+  .progress {
+    width: 100%;
   }
 }
 
@@ -61,7 +60,8 @@
   flex-shrink: 1;
   display: flex;
   flex-direction: column;
-  justify-content: top;
+  justify-content: flex-start;
+  margin: 15px;
 
   p {
     margin-bottom: 15px;

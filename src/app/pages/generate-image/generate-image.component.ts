@@ -73,7 +73,7 @@ import {ConfigureLoraComponent, ConfigureLoraResult} from "../../components/conf
 import {CivitAiService} from "../../services/civit-ai.service";
 import {LoraVersionIdPipe} from "../../pipes/lora-version-id.pipe";
 import {Swiper} from "swiper";
-import {Navigation} from "swiper/modules";
+import {Navigation, Pagination, Thumbs} from "swiper/modules";
 
 interface Result {
   width: number;
@@ -135,6 +135,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
   private checkInterval: Subscription | null = null;
   private swiper: Swiper | null = null;
+  private swiperThumbs: Swiper | null = null;
 
   private currentModelName: WritableSignal<string> = signal('');
   private currentPrompt: WritableSignal<string> = signal('');
@@ -145,6 +146,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
   private viewInitialized = signal(false);
   private swiperContainer = signal<ElementRef<HTMLDivElement> | null>(null);
+  private swiperThumbsContainer = signal<ElementRef<HTMLDivElement> | null>(null);
 
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
@@ -283,6 +285,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     this.swiperContainer.set(container ?? null);
   }
 
+  @ViewChild('swiperThumbsContainer', {static: false}) set swiperThumbsContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
+    this.swiperThumbsContainer.set(container ?? null);
+  }
+
   constructor(
     private readonly database: DatabaseService,
     private readonly costCalculator: KudosCostCalculator,
@@ -325,6 +331,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       }
 
       this.initializeSwiper();
+      this.initializeSwiperThumbs();
     });
   }
 
@@ -684,25 +691,28 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
   private initializeSwiper(): void {
     this.swiper = new Swiper(this.swiperContainer()!.nativeElement, {
-      modules: [Navigation],
-      // navigation: {
-      //   nextEl: this.nextButton.nativeElement,
-      //   prevEl: this.prevButton.nativeElement,
-      // },
-      breakpoints: {
-        1640: {
-          slidesPerView: 5,
-        },
-        1366: {
-          slidesPerView: 4,
-        },
-        768: {
-          slidesPerView: 3,
-        },
-        0: {
-          slidesPerView: 2,
-        },
-      },
+      modules: [Navigation, Pagination, Thumbs],
+      slidesPerView: 1,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      }
+    });
+
+    this.swiper.on('slideChange', () => {
+      this.swiperThumbs!.slideTo(this.swiper!.activeIndex);
+    });
+  }
+
+  private initializeSwiperThumbs(): void {
+    this.swiperThumbs = new Swiper(this.swiperThumbsContainer()!.nativeElement, {
+      slidesPerView: 'auto',
+      freeMode: true,
+      watchSlidesProgress: true,
+    });
+
+    this.swiperThumbs.on('click', () => {
+      this.swiper!.slideTo(this.swiperThumbs!.clickedIndex);
     });
   }
 
