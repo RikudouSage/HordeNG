@@ -326,29 +326,54 @@
           <div class="col-md-12">
             <div id="image-wrapper">
               @if (result()) {
-                <a href="{{result()![0].source}}" target="_blank" class="image-link">
-                  <img src="{{result()![0].source}}"/>
-                </a>
-                <div class="image-parameter-result">
-                  <p>
-                    <transloco key="app.generate.result.info" [params]="{
-                      width: result()![0].width,
-                      height: result()![0].height,
-                      model: result()![0].model,
-                      seed: result()![0].seed,
-                      id: result()![0].id,
-                      workerId: result()![0].workerId,
-                      workerName: result()![0].workerName,
-                      kudosCost: result()![0].kudos | formatNumber,
-                      postProcessors: result()![0].postProcessors,
-                    }"/>
-                  </p>
-                  @if (result()![0].censored) {
-                    <p>{{'app.generate.result.censored' | transloco}}</p>
-                  } @else {
-                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()![0])">{{'app.download' | transloco}}</button></p>
-                  }
+                <div class="swiper">
+                  <div class="swiper-container" #swiperContainer>
+                    <div class="swiper-wrapper">
+                      @for (image of result(); track image) { <!-- todo track id -->
+                        <div class="swiper-slide">
+                          <span [style.background-image]="'url(' + image.source + ')'"></span>
+                          <img [ngSrc]="image.source" [width]="image.width" [height]="image.height" [alt]="'app.generated_image.alt' | transloco" />
+                        </div>
+                      }
+                    </div>
+
+                  </div>
+                  <div class="tSwiper--next swiper-button-next"></div>
+                  <div class="tSwiper--prev swiper-button-prev"></div>
                 </div>
+
+                <div class="swiper swiper-thumbs">
+                  <div class="swiper-container" #swiperThumbsContainer>
+                    <div class="swiper-wrapper">
+
+                      @for (image of result(); track image) { <!-- todo track id -->
+                        <div class="swiper-slide">
+                          <img [ngSrc]="image.source" [width]="image.width" [height]="image.height" [alt]="'app.generated_image.alt' | transloco" />
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+<!--                <div class="image-parameter-result">-->
+<!--                  <p>-->
+<!--                    <transloco key="app.generate.result.info" [params]="{-->
+<!--                      width: result()![0].width,-->
+<!--                      height: result()![0].height,-->
+<!--                      model: result()![0].model,-->
+<!--                      seed: result()![0].seed,-->
+<!--                      id: result()![0].id,-->
+<!--                      workerId: result()![0].workerId,-->
+<!--                      workerName: result()![0].workerName,-->
+<!--                      kudosCost: result()![0].kudos | formatNumber,-->
+<!--                      postProcessors: result()![0].postProcessors,-->
+<!--                    }"/>-->
+<!--                  </p>-->
+<!--                  @if (result()![0].censored) {-->
+<!--                    <p>{{'app.generate.result.censored' | transloco}}</p>-->
+<!--                  } @else {-->
+<!--                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()![0])">{{'app.download' | transloco}}</button></p>-->
+<!--                  }-->
+<!--                </div>-->
               } @else if (inProgress()) {
                 <app-loader/>
                 @if (requestStatus()) {
@@ -368,90 +393,7 @@
                   </div>
                 }
               } @else {
-
-                <div class="swiper">
-                  <div class="swiper-container" #swiperContainer>
-                    <div class="swiper-wrapper">
-
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://pixlr.com/images/index/ai-image-generator-three.webp')"></span>
-                        <img src="https://pixlr.com/images/index/ai-image-generator-three.webp" alt="" />
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg')"></span>
-                        <img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg">
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg')"></span>
-                        <img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg">
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://pixlr.com/images/index/ai-image-generator-three.webp')"></span>
-                        <img src="https://pixlr.com/images/index/ai-image-generator-three.webp" alt="" />
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg')"></span>
-                        <img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg">
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg')"></span>
-                        <img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg">
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://pixlr.com/images/index/ai-image-generator-three.webp')"></span>
-                        <img src="https://pixlr.com/images/index/ai-image-generator-three.webp" alt="" />
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg')"></span>
-                        <img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg">
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg')"></span>
-                        <img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg">
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://pixlr.com/images/index/ai-image-generator-three.webp')"></span>
-                        <img src="https://pixlr.com/images/index/ai-image-generator-three.webp" alt="" />
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg')"></span>
-                        <img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg">
-                      </div>
-                      <div class="swiper-slide">
-                        <span style="background-image: url('https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg')"></span>
-                        <img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg">
-                      </div>
-
-                    </div>
-
-                  </div>
-                  <div class="tSwiper--next swiper-button-next"></div>
-                  <div class="tSwiper--prev swiper-button-prev"></div>
-                </div>
-
-                <div class="swiper swiper-thumbs">
-                  <div class="swiper-container" #swiperThumbsContainer>
-                    <div class="swiper-wrapper">
-
-
-                      <div class="swiper-slide"><img src="https://pixlr.com/images/index/ai-image-generator-three.webp"></div>
-                      <div class="swiper-slide"><img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg"></div>
-                      <div class="swiper-slide"><img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg"></div>
-                      <div class="swiper-slide"><img src="https://pixlr.com/images/index/ai-image-generator-three.webp"></div>
-                      <div class="swiper-slide"><img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg"></div>
-                      <div class="swiper-slide"><img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg"></div>
-                      <div class="swiper-slide"><img src="https://pixlr.com/images/index/ai-image-generator-three.webp"></div>
-                      <div class="swiper-slide"><img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg"></div>
-                      <div class="swiper-slide"><img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg"></div>
-                      <div class="swiper-slide"><img src="https://pixlr.com/images/index/ai-image-generator-three.webp"></div>
-                      <div class="swiper-slide"><img src="https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg"></div>
-                      <div class="swiper-slide"><img src="https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg"></div>
-
-                    </div>
-                  </div>
-                </div>
-
-                <div class="empty" style="display: none;">{{ 'app.generate.image_placeholder' | transloco }}</div>
+                <div class="empty">{{ 'app.generate.image_placeholder' | transloco }}</div>
               }
             </div>
           </div>
