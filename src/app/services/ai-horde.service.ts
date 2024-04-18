@@ -82,6 +82,7 @@ export class AiHorde {
           inject_trigger: lora.injectTrigger,
           is_version: lora.isVersionId,
         })),
+        n: options.amount,
       },
       nsfw: options.nsfw,
       trusted_workers: workers !== null ? false : options.trustedWorkers,

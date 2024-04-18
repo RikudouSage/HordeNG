@@ -130,6 +130,7 @@ export class DatabaseService {
       loraList: <LoraGenerationOption[]>valuesMap['loraList'] ?? DefaultGenerationOptions.loraList,
       styleName: <string>valuesMap['styleName'] ?? DefaultGenerationOptions.styleName,
       onlyMyWorkers: <boolean>valuesMap['onlyMyWorkers'] ?? DefaultGenerationOptions.onlyMyWorkers,
+      amount: <number>valuesMap['amount'] ?? DefaultGenerationOptions.amount,
     };
   }
 

@@ -278,6 +278,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       Validators.maxLength(5),
     ]),
     onlyMyWorkers: new FormControl<boolean>(false),
+    amount: new FormControl<number>(1),
   });
   public isScrolledPastThreshold = computed(() => this.currentScrollPosition() > this.scrollThreshold());
 
@@ -549,6 +550,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       loraList: value.loraList ?? [],
       styleName: this.chosenStyle()?.name ?? null,
       onlyMyWorkers: value.onlyMyWorkers ?? false,
+      amount: value.amount ?? 1,
     };
   }
 

@@ -250,5 +250,7 @@
   "app.images.no_image": "You haven't generated any images yet. Once you generate some, they will appear here.",
   "app.homepage": "Homepage",
   "app.error.persistent_storage": "You have declined the persistent storage permission, {{app.title.simple}} might not have enough space to save all your generated images.",
-  "app.language": "Language"
+  "app.language": "Language",
+  "app.generate.amount": "Batch size",
+  "app.generate.help.amount": "Specify how many images do you want to generate at once."
 }

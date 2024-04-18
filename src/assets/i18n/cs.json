@@ -249,5 +249,7 @@
   "app.error.invalid_api_key_global": "Vypadá to, že váš api klíč není platný, možná chcete jít do {{app.settings}} a nastavit si nový?",
   "app.images.no_image": "Ještě jste nevygenerovali žádné obrázky. Jakmile nějaké vygenerujete, objeví se zde.",
   "app.homepage": "Domovská stránka",
-  "app.language": "Jazyk"
+  "app.language": "Jazyk",
+  "app.generate.amount": "Počet obrázků",
+  "app.generate.help.amount": "Zvolte, kolik obrázků chcete naráz vygenerovat."
 }
