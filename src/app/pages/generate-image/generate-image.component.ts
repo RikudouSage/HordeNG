@@ -153,7 +153,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   public availableModels: WritableSignal<ModelConfigurations> = signal({});
   public liveModelDetails: WritableSignal<Record<string, number>> = signal({});
   public inProgress: WritableSignal<JobInProgress | null> = signal(null);
-  public result: WritableSignal<Result | null> = signal(null);
+  public result: WritableSignal<Result[] | null> = signal(null);
   public requestStatus: WritableSignal<RequestStatusCheck | null> = signal(null);
   public groupedModels = computed(() => {
     const result: {[group: string]: ModelConfiguration[]} = {};
@@ -494,7 +494,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     this.loading.set(true);
     if (this.result()) {
-      URL.revokeObjectURL(this.result()!.source);
+      for (const image of this.result()!) {
+        URL.revokeObjectURL(image.source);
+      }
     }
     this.result.set(null);
     const response = await toPromise(this.api.generateImage(this.formAsOptionsStyled));
@@ -569,41 +571,50 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       promises.push(toPromise(this.httpClient.get(generation.img, {observe: 'response', responseType: 'blob'})));
     }
     const responses = await Promise.all(promises);
-    // todo handle multiple images
-    const image = responses[0].body;
-    if (image === null) {
-      await this.messageService.error(this.translator.get('app.error.image_download_failed'));
-      return;
-    }
 
-    this.result.set({
-      source: URL.createObjectURL(image),
-      width: metadata.width,
-      height: metadata.height,
-      workerId: generations[0].worker_id,
-      model: generations[0].model,
-      censored: generations[0].censored,
-      workerName: generations[0].worker_name,
-      seed: generations[0].seed,
-      id: generations[0].id,
-      kudos: result.kudos,
-      postProcessors: metadata.postProcessors.join(', '),
-      prompt: metadata.prompt,
-    });
-    const storeData: UnsavedStoredImage = {
-      id: generations[0].id,
-      data: image,
-      worker: {
-        id: generations[0].worker_id,
-        name: generations[0].worker_name,
-      },
-      ...metadata,
-      model: generations[0].model,
-      seed: generations[0].seed,
-    };
     const storage = await this.dataStorage.currentStorage;
-    await storage.storeImage(storeData);
+    const storeImagePromises: Promise<void>[] = [];
+    const results: Result[] = [];
+    let i = 0;
+    for (const response of responses) {
+      ++i;
+      const image = response.body;
+      if (image === null) {
+        await this.messageService.error(this.translator.get('app.error.image_download_failed', {index: i}));
+        continue;
+      }
+      results.push({
+        source: URL.createObjectURL(image),
+        width: metadata.width,
+        height: metadata.height,
+        workerId: generations[i - 1].worker_id,
+        model: generations[i - 1].model,
+        censored: generations[i - 1].censored,
+        workerName: generations[i - 1].worker_name,
+        seed: generations[i - 1].seed,
+        id: generations[i - 1].id,
+        kudos: result.kudos,
+        postProcessors: metadata.postProcessors.join(', '),
+        prompt: metadata.prompt,
+      });
+
+      const storeData: UnsavedStoredImage = {
+        id: generations[i - 1].id,
+        data: image,
+        worker: {
+          id: generations[i - 1].worker_id,
+          name: generations[i - 1].worker_name,
+        },
+        ...metadata,
+        model: generations[i - 1].model,
+        seed: generations[i - 1].seed,
+      };
+      storeImagePromises.push(storage.storeImage(storeData));
+    }
+    // todo fix race condition with cache
+    await Promise.all(storeImagePromises);
     await this.database.removeJobMetadata(metadata);
+    this.result.set(results);
   }
 
   public async cancelGeneration(): Promise<void> {
