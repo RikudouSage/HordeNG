@@ -93,14 +93,28 @@
           }
         </div>
 
-        <div class="form-group">
-          <label for="inputSampler">{{ 'app.generate.sampler' | transloco }} <app-tooltip [text]="'app.generate.help.sampler' | transloco" /></label>
-          <select id="inputSampler" tom-select [maxItems]="1" formControlName="sampler" required>
-            @for (enumCase of Sampler | keyvalue; track enumCase.key) {
-              <option [value]="enumCase.value">{{ enumCase.value }}</option>
-            }
-          </select>
-          <app-effective-value [value]="modifiedOptions()?.sampler" [original]="form.value.sampler" />
+        <div class="row formGroup">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="inputSampler">{{ 'app.generate.sampler' | transloco }} <app-tooltip [text]="'app.generate.help.sampler' | transloco" /></label>
+              <select id="inputSampler" tom-select [maxItems]="1" formControlName="sampler" required>
+                @for (enumCase of Sampler | keyvalue; track enumCase.key) {
+                  <option [value]="enumCase.value">{{ enumCase.value }}</option>
+                }
+              </select>
+              <app-effective-value [value]="modifiedOptions()?.sampler" [original]="form.value.sampler" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <!--suppress XmlInvalidId -->
+              <label for="inputAmount">
+                {{'app.generate.amount' | transloco}}
+                <app-tooltip [text]="'app.generate.help.amount' | transloco" />
+              </label>
+              <app-slider-with-value [min]="1" [max]="20" [step]="1" formControlName="amount" inputId="inputAmount" />
+            </div>
+          </div>
         </div>
         <div class="row formGroup">
           <div class="col-md-6">
@@ -312,27 +326,27 @@
           <div class="col-md-12">
             <div id="image-wrapper">
               @if (result()) {
-                <a href="{{result()!.source}}" target="_blank" class="image-link">
-                  <img src="{{result()!.source}}"/>
+                <a href="{{result()![0].source}}" target="_blank" class="image-link">
+                  <img src="{{result()![0].source}}"/>
                 </a>
                 <div class="image-parameter-result">
                   <p>
                     <transloco key="app.generate.result.info" [params]="{
-                      width: result()!.width,
-                      height: result()!.height,
-                      model: result()!.model,
-                      seed: result()!.seed,
-                      id: result()!.id,
-                      workerId: result()!.workerId,
-                      workerName: result()!.workerName,
-                      kudosCost: result()!.kudos | formatNumber,
-                      postProcessors: result()!.postProcessors,
+                      width: result()![0].width,
+                      height: result()![0].height,
+                      model: result()![0].model,
+                      seed: result()![0].seed,
+                      id: result()![0].id,
+                      workerId: result()![0].workerId,
+                      workerName: result()![0].workerName,
+                      kudosCost: result()![0].kudos | formatNumber,
+                      postProcessors: result()![0].postProcessors,
                     }"/>
                   </p>
-                  @if (result()!.censored) {
+                  @if (result()![0].censored) {
                     <p>{{'app.generate.result.censored' | transloco}}</p>
                   } @else {
-                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()!)">{{'app.download' | transloco}}</button></p>
+                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()![0])">{{'app.download' | transloco}}</button></p>
                   }
                 </div>
               } @else if (inProgress()) {
