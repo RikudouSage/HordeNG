@@ -39,7 +39,7 @@ import {BlobToUrlPipe} from "../../pipes/blob-to-url.pipe";
 import {JobMetadata} from "../../types/job-metadata";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {RequestStatusFull} from "../../types/horde/request-status-full";
-import {UnsavedStoredImage} from "../../types/db/stored-image";
+import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {TomSelectDirective} from "../../directives/tom-select.directive";
@@ -573,7 +573,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     const responses = await Promise.all(promises);
 
     const storage = await this.dataStorage.currentStorage;
-    const storeImagePromises: Promise<void>[] = [];
+    const storeImagePromises: Promise<StoredImage>[] = [];
     const results: Result[] = [];
     let i = 0;
     for (const response of responses) {
@@ -611,8 +611,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       };
       storeImagePromises.push(storage.storeImage(storeData));
     }
-    // todo fix race condition with cache
-    await Promise.all(storeImagePromises);
+    const storedImages = await Promise.all(storeImagePromises);
+    await storage.storeImagesInCache(...storedImages);
     await this.database.removeJobMetadata(metadata);
     this.result.set(results);
   }

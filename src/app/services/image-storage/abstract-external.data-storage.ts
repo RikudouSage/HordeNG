@@ -89,14 +89,19 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
     return result;
   }
 
-  public async storeImage(image: UnsavedStoredImage): Promise<void> {
+  public async storeImage(image: UnsavedStoredImage): Promise<StoredImage> {
     await this.doStoreImage(image);
+    return <StoredImage>image;
+  }
 
+  public async storeImagesInCache(...images: StoredImage[]): Promise<void> {
     const cacheItem = await this.cache.getItem<StoredImage[]>(this.BaseCacheKeys.Images);
     cacheItem.value ??= [];
-    cacheItem.value.unshift(<StoredImage>image);
+    for (const image of images) {
+      cacheItem.value.unshift(image);
+      await this.updateSize(image.data.size);
+    }
     await this.cache.save(cacheItem);
-    await this.updateSize(image.data.size);
   }
 
   protected async updateSize(size: number): Promise<void> {
