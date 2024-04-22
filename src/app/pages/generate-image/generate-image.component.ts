@@ -76,6 +76,7 @@ import {ModelStyle} from "../../types/sd-repo/model-style";
 import {ModelType} from "../../types/sd-repo/model-type";
 import {Swiper} from "swiper";
 import {Navigation, Pagination, Thumbs} from "swiper/modules";
+import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 
 interface Result {
   width: number;
@@ -167,7 +168,8 @@ const fakeData: Result[] = [
     SliderWithValueComponent,
     TooltipComponent,
     ConfigureLoraComponent,
-    LoraVersionIdPipe
+    LoraVersionIdPipe,
+    CopyButtonComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
