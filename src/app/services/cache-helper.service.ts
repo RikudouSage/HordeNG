@@ -16,13 +16,15 @@ export class CacheHelperService {
   ) {}
 
   public staleWhileRevalidate<T>(key: string, expiresAfter: number, fresh: () => Observable<T>): Observable<T> {
-    const saveTap = (item: T) => {
+    const saveTap = (item: T, isFresh: boolean = true) => {
       this.cache.getItem<Stored<T>>(key).then(cacheItem => {
-        cacheItem.value = {
-          expires: new Date(new Date().getTime() + expiresAfter),
-          item: item,
-        };
-        this.cache.save(cacheItem);
+        (isFresh ? of(item) : fresh()).subscribe(freshValue => {
+          cacheItem.value = {
+            expires: new Date(new Date().getTime() + expiresAfter),
+            item: freshValue,
+          };
+          this.cache.save(cacheItem);
+        });
       });
     }
 
@@ -39,7 +41,7 @@ export class CacheHelperService {
         const currentTime = new Date().getTime();
         if (cacheItem.value!.expires.getTime() < currentTime) {
           return of(cacheItem.value!.item).pipe(
-            tap(saveTap),
+            tap(value => saveTap(value, false)),
           );
         }
 
