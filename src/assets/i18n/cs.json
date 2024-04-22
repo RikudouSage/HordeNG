@@ -249,6 +249,8 @@
   "app.images.no_image": "Ještě jste nevygenerovali žádné obrázky. Jakmile nějaké vygenerujete, objeví se zde.",
   "app.homepage": "Domovská stránka",
   "app.language": "Jazyk",
+  "app.generate.custom_models": "Vlastní modely",
+  "app.warning.custom_model": "Varování: Tohle je vlastní model, který nebyl zkontrolován a otestován správci Hordy.",
   "app.generate.amount": "Počet obrázků",
   "app.generate.help.amount": "Zvolte, kolik obrázků chcete naráz vygenerovat.",
   "app.generate.result.size": "Velikost",

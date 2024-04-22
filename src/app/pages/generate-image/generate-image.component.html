@@ -42,6 +42,15 @@
                 }
               </optgroup>
             }
+            @if (customModels().length) {
+              <optgroup [label]="'app.generate.custom_models' | transloco">
+                @for (model of customModels(); track model.name) {
+                  <option [value]="model.name">
+                    {{ model.name }} ({{'app.generate.workers_count' | transloco}}: {{liveModelDetails()[model.name]}})
+                  </option>
+                }
+              </optgroup>
+            }
           </select>
           @if (currentModelDetail()?.baseline === BaselineModel.StableCascade) {
             <p class="text-warning">{{'app.generate.no_commercial' | transloco}}</p>
@@ -59,8 +68,6 @@
                     {{'app.generation.validation.samplers' | transloco:{expected: currentModelDetail()!.requirements!.samplers!.join(', ')} }}
                   } @else if (error === OptionsValidationError.Steps) {
                     {{'app.generation.validation.steps' | transloco:{min: currentModelDetail()!.requirements!.min_steps, max: currentModelDetail()!.requirements!.max_steps} }}
-                  } @else if (error === OptionsValidationError.ModelNotFound) {
-                    {{'app.generation.validation.model_not_found' | transloco }}
                   } @else if (error === OptionsValidationError.CfgScale) {
                     {{'app.generation.validation.cfg_scale' | transloco:{expected: currentModelDetail()!.requirements!.cfg_scale!} }}
                   }
@@ -68,8 +75,11 @@
               }
             </ul>
           }
+          @if (!availableModels()[effectiveModel()]) {
+            <p class="text-warning">{{'app.warning.custom_model' | transloco}}</p>
+          }
           <app-effective-value [value]="modifiedOptions()?.model" [original]="form.value.model" />
-          @if (effectiveModel()) {
+          @if (effectiveModel() && availableModels()[effectiveModel()]) {
             <small>
               <strong>{{'app.model.baseline' | transloco}}</strong>: {{availableModels()[effectiveModel()].baseline}}<br>
               <strong>{{'app.model.description' | transloco}}</strong>: {{availableModels()[effectiveModel()].description}}<br>
