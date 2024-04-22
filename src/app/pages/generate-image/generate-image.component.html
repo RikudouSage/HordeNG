@@ -354,17 +354,15 @@
                 </div>
                 <div class="image-parameter-result">
                   <p>
-                    <transloco key="app.generate.result.info" [params]="{
-                      width: result()![0].width,
-                      height: result()![0].height,
-                      model: result()![0].model,
-                      seed: result()![0].seed,
-                      id: result()![0].id,
-                      workerId: result()![0].workerId,
-                      workerName: result()![0].workerName,
-                      kudosCost: result()![0].kudos | formatNumber,
-                      postProcessors: result()![0].postProcessors,
-                    }"/>
+                    <span>{{'app.generate.result.size' | transloco}}: {{result()![0].width}}x{{result()![1].height}}</span>
+                    <span>{{'app.generate.model' | transloco}}: {{result()![0].model}}</span>
+                    <span>{{'app.generate.seed' | transloco}}: {{result()![0].seed}}</span>
+                    <span>{{'app.generate.result.id' | transloco}}: {{result()![0].id}}</span>
+                    <span><transloco key="app.generate.result.generated_by" [params]="{name: result()![0].workerName, id: result()![0].workerId}" /></span>
+                    <span>{{'app.generate.result.kudos_cost' | transloco}}: {{result()![0].kudos | formatNumber}}</span>
+                    @if (result()![0].postProcessors) {
+                      <span>{{'app.generate.post_processors' | transloco}}: {{result()![0].postProcessors}}</span>
+                    }
                   </p>
                   @if (result()![0].censored) {
                     <p>{{'app.generate.result.censored' | transloco}}</p>
