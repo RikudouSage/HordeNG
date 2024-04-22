@@ -764,9 +764,19 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
   private initializeSwiperThumbs(): void {
     this.swiperThumbs = new Swiper(this.swiperThumbsContainer()!.nativeElement, {
-      slidesPerView: 'auto',
+      slidesPerView: 5,
+      centerInsufficientSlides: true,
       freeMode: true,
+      spaceBetween: 5,
       watchSlidesProgress: true,
+      breakpoints: {
+        576: {
+          slidesPerView: 5,
+        },
+        0: {
+          slidesPerView: 4,
+        }
+      },
     });
 
     this.swiperThumbs.on('click', () => {

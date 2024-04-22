@@ -1,3 +1,6 @@
+@import "colors";
+@import "../scss/breakpoints";
+
 .swiper {
   position: relative;
   overflow: hidden;
@@ -49,8 +52,16 @@
     flex-shrink: 0;
     position: relative;
     transition-property: transform;
-    height: calc(100vh - 425px);
+    height: calc(100vh - 500px);
     background-color: #1c1b22;
+
+    @include mediaMax($large) {
+      height: 400px;
+    }
+
+    @include mediaMax($small) {
+      height: 300px;
+    }
 
     &-invisible-blank {
       visibility: hidden;
@@ -191,14 +202,25 @@
   }
 
   &-thumbs {
-    height: 200px;
+    height: 100px;
+    padding: 5px 0;
+    background: #252525;
+    border-radius: 0;
 
     .swiper-slide {
-      height: 100px;
+      height: 90px;
       opacity: 0.4;
-      background-size: cover;
       padding: 2px;
-      background: #4c4d4f;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      border-radius: 0;
+      transition: 0.3s ease-in-out;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
 
       img {
         height: 100px;

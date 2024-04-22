@@ -347,33 +347,31 @@
                     <div class="swiper-wrapper">
 
                       @for (image of result(); track image) { <!-- todo track id -->
-                        <div class="swiper-slide">
-                          <img [ngSrc]="image.source" [width]="image.width" [height]="image.height" [alt]="'app.generated_image.alt' | transloco" />
-                        </div>
+                        <div class="swiper-slide" [style.background-image]="'url(' + image.source + ')'"></div>
                       }
                     </div>
                   </div>
                 </div>
-<!--                <div class="image-parameter-result">-->
-<!--                  <p>-->
-<!--                    <transloco key="app.generate.result.info" [params]="{-->
-<!--                      width: result()![0].width,-->
-<!--                      height: result()![0].height,-->
-<!--                      model: result()![0].model,-->
-<!--                      seed: result()![0].seed,-->
-<!--                      id: result()![0].id,-->
-<!--                      workerId: result()![0].workerId,-->
-<!--                      workerName: result()![0].workerName,-->
-<!--                      kudosCost: result()![0].kudos | formatNumber,-->
-<!--                      postProcessors: result()![0].postProcessors,-->
-<!--                    }"/>-->
-<!--                  </p>-->
-<!--                  @if (result()![0].censored) {-->
-<!--                    <p>{{'app.generate.result.censored' | transloco}}</p>-->
-<!--                  } @else {-->
-<!--                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()![0])">{{'app.download' | transloco}}</button></p>-->
-<!--                  }-->
-<!--                </div>-->
+                <div class="image-parameter-result">
+                  <p>
+                    <transloco key="app.generate.result.info" [params]="{
+                      width: result()![0].width,
+                      height: result()![0].height,
+                      model: result()![0].model,
+                      seed: result()![0].seed,
+                      id: result()![0].id,
+                      workerId: result()![0].workerId,
+                      workerName: result()![0].workerName,
+                      kudosCost: result()![0].kudos | formatNumber,
+                      postProcessors: result()![0].postProcessors,
+                    }"/>
+                  </p>
+                  @if (result()![0].censored) {
+                    <p>{{'app.generate.result.censored' | transloco}}</p>
+                  } @else {
+                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()![0])">{{'app.download' | transloco}}</button></p>
+                  }
+                </div>
               } @else if (inProgress()) {
                 <app-loader/>
                 @if (requestStatus()) {
