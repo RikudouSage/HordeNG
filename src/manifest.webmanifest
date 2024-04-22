@@ -1,7 +1,7 @@
 {
   "name": "HordeNG",
   "short_name": "HordeNG",
-  "theme_color": "#409eff",
+  "theme_color": "#1c1b22",
   "background_color": "#1c1b22",
   "display": "standalone",
   "scope": "./",

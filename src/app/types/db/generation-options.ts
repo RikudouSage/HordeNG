@@ -33,6 +33,7 @@ export interface GenerationOptions {
   loraList: LoraGenerationOption[];
   styleName: string | null;
   onlyMyWorkers: boolean;
+  amount: number;
 }
 
 export const DefaultGenerationOptions: GenerationOptions = {
@@ -59,4 +60,5 @@ export const DefaultGenerationOptions: GenerationOptions = {
   loraList: [],
   styleName: null,
   onlyMyWorkers: false,
+  amount: 1,
 };

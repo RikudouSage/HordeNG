@@ -10,7 +10,7 @@ import {DropboxUploadResponse} from "../../types/dropbox/dropbox-upload-response
 import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
 
-type Metadata = Record<keyof Omit<StoredImage, 'data' | 'onlyMyWorkers'>, string>;
+type Metadata = Record<keyof Omit<StoredImage, 'data' | 'onlyMyWorkers' | 'amount'>, string>;
 
 @Injectable({
   providedIn: 'root',
@@ -80,6 +80,7 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
           clipSkip: Number(metadata.clipSkip ?? 0),
           styleName: metadata.styleName || null,
           onlyMyWorkers: false,
+          amount: 1,
         };
       }));
     } catch (e) {

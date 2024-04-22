@@ -48,12 +48,16 @@ export class DatabaseService {
     await this.removeItem(this.ObjectStores.Cache, key);
   }
 
-  public async storeImage(image: UnsavedStoredImage): Promise<void> {
-    await this.setValue(this.ObjectStores.Images, image);
+  public async storeImage(image: UnsavedStoredImage): Promise<IDBValidKey> {
+    return await this.setValue(this.ObjectStores.Images, image);
   }
 
   public async deleteImage(image: StoredImage): Promise<void> {
     await this.removeItem(this.ObjectStores.Images, image.id);
+  }
+
+  public async getImage(id: string): Promise<StoredImage | null> {
+    return (await this.getValue(this.ObjectStores.Images, id)) ?? null;
   }
 
   public async getImages(page: number, limit: number, order: Order = Order.Asc): Promise<PaginatedResult<StoredImage>> {
@@ -130,6 +134,7 @@ export class DatabaseService {
       loraList: <LoraGenerationOption[]>valuesMap['loraList'] ?? DefaultGenerationOptions.loraList,
       styleName: <string>valuesMap['styleName'] ?? DefaultGenerationOptions.styleName,
       onlyMyWorkers: <boolean>valuesMap['onlyMyWorkers'] ?? DefaultGenerationOptions.onlyMyWorkers,
+      amount: <number>valuesMap['amount'] ?? DefaultGenerationOptions.amount,
     };
   }
 

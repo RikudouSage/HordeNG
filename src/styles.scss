@@ -11,6 +11,11 @@
 @import "scss/breakpoints";
 @import "scss/card";
 @import "scss/tom-select";
+@import "scss/swiper";
+
+:root {
+  scroll-behavior: smooth;
+}
 
 * {
   padding: 0;

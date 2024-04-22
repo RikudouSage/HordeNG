@@ -75,9 +75,14 @@ export class IndexedDbDataStorage implements DataStorage<Credentials> {
     return true;
   }
 
-  public async storeImage(image: UnsavedStoredImage): Promise<void> {
+  public async storeImage(image: UnsavedStoredImage): Promise<StoredImage> {
     delete image.id;
-    await this.database.storeImage(image);
+    const id = await this.database.storeImage(image);
+    return (await this.database.getImage(String(id)))!;
+  }
+
+  public async storeImagesInCache(...image: StoredImage[]): Promise<void> {
+    // ignored, nothing to do
   }
 
   public async getGenerationOptions(): Promise<GenerationOptions> {

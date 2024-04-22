@@ -1,8 +1,9 @@
 import {
+  AfterViewInit,
   Component,
   computed,
   effect,
-  HostListener,
+  ElementRef,
   Inject,
   OnDestroy,
   OnInit,
@@ -10,6 +11,7 @@ import {
   Signal,
   signal,
   TemplateRef,
+  ViewChild,
   WritableSignal
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
@@ -36,7 +38,7 @@ import {BlobToUrlPipe} from "../../pipes/blob-to-url.pipe";
 import {JobMetadata} from "../../types/job-metadata";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {RequestStatusFull} from "../../types/horde/request-status-full";
-import {UnsavedStoredImage} from "../../types/db/stored-image";
+import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {TomSelectDirective} from "../../directives/tom-select.directive";
@@ -71,6 +73,9 @@ import {CivitAiService} from "../../services/civit-ai.service";
 import {LoraVersionIdPipe} from "../../pipes/lora-version-id.pipe";
 import {ModelStyle} from "../../types/sd-repo/model-style";
 import {ModelType} from "../../types/sd-repo/model-type";
+import {Swiper} from "swiper";
+import {Navigation, Pagination, Thumbs} from "swiper/modules";
+import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 
 interface Result {
   width: number;
@@ -86,6 +91,51 @@ interface Result {
   postProcessors: string;
   prompt: string;
 }
+
+// const fakeData: Result[] = [
+//   {
+//     width: 453,
+//     height: 600,
+//     source: 'https://pixlr.com/images/index/ai-image-generator-three.webp',
+//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
+//     workerName: 'Fake worker',
+//     model: 'Fake model',
+//     seed: '123',
+//     id: 'b1ddf95e-7825-4a02-82a1-a09e7734f2c4',
+//     censored: false,
+//     kudos: 30,
+//     postProcessors: '',
+//     prompt: 'Some fake prompt',
+//   },
+//   {
+//     width: 866,
+//     height: 360,
+//     source: 'https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg',
+//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
+//     workerName: 'Fake worker',
+//     model: 'Fake model',
+//     seed: '123',
+//     id: '8a3936a2-f935-4bc3-acf3-025a9151e452',
+//     censored: false,
+//     kudos: 30,
+//     postProcessors: '',
+//     prompt: 'Some fake prompt',
+//   },
+//   {
+//     width: 540,
+//     height: 360,
+//     source: 'https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg',
+//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
+//     workerName: 'Fake worker',
+//     model: 'Fake model',
+//     seed: '123',
+//     id: '806cde5e-45d4-4709-b82e-fa3cb14f27ed',
+//     censored: false,
+//     kudos: 30,
+//     postProcessors: '',
+//     prompt: 'Some fake prompt',
+//   },
+// ];
 
 @Component({
   selector: 'app-generate-image',
@@ -117,12 +167,13 @@ interface Result {
     SliderWithValueComponent,
     TooltipComponent,
     ConfigureLoraComponent,
-    LoraVersionIdPipe
+    LoraVersionIdPipe,
+    CopyButtonComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
 })
-export class GenerateImageComponent implements OnInit, OnDestroy {
+export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly isBrowser: boolean;
 
   protected readonly Sampler = Sampler;
@@ -131,20 +182,24 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   protected readonly BaselineModel = BaselineModel;
 
   private checkInterval: Subscription | null = null;
+  private swiper: Swiper | null = null;
+  private swiperThumbs: Swiper | null = null;
 
   private currentModelName: WritableSignal<string> = signal('');
   private currentPrompt: WritableSignal<string> = signal('');
   private currentNegativePrompt: WritableSignal<string | null> = signal(null);
 
-  private scrollThreshold = signal(85);
-  private currentScrollPosition = signal(0);
+  private viewInitialized = signal(false);
+  private swiperContainer = signal<ElementRef<HTMLDivElement> | null>(null);
+  private swiperThumbsContainer = signal<ElementRef<HTMLDivElement> | null>(null);
+  private imageWrapper = signal<ElementRef<HTMLDivElement> | null>(null);
 
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
   public availableModels: WritableSignal<ModelConfigurations> = signal({});
   public liveModelDetails: WritableSignal<Record<string, number>> = signal({});
   public inProgress: WritableSignal<JobInProgress | null> = signal(null);
-  public result: WritableSignal<Result | null> = signal(null);
+  public result: WritableSignal<Result[] | null> = signal(null);
   public requestStatus: WritableSignal<RequestStatusCheck | null> = signal(null);
   public groupedModels = computed(() => {
     const result: {[group: string]: ModelConfiguration[]} = {};
@@ -228,6 +283,12 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
 
     return patch;
   });
+
+  isOpenResult: boolean = false;
+  toggleContent() {
+    this.isOpenResult = !this.isOpenResult;
+  }
+
   public effectiveModel = computed(() => this.modifiedOptions()?.model ?? this.currentModelName());
 
   public iconEdit = signal(faPencil);
@@ -294,8 +355,20 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       Validators.maxLength(5),
     ]),
     onlyMyWorkers: new FormControl<boolean>(false),
+    amount: new FormControl<number>(1),
   });
-  public isScrolledPastThreshold = computed(() => this.currentScrollPosition() > this.scrollThreshold());
+
+  @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
+    this.swiperContainer.set(container ?? null);
+  }
+
+  @ViewChild('swiperThumbsContainer', {static: false}) set swiperThumbsContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
+    this.swiperThumbsContainer.set(container ?? null);
+  }
+
+  @ViewChild('imageWrapper', {static: false}) set imageWrapperChanged(wrapper: ElementRef<HTMLDivElement> | undefined) {
+    this.imageWrapper.set(wrapper ?? null);
+  }
 
   constructor(
     private readonly database: DatabaseService,
@@ -326,6 +399,20 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
         setting: 'chosen_style',
         value: style,
       });
+    });
+
+    // swiper
+    effect(() => {
+      if (!this.viewInitialized()) {
+        return;
+      }
+      if (this.loading() || !this.result() || !this.swiperContainer() || !this.swiperThumbsContainer()) {
+        this.destroySwiper();
+        return;
+      }
+
+      this.initializeSwiper();
+      this.initializeSwiperThumbs();
     });
   }
 
@@ -468,6 +555,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     });
   }
 
+  public async ngAfterViewInit(): Promise<void> {
+    this.viewInitialized.set(true);
+  }
+
   public async ngOnDestroy(): Promise<void> {
     this.checkInterval?.unsubscribe();
   }
@@ -483,7 +574,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     }
     this.loading.set(true);
     if (this.result()) {
-      URL.revokeObjectURL(this.result()!.source);
+      for (const image of this.result()!) {
+        URL.revokeObjectURL(image.source);
+      }
     }
     this.result.set(null);
     const response = await toPromise(this.api.generateImage(this.formAsOptionsStyled));
@@ -500,6 +593,23 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     });
     this.inProgress.set(response.successResponse!);
     this.loading.set(false);
+
+    const subscription = interval(50).subscribe(() => {
+      if (this.imageWrapper()) {
+        const boundingRect = this.imageWrapper()!.nativeElement.getBoundingClientRect();
+        if (
+          boundingRect.top >= 0
+          && boundingRect.left >= 0
+          && boundingRect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+          && boundingRect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        ) {
+          subscription.unsubscribe();
+          return;
+        }
+        window.scrollTo({left: 0, top: boundingRect.top + document.documentElement.scrollTop});
+        subscription.unsubscribe();
+      }
+    });
   }
 
   private get formAsOptions(): GenerationOptions {
@@ -539,6 +649,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       loraList: value.loraList ?? [],
       styleName: this.chosenStyle()?.name ?? null,
       onlyMyWorkers: value.onlyMyWorkers ?? false,
+      amount: value.amount ?? 1,
     };
   }
 
@@ -557,41 +668,50 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
       promises.push(toPromise(this.httpClient.get(generation.img, {observe: 'response', responseType: 'blob'})));
     }
     const responses = await Promise.all(promises);
-    // todo handle multiple images
-    const image = responses[0].body;
-    if (image === null) {
-      await this.messageService.error(this.translator.get('app.error.image_download_failed'));
-      return;
-    }
 
-    this.result.set({
-      source: URL.createObjectURL(image),
-      width: metadata.width,
-      height: metadata.height,
-      workerId: generations[0].worker_id,
-      model: generations[0].model,
-      censored: generations[0].censored,
-      workerName: generations[0].worker_name,
-      seed: generations[0].seed,
-      id: generations[0].id,
-      kudos: result.kudos,
-      postProcessors: metadata.postProcessors.join(', '),
-      prompt: metadata.prompt,
-    });
-    const storeData: UnsavedStoredImage = {
-      id: generations[0].id,
-      data: image,
-      worker: {
-        id: generations[0].worker_id,
-        name: generations[0].worker_name,
-      },
-      ...metadata,
-      model: generations[0].model,
-      seed: generations[0].seed,
-    };
     const storage = await this.dataStorage.currentStorage;
-    await storage.storeImage(storeData);
+    const storeImagePromises: Promise<StoredImage>[] = [];
+    const results: Result[] = [];
+    let i = 0;
+    for (const response of responses) {
+      ++i;
+      const image = response.body;
+      if (image === null) {
+        await this.messageService.error(this.translator.get('app.error.image_download_failed', {index: i}));
+        continue;
+      }
+      results.push({
+        source: URL.createObjectURL(image),
+        width: metadata.width,
+        height: metadata.height,
+        workerId: generations[i - 1].worker_id,
+        model: generations[i - 1].model,
+        censored: generations[i - 1].censored,
+        workerName: generations[i - 1].worker_name,
+        seed: generations[i - 1].seed,
+        id: generations[i - 1].id,
+        kudos: result.kudos,
+        postProcessors: metadata.postProcessors.join(', '),
+        prompt: metadata.prompt,
+      });
+
+      const storeData: UnsavedStoredImage = {
+        id: generations[i - 1].id,
+        data: image,
+        worker: {
+          id: generations[i - 1].worker_id,
+          name: generations[i - 1].worker_name,
+        },
+        ...metadata,
+        model: generations[i - 1].model,
+        seed: generations[i - 1].seed,
+      };
+      storeImagePromises.push(storage.storeImage(storeData));
+    }
+    const storedImages = await Promise.all(storeImagePromises);
+    await storage.storeImagesInCache(...storedImages);
     await this.database.removeJobMetadata(metadata);
+    this.result.set(results);
   }
 
   public async cancelGeneration(): Promise<void> {
@@ -638,12 +758,17 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
   }
 
   public async download(result: Result) {
+    const response = await fetch(result.source);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.display = 'none';
     this.document.body.appendChild(a);
-    a.href = result.source
+    a.href = url;
     a.download = `${result.prompt}.webp`;
     a.click();
+    window.URL.revokeObjectURL(url);
     a.remove();
   }
 
@@ -674,8 +799,48 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     this.chosenStyle.set(null);
   }
 
-  @HostListener('window:scroll')
-  public onWindowsScroll() {
-    this.currentScrollPosition.set(window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0);
+  private initializeSwiper(): void {
+    this.swiper = new Swiper(this.swiperContainer()!.nativeElement, {
+      modules: [Navigation, Pagination, Thumbs],
+      slidesPerView: 1,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      }
+    });
+
+    this.swiper.on('slideChange', () => {
+      this.swiperThumbs!.slideTo(this.swiper!.activeIndex);
+    });
+  }
+
+  private initializeSwiperThumbs(): void {
+    this.swiperThumbs = new Swiper(this.swiperThumbsContainer()!.nativeElement, {
+      slidesPerView: 5,
+      centerInsufficientSlides: true,
+      freeMode: true,
+      spaceBetween: 5,
+      watchSlidesProgress: true,
+      breakpoints: {
+        576: {
+          slidesPerView: 5,
+        },
+        0: {
+          slidesPerView: 4,
+        }
+      },
+    });
+
+    this.swiperThumbs.on('click', () => {
+      this.swiper!.slideTo(this.swiperThumbs!.clickedIndex);
+    });
+  }
+
+  private destroySwiper(): void {
+    this.swiper?.destroy();
+    this.swiperThumbs?.destroy();
+
+    this.swiper = null;
+    this.swiperThumbs = null;
   }
 }

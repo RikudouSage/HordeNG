@@ -79,7 +79,6 @@
   "app.generate.progress.estimated_wait": "Odhad čekání",
   "app.error.generate.impossible": "Kombinace vámi zvolených parametrů nelze nyní zpracovat, požadavek byl zrušen.",
   "app.error.image_download_failed": "Nezdařilo se stáhnout vygenerovaný obrázek, zkuste to prosím znovu.",
-  "app.generate.result.info": "Velikost: [b]{{width}}x{{height}}[/b], model: [b]{{model}}[/b], seed: [b]{{seed}}[/b], id: [b]{{id}}[/b], post processory: [b]{{postProcessors}}[/b]. Vygeneroval [b]{{workerName}}[/b] (id: [b]{{workerId}}[/b]). Cena v kudos: [b]{{kudosCost}}[/b].",
   "app.generate.result.censored": "Vygenerování obrázku bylo cenzurováno AI Hordou.",
   "app.image_storage": "Uložiště obrázků",
   "app.storage.s3": "AWS S3 (či kompatibilní)",
@@ -251,5 +250,12 @@
   "app.homepage": "Domovská stránka",
   "app.language": "Jazyk",
   "app.generate.custom_models": "Vlastní modely",
-  "app.warning.custom_model": "Varování: Tohle je vlastní model, který nebyl zkontrolován a otestován správci Hordy."
+  "app.warning.custom_model": "Varování: Tohle je vlastní model, který nebyl zkontrolován a otestován správci Hordy.",
+  "app.generate.amount": "Počet obrázků",
+  "app.generate.help.amount": "Zvolte, kolik obrázků chcete naráz vygenerovat.",
+  "app.generate.result.size": "Velikost",
+  "app.generate.result.id": "ID",
+  "app.generate.result.generated_by": "Vygenerováno pomocí [b]{{name}}[/b] (id: [b]{{id}}[/b])",
+  "app.generate.result.kudos_cost": "Cena v kudos",
+  "app.preview": "Celý obrázek"
 }

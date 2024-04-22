@@ -82,7 +82,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       content: image.data,
     });
 
-    const metadata: Record<(keyof Omit<GenerationOptions, 'worker' | 'data' | 'loraList' | 'onlyMyWorkers'>) | 'workerId' | 'workerName' | 'loras' | 'googleApiId', string> = {
+    const metadata: Record<(keyof Omit<GenerationOptions, 'worker' | 'data' | 'loraList' | 'onlyMyWorkers' | 'amount'>) | 'workerId' | 'workerName' | 'loras' | 'googleApiId', string> = {
       workerId: image.worker.id,
       workerName: image.worker.name,
       model: image.model,
@@ -177,6 +177,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
         clipSkip: Number(metadata['clipSkip'] ?? 0),
         styleName: metadata['styleName'] || null,
         onlyMyWorkers: false,
+        amount: 1,
       }
     }));
   }

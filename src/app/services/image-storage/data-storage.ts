@@ -8,7 +8,8 @@ export interface DataStorage<TCredentials extends Credentials> {
   get name(): string;
   get displayName(): Resolvable<string>;
   validateCredentials(credentials: TCredentials): Promise<boolean | string>;
-  storeImage(image: UnsavedStoredImage): Promise<void>;
+  storeImage(image: UnsavedStoredImage): Promise<StoredImage>;
+  storeImagesInCache(...image: StoredImage[]): Promise<void>;
   loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>>;
   deleteImage(image: StoredImage): Promise<void>;
   storeOption(option: string, value: any): Promise<void>;
