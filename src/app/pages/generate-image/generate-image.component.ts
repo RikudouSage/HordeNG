@@ -4,7 +4,6 @@ import {
   computed,
   effect,
   ElementRef,
-  HostListener,
   Inject,
   OnDestroy,
   OnInit,
@@ -77,7 +76,6 @@ import {ModelType} from "../../types/sd-repo/model-type";
 import {Swiper} from "swiper";
 import {Navigation, Pagination, Thumbs} from "swiper/modules";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
-import {ModalComponent} from "../../components/modal/modal.component";
 
 interface Result {
   width: number;
@@ -190,9 +188,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   private currentModelName: WritableSignal<string> = signal('');
   private currentPrompt: WritableSignal<string> = signal('');
   private currentNegativePrompt: WritableSignal<string | null> = signal(null);
-
-  private scrollThreshold = signal(85);
-  private currentScrollPosition = signal(0);
 
   private viewInitialized = signal(false);
   private swiperContainer = signal<ElementRef<HTMLDivElement> | null>(null);
@@ -361,7 +356,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     onlyMyWorkers: new FormControl<boolean>(false),
     amount: new FormControl<number>(1),
   });
-  public isScrolledPastThreshold = computed(() => this.currentScrollPosition() > this.scrollThreshold());
 
   @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
     this.swiperContainer.set(container ?? null);
@@ -781,11 +775,6 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     this.result.set(null);
     this.requestStatus.set(null);
     this.chosenStyle.set(null);
-  }
-
-  @HostListener('window:scroll')
-  public onWindowsScroll() {
-    this.currentScrollPosition.set(window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0);
   }
 
   private initializeSwiper(): void {
