@@ -596,7 +596,17 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
     const subscription = interval(50).subscribe(() => {
       if (this.imageWrapper()) {
-        window.scrollTo({left: 0, top: this.imageWrapper()!.nativeElement.getBoundingClientRect().top + document.documentElement.scrollTop});
+        const boundingRect = this.imageWrapper()!.nativeElement.getBoundingClientRect();
+        if (
+          boundingRect.top >= 0
+          && boundingRect.left >= 0
+          && boundingRect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+          && boundingRect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        ) {
+          subscription.unsubscribe();
+          return;
+        }
+        window.scrollTo({left: 0, top: boundingRect.top + document.documentElement.scrollTop});
         subscription.unsubscribe();
       }
     });
