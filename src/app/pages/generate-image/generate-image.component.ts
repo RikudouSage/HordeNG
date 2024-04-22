@@ -77,6 +77,7 @@ import {ModelType} from "../../types/sd-repo/model-type";
 import {Swiper} from "swiper";
 import {Navigation, Pagination, Thumbs} from "swiper/modules";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
+import {ModalComponent} from "../../components/modal/modal.component";
 
 interface Result {
   width: number;

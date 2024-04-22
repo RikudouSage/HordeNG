@@ -256,5 +256,6 @@
   "app.generate.result.size": "Velikost",
   "app.generate.result.id": "ID",
   "app.generate.result.generated_by": "Vygenerováno pomocí [b]{{name}}[/b] (id: [b]{{id}}[/b])",
-  "app.generate.result.kudos_cost": "Cena v kudos"
+  "app.generate.result.kudos_cost": "Cena v kudos",
+  "app.preview": "Celý obrázek"
 }
