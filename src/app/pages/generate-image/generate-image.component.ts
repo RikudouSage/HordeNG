@@ -92,50 +92,50 @@ interface Result {
   prompt: string;
 }
 
-const fakeData: Result[] = [
-  {
-    width: 453,
-    height: 600,
-    source: 'https://pixlr.com/images/index/ai-image-generator-three.webp',
-    workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
-    workerName: 'Fake worker',
-    model: 'Fake model',
-    seed: '123',
-    id: 'b1ddf95e-7825-4a02-82a1-a09e7734f2c4',
-    censored: false,
-    kudos: 30,
-    postProcessors: '',
-    prompt: 'Some fake prompt',
-  },
-  {
-    width: 866,
-    height: 360,
-    source: 'https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg',
-    workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
-    workerName: 'Fake worker',
-    model: 'Fake model',
-    seed: '123',
-    id: '8a3936a2-f935-4bc3-acf3-025a9151e452',
-    censored: false,
-    kudos: 30,
-    postProcessors: '',
-    prompt: 'Some fake prompt',
-  },
-  {
-    width: 540,
-    height: 360,
-    source: 'https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg',
-    workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
-    workerName: 'Fake worker',
-    model: 'Fake model',
-    seed: '123',
-    id: '806cde5e-45d4-4709-b82e-fa3cb14f27ed',
-    censored: false,
-    kudos: 30,
-    postProcessors: '',
-    prompt: 'Some fake prompt',
-  },
-];
+// const fakeData: Result[] = [
+//   {
+//     width: 453,
+//     height: 600,
+//     source: 'https://pixlr.com/images/index/ai-image-generator-three.webp',
+//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
+//     workerName: 'Fake worker',
+//     model: 'Fake model',
+//     seed: '123',
+//     id: 'b1ddf95e-7825-4a02-82a1-a09e7734f2c4',
+//     censored: false,
+//     kudos: 30,
+//     postProcessors: '',
+//     prompt: 'Some fake prompt',
+//   },
+//   {
+//     width: 866,
+//     height: 360,
+//     source: 'https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg',
+//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
+//     workerName: 'Fake worker',
+//     model: 'Fake model',
+//     seed: '123',
+//     id: '8a3936a2-f935-4bc3-acf3-025a9151e452',
+//     censored: false,
+//     kudos: 30,
+//     postProcessors: '',
+//     prompt: 'Some fake prompt',
+//   },
+//   {
+//     width: 540,
+//     height: 360,
+//     source: 'https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg',
+//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
+//     workerName: 'Fake worker',
+//     model: 'Fake model',
+//     seed: '123',
+//     id: '806cde5e-45d4-4709-b82e-fa3cb14f27ed',
+//     censored: false,
+//     kudos: 30,
+//     postProcessors: '',
+//     prompt: 'Some fake prompt',
+//   },
+// ];
 
 @Component({
   selector: 'app-generate-image',
@@ -198,7 +198,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   public availableModels: WritableSignal<ModelConfigurations> = signal({});
   public liveModelDetails: WritableSignal<Record<string, number>> = signal({});
   public inProgress: WritableSignal<JobInProgress | null> = signal(null);
-  public result: WritableSignal<Result[] | null> = signal(fakeData);
+  public result: WritableSignal<Result[] | null> = signal(null);
   public requestStatus: WritableSignal<RequestStatusCheck | null> = signal(null);
   public groupedModels = computed(() => {
     const result: {[group: string]: ModelConfiguration[]} = {};
