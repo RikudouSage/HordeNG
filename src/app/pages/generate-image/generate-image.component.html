@@ -2,7 +2,7 @@
   <app-loader/>
 } @else {
   <form [formGroup]="form" (ngSubmit)="generateImage()">
-    <div class="row setWrapper" [class.is-scrolled]="isScrolledPastThreshold()">
+    <div class="row setWrapper">
       <div class="setContainer">
         <div class="form-group">
           <label for="inputPrompt">{{ 'app.generate.prompt' | transloco }} <app-tooltip [text]="'app.generate.help.prompt' | transloco" /></label>
