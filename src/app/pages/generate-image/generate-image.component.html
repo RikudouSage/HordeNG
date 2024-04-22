@@ -351,7 +351,7 @@
                             <p>
                               <span>{{'app.generate.seed' | transloco}}: <b>{{image.seed}}</b><app-copy-button [text]="image.seed" /></span>
                               <span>{{'app.generate.result.kudos_cost' | transloco}}: <b>{{image.kudos | formatNumber}}</b></span>
-                              <span>{{'app.generate.result.size' | transloco}}: {{image.width}}x{{result()![1].height}}</span>
+                              <span>{{'app.generate.result.size' | transloco}}: {{image.width}}x{{image.height}}</span>
                               <span>{{'app.generate.model' | transloco}}: {{image.model}}</span>
                               <span>{{'app.generate.result.id' | transloco}}: {{image.id}}</span>
                               <span class="generatedBy"><transloco key="app.generate.result.generated_by" [params]="{name: image.workerName, id: image.workerId}" /></span>
