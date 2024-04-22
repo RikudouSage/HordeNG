@@ -349,23 +349,23 @@
                           </div>
                           <div class="image-parameter-result" [class.is-open]="isOpenResult">
                             <p>
-                              <span>{{'app.generate.seed' | transloco}}: <b>{{result()![0].seed}}</b><app-copy-button [text]="result()![0].seed" /></span>
-                              <span>{{'app.generate.result.kudos_cost' | transloco}}: <b>{{result()![0].kudos | formatNumber}}</b></span>
-                              <span>{{'app.generate.result.size' | transloco}}: {{result()![0].width}}x{{result()![1].height}}</span>
-                              <span>{{'app.generate.model' | transloco}}: {{result()![0].model}}</span>
-                              <span>{{'app.generate.result.id' | transloco}}: {{result()![0].id}}</span>
-                              <span class="generatedBy"><transloco key="app.generate.result.generated_by" [params]="{name: result()![0].workerName, id: result()![0].workerId}" /></span>
-                              @if (result()![0].postProcessors) {
-                                <span>{{'app.generate.post_processors' | transloco}}: {{result()![0].postProcessors}}</span>
+                              <span>{{'app.generate.seed' | transloco}}: <b>{{image.seed}}</b><app-copy-button [text]="image.seed" /></span>
+                              <span>{{'app.generate.result.kudos_cost' | transloco}}: <b>{{image.kudos | formatNumber}}</b></span>
+                              <span>{{'app.generate.result.size' | transloco}}: {{image.width}}x{{result()![1].height}}</span>
+                              <span>{{'app.generate.model' | transloco}}: {{image.model}}</span>
+                              <span>{{'app.generate.result.id' | transloco}}: {{image.id}}</span>
+                              <span class="generatedBy"><transloco key="app.generate.result.generated_by" [params]="{name: image.workerName, id: image.workerId}" /></span>
+                              @if (image.postProcessors) {
+                                <span>{{'app.generate.post_processors' | transloco}}: {{image.postProcessors}}</span>
                               }
                             </p>
                           </div>
                           <div class="image-result" [class.is-open]="isOpenResult">
-                            @if (result()![0].censored) {
+                            @if (image.censored) {
                               <p>{{'app.generate.result.censored' | transloco}}</p>
                             } @else {
                               <p><button type="button" class="btn btn-secondary btnBig">Náhled</button></p>
-                              <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()![0])">{{'app.download' | transloco}}</button></p>
+                              <p><button type="button" class="btn btn-primary btnBig" (click)="download(image)">{{'app.download' | transloco}}</button></p>
                             }
                           </div>
                         </div>
