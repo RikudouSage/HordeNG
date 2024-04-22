@@ -4,7 +4,6 @@ import {GenerationOptions} from "../types/db/generation-options";
 import {toPromise} from "../helper/resolvable";
 
 export enum OptionsValidationError {
-  ModelNotFound,
   CfgScale,
   ClipSkip,
   Steps,
@@ -27,7 +26,7 @@ export class GenerationOptionsValidatorService {
     const configData = await toPromise(this.repoData.getModelsConfig());
     const modelConfig = configData[modelName] ?? null;
     if (modelConfig === null) {
-      return [OptionsValidationError.ModelNotFound];
+      return [];
     }
 
     if (!modelConfig.requirements) {

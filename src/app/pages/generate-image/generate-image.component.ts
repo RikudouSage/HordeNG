@@ -69,6 +69,8 @@ import {TooltipComponent} from "../../components/tooltip/tooltip.component";
 import {ConfigureLoraComponent, ConfigureLoraResult} from "../../components/configure-lora/configure-lora.component";
 import {CivitAiService} from "../../services/civit-ai.service";
 import {LoraVersionIdPipe} from "../../pipes/lora-version-id.pipe";
+import {ModelStyle} from "../../types/sd-repo/model-style";
+import {ModelType} from "../../types/sd-repo/model-type";
 
 interface Result {
   width: number;
@@ -149,6 +151,31 @@ export class GenerateImageComponent implements OnInit, OnDestroy {
     for (const model of Object.values(this.availableModels())) {
       result[model.style] ??= [];
       result[model.style].push(model);
+    }
+
+    return result;
+  });
+  public customModels: Signal<ModelConfiguration[]> = computed(() => {
+    const result: ModelConfiguration[] = [];
+    for (const modelName of Object.keys(this.liveModelDetails())) {
+      if (typeof this.availableModels()[modelName] !== 'undefined') {
+        continue;
+      }
+      result.push({
+        name: modelName,
+        baseline: BaselineModel.StableDiffusion1,
+        config: {
+          download: [],
+          files: [],
+        },
+        description: "",
+        download_all: false,
+        inpainting: false,
+        nsfw: true,
+        style: ModelStyle.CustomModel,
+        type: ModelType.Ckpt,
+        version: 'unknown'
+      });
     }
 
     return result;

@@ -5,4 +5,5 @@ export enum ModelStyle {
   Artistic = 'artistic',
   Other = 'other',
   Realistic = 'realistic',
+  CustomModel = 'custom model',
 }
