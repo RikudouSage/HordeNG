@@ -13,6 +13,10 @@
 @import "scss/tom-select";
 @import "scss/swiper";
 
+:root {
+  scroll-behavior: smooth;
+}
+
 * {
   padding: 0;
   margin: 0;

@@ -192,6 +192,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   private viewInitialized = signal(false);
   private swiperContainer = signal<ElementRef<HTMLDivElement> | null>(null);
   private swiperThumbsContainer = signal<ElementRef<HTMLDivElement> | null>(null);
+  private imageWrapper = signal<ElementRef<HTMLDivElement> | null>(null);
 
   public loading = signal(true);
   public kudosCost = signal<number | null>(null);
@@ -363,6 +364,10 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
   @ViewChild('swiperThumbsContainer', {static: false}) set swiperThumbsContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
     this.swiperThumbsContainer.set(container ?? null);
+  }
+
+  @ViewChild('imageWrapper', {static: false}) set imageWrapperChanged(wrapper: ElementRef<HTMLDivElement> | undefined) {
+    this.imageWrapper.set(wrapper ?? null);
   }
 
   constructor(
@@ -588,6 +593,13 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     });
     this.inProgress.set(response.successResponse!);
     this.loading.set(false);
+
+    const subscription = interval(50).subscribe(() => {
+      if (this.imageWrapper()) {
+        window.scrollTo({left: 0, top: this.imageWrapper()!.nativeElement.getBoundingClientRect().top + document.documentElement.scrollTop});
+        subscription.unsubscribe();
+      }
+    });
   }
 
   private get formAsOptions(): GenerationOptions {
