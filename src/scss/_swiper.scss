@@ -52,7 +52,7 @@
     flex-shrink: 0;
     position: relative;
     transition-property: transform;
-    height: calc(100vh - 500px);
+    height: calc(100vh - 322px);
     background-color: #1c1b22;
 
     @include mediaMax($large) {
@@ -61,6 +61,44 @@
 
     @include mediaMax($small) {
       height: 300px;
+    }
+
+    &:hover {
+      .image-parameter-result,
+      .image-result {
+        @include mediaMin($large) {
+          opacity: 1;
+          pointer-events: auto;
+        }
+      }
+
+      &:before {
+        @include mediaMin($large) {
+          opacity: 1;
+        }
+      }
+    }
+
+    &.is-open {
+      &:before {
+        @include mediaMax($large) {
+          opacity: 1;
+        }
+      }
+    }
+
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+      opacity: 0;
+      background: rgba(0,0,0,0.8);
+      transition: 0.200s ease-in-out;
     }
 
     &-invisible-blank {

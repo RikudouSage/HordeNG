@@ -257,6 +257,12 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
     return patch;
   });
+
+  isOpenResult: boolean = false;
+  toggleContent() {
+    this.isOpenResult = !this.isOpenResult;
+  }
+
   public effectiveModel = computed(() => this.modifiedOptions()?.model ?? this.currentModelName());
 
   public iconEdit = signal(faPencil);
@@ -706,12 +712,17 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   public async download(result: Result) {
+    const response = await fetch(result.source);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.display = 'none';
     this.document.body.appendChild(a);
-    a.href = result.source
+    a.href = url;
     a.download = `${result.prompt}.webp`;
     a.click();
+    window.URL.revokeObjectURL(url);
     a.remove();
   }
 

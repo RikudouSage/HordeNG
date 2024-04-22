@@ -323,16 +323,41 @@
           <button [disabled]="inProgress() === null" type="button" class="btn btn-danger btn-long" (click)="cancelGeneration()">{{'app.generate.cancel' | transloco}}</button>
         </div>
         <div class="row">
-          <div class="col-md-12">
+
             <div id="image-wrapper">
               @if (result()) {
                 <div class="swiper">
                   <div class="swiper-container" #swiperContainer>
                     <div class="swiper-wrapper">
                       @for (image of result(); track image) { <!-- todo track id -->
-                        <div class="swiper-slide">
+                        <div class="swiper-slide" [class.is-open]="isOpenResult">
                           <span [style.background-image]="'url(' + image.source + ')'"></span>
                           <img [ngSrc]="image.source" [width]="image.width" [height]="image.height" [alt]="'app.generated_image.alt' | transloco" />
+                          <div class="mobile-result" (click)="toggleContent()" [class.is-open]="isOpenResult">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" xml:space="preserve"><path fill="#ffffff" d="M32 0c17.7 0 32 14.3 32 32S49.7 64 32 64 0 49.7 0 32 14.3 0 32 0z"/><path fill="#1c1b22" d="M16 43h32v6H16zM43 27 32 40 21 27h7V12h8v15z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1C5.926 1 1 5.926 1 12s4.926 11 11 11 11-4.926 11-11S18.074 1 12 1zm5.25 14.75-1.5 1.5L12 13.5l-3.75 3.75-1.5-1.5L10.5 12 6.75 8.25l1.5-1.5L12 10.5l3.75-3.75 1.5 1.5L13.5 12z"/></svg>
+                          </div>
+                          <div class="image-parameter-result" [class.is-open]="isOpenResult">
+                            <p>
+                              <span>{{'app.generate.seed' | transloco}}: <b>{{result()![0].seed}}</b><svg width="800" height="800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 8V7c0-.943 0-1.414.293-1.707C10.586 5 11.057 5 12 5h5c.943 0 1.414 0 1.707.293C19 5.586 19 6.057 19 7v5c0 .943 0 1.414-.293 1.707C18.414 14 17.943 14 17 14h-1m-9 5h5c.943 0 1.414 0 1.707-.293C14 18.414 14 17.943 14 17v-5c0-.943 0-1.414-.293-1.707C13.414 10 12.943 10 12 10H7c-.943 0-1.414 0-1.707.293C5 10.586 5 11.057 5 12v5c0 .943 0 1.414.293 1.707C5.586 19 6.057 19 7 19Z" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                              <span>{{'app.generate.result.kudos_cost' | transloco}}: <b>{{result()![0].kudos | formatNumber}}</b></span>
+                              <span>{{'app.generate.result.size' | transloco}}: {{result()![0].width}}x{{result()![1].height}}</span>
+                              <span>{{'app.generate.model' | transloco}}: {{result()![0].model}}</span>
+                              <span>{{'app.generate.result.id' | transloco}}: {{result()![0].id}}<svg width="800" height="800" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 8V7c0-.943 0-1.414.293-1.707C10.586 5 11.057 5 12 5h5c.943 0 1.414 0 1.707.293C19 5.586 19 6.057 19 7v5c0 .943 0 1.414-.293 1.707C18.414 14 17.943 14 17 14h-1m-9 5h5c.943 0 1.414 0 1.707-.293C14 18.414 14 17.943 14 17v-5c0-.943 0-1.414-.293-1.707C13.414 10 12.943 10 12 10H7c-.943 0-1.414 0-1.707.293C5 10.586 5 11.057 5 12v5c0 .943 0 1.414.293 1.707C5.586 19 6.057 19 7 19Z" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                              <span class="generatedBy"><transloco key="app.generate.result.generated_by" [params]="{name: result()![0].workerName, id: result()![0].workerId}" /></span>
+                              @if (result()![0].postProcessors) {
+                                <span>{{'app.generate.post_processors' | transloco}}: {{result()![0].postProcessors}}</span>
+                              }
+                            </p>
+                          </div>
+                          <div class="image-result" [class.is-open]="isOpenResult">
+                            @if (result()![0].censored) {
+                              <p>{{'app.generate.result.censored' | transloco}}</p>
+                            } @else {
+                              <p><button type="button" class="btn btn-secondary btnBig">Náhled</button></p>
+                              <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()![0])">{{'app.download' | transloco}}</button></p>
+                            }
+                          </div>
                         </div>
                       }
                     </div>
@@ -352,24 +377,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="image-parameter-result">
-                  <p>
-                    <span>{{'app.generate.result.size' | transloco}}: {{result()![0].width}}x{{result()![1].height}}</span>
-                    <span>{{'app.generate.model' | transloco}}: {{result()![0].model}}</span>
-                    <span>{{'app.generate.seed' | transloco}}: {{result()![0].seed}}</span>
-                    <span>{{'app.generate.result.id' | transloco}}: {{result()![0].id}}</span>
-                    <span><transloco key="app.generate.result.generated_by" [params]="{name: result()![0].workerName, id: result()![0].workerId}" /></span>
-                    <span>{{'app.generate.result.kudos_cost' | transloco}}: {{result()![0].kudos | formatNumber}}</span>
-                    @if (result()![0].postProcessors) {
-                      <span>{{'app.generate.post_processors' | transloco}}: {{result()![0].postProcessors}}</span>
-                    }
-                  </p>
-                  @if (result()![0].censored) {
-                    <p>{{'app.generate.result.censored' | transloco}}</p>
-                  } @else {
-                    <p><button type="button" class="btn btn-primary btnBig" (click)="download(result()![0])">{{'app.download' | transloco}}</button></p>
-                  }
-                </div>
+
               } @else if (inProgress()) {
                 <app-loader/>
                 @if (requestStatus()) {
@@ -392,7 +400,7 @@
                 <div class="empty">{{ 'app.generate.image_placeholder' | transloco }}</div>
               }
             </div>
-          </div>
+
         </div>
       </div>
     </div>
