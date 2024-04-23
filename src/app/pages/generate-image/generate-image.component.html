@@ -184,10 +184,10 @@
             @for (lora of form.value.loraList!; track lora.id) {
               <li>
                 <strong class="lora-name">
-                  <app-lora-text-row [lora]="lora" />
                   <a href="https://civitai.com/models/{{lora.isVersionId ? (lora.id | loraModelId | async) : lora.id}}" target="_blank">
                     <fa-icon [icon]="iconExternalLink()" />
                   </a>
+                  <app-lora-text-row [lora]="lora" />
                 </strong>
                 <button (click)="openModal(editLora)" class="text-primary icon-button ml-1" type="button" [title]="'app.edit' | transloco" style="right: 40px;">
                   <fa-icon [title]="'app.edit' | transloco" [icon]="iconEdit()" size="xl" />
