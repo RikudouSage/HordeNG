@@ -1,14 +1,14 @@
 import {Component, computed, OnDestroy, signal} from '@angular/core';
-import {BoxComponent} from "../../box/box.component";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {interval, Subscription} from "rxjs";
-import {WorkerDetails} from "../../../types/horde/worker-details";
-import {AiHorde} from "../../../services/ai-horde.service";
-import {toPromise} from "../../../helper/resolvable";
-import {MessageService} from "../../../services/message.service";
-import {TranslatorService} from "../../../services/translator.service";
-import {LoaderComponent} from "../../loader/loader.component";
-import {WorkerDetailComponent} from "../../worker-detail/worker-detail.component";
+import {BoxComponent} from "../../../../components/box/box.component";
+import {LoaderComponent} from "../../../../components/loader/loader.component";
+import {WorkerDetailComponent} from "../../../../components/worker-detail/worker-detail.component";
+import {WorkerDetails} from "../../../../types/horde/worker-details";
+import {AiHorde} from "../../../../services/ai-horde.service";
+import {MessageService} from "../../../../services/message.service";
+import {TranslatorService} from "../../../../services/translator.service";
+import {toPromise} from "../../../../helper/resolvable";
 
 @Component({
   selector: 'app-all-workers',

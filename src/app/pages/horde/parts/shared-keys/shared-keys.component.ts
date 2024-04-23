@@ -1,22 +1,22 @@
 import {Component, effect, input, OnInit, output, Signal, signal, TemplateRef} from '@angular/core';
-import {BoxComponent} from "../../box/box.component";
 import {TranslocoPipe} from "@ngneat/transloco";
-import {LoaderComponent} from "../../loader/loader.component";
-import {CopyButtonComponent} from "../../copy-button/copy-button.component";
-import {FormatNumberPipe} from "../../../pipes/format-number.pipe";
-import {FormatDatetimePipe} from "../../../pipes/format-date.pipe";
-import {UserDetails} from "../../../types/horde/user-details";
-import {SharedKey} from "../../../types/horde/shared-key";
 import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {toPromise} from "../../../helper/resolvable";
-import {AiHorde} from "../../../services/ai-horde.service";
-import {MessageService} from "../../../services/message.service";
-import {TranslatorService} from "../../../services/translator.service";
-import {ModalService} from "../../../services/modal.service";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {AppValidators} from "../../../helper/app-validators";
+import {BoxComponent} from "../../../../components/box/box.component";
+import {LoaderComponent} from "../../../../components/loader/loader.component";
+import {CopyButtonComponent} from "../../../../components/copy-button/copy-button.component";
+import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";
+import {FormatDatetimePipe} from "../../../../pipes/format-date.pipe";
+import {UserDetails} from "../../../../types/horde/user-details";
+import {SharedKey} from "../../../../types/horde/shared-key";
+import {AppValidators} from "../../../../helper/app-validators";
+import {AiHorde} from "../../../../services/ai-horde.service";
+import {MessageService} from "../../../../services/message.service";
+import {TranslatorService} from "../../../../services/translator.service";
+import {ModalService} from "../../../../services/modal.service";
+import {toPromise} from "../../../../helper/resolvable";
 
 @Component({
   selector: 'app-shared-keys',

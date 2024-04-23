@@ -1,15 +1,15 @@
 import {Component, input, output, signal} from '@angular/core';
-import {BoxComponent} from "../../box/box.component";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {TranslocoPipe} from "@ngneat/transloco";
-import {UserDetails} from "../../../types/horde/user-details";
-import {AppValidators} from "../../../helper/app-validators";
-import {toPromise} from "../../../helper/resolvable";
-import {AiHorde} from "../../../services/ai-horde.service";
-import {MessageService} from "../../../services/message.service";
-import {TranslatorService} from "../../../services/translator.service";
-import {LoaderComponent} from "../../loader/loader.component";
+import {BoxComponent} from "../../../../components/box/box.component";
+import {LoaderComponent} from "../../../../components/loader/loader.component";
+import {UserDetails} from "../../../../types/horde/user-details";
+import {AppValidators} from "../../../../helper/app-validators";
+import {AiHorde} from "../../../../services/ai-horde.service";
+import {MessageService} from "../../../../services/message.service";
+import {TranslatorService} from "../../../../services/translator.service";
+import {toPromise} from "../../../../helper/resolvable";
 
 @Component({
   selector: 'app-transfer-kudos',

@@ -19,13 +19,13 @@ import {AuthManagerService} from "../../services/auth-manager.service";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 import {FormatDatetimePipe} from "../../pipes/format-date.pipe";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {CurrentUserStatusComponent} from "../../components/horde/current-user-status/current-user-status.component";
-import {HordeStatusComponent} from "../../components/horde/horde-status/horde-status.component";
+import {CurrentUserStatusComponent} from "./parts/current-user-status/current-user-status.component";
+import {HordeStatusComponent} from "./parts/horde-status/horde-status.component";
 import {WorkerDetailComponent} from "../../components/worker-detail/worker-detail.component";
-import {YourWorkersComponent} from "../../components/horde/your-workers/your-workers.component";
-import {TransferKudosComponent} from "../../components/horde/transfer-kudos/transfer-kudos.component";
-import {SharedKeysComponent} from "../../components/horde/shared-keys/shared-keys.component";
-import {AllWorkersComponent} from "../../components/horde/all-workers/all-workers.component";
+import {YourWorkersComponent} from "./parts/your-workers/your-workers.component";
+import {TransferKudosComponent} from "./parts/transfer-kudos/transfer-kudos.component";
+import {SharedKeysComponent} from "./parts/shared-keys/shared-keys.component";
+import {AllWorkersComponent} from "./parts/all-workers/all-workers.component";
 
 @Component({
   selector: 'app-horde',

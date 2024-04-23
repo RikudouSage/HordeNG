@@ -1,16 +1,16 @@
 import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
-import {BoxComponent} from "../../box/box.component";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
-import {HordePerformance} from "../../../types/horde/horde-performance";
-import {AiHorde} from "../../../services/ai-horde.service";
-import {MessageService} from "../../../services/message.service";
-import {TranslatorService} from "../../../services/translator.service";
 import {interval, Subscription} from "rxjs";
-import {toPromise} from "../../../helper/resolvable";
 import {TranslocoPipe} from "@ngneat/transloco";
-import {FormatNumberPipe} from "../../../pipes/format-number.pipe";
 import {isPlatformBrowser} from "@angular/common";
-import {LoaderComponent} from "../../loader/loader.component";
+import {BoxComponent} from "../../../../components/box/box.component";
+import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";
+import {LoaderComponent} from "../../../../components/loader/loader.component";
+import {HordePerformance} from "../../../../types/horde/horde-performance";
+import {AiHorde} from "../../../../services/ai-horde.service";
+import {MessageService} from "../../../../services/message.service";
+import {TranslatorService} from "../../../../services/translator.service";
+import {toPromise} from "../../../../helper/resolvable";
 
 @Component({
   selector: 'app-horde-status',

@@ -1,16 +1,16 @@
 import {Component, Inject, input, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {BoxComponent} from "../../box/box.component";
 import {TranslocoPipe} from "@ngneat/transloco";
-import {WorkerDetailComponent} from "../../worker-detail/worker-detail.component";
-import {UserDetails} from "../../../types/horde/user-details";
-import {AiHorde} from "../../../services/ai-horde.service";
-import {WorkerDetails} from "../../../types/horde/worker-details";
-import {toPromise} from "../../../helper/resolvable";
-import {MessageService} from "../../../services/message.service";
-import {TranslatorService} from "../../../services/translator.service";
-import {LoaderComponent} from "../../loader/loader.component";
 import {isPlatformBrowser} from "@angular/common";
 import {interval, Subscription} from "rxjs";
+import {BoxComponent} from "../../../../components/box/box.component";
+import {WorkerDetailComponent} from "../../../../components/worker-detail/worker-detail.component";
+import {LoaderComponent} from "../../../../components/loader/loader.component";
+import {UserDetails} from "../../../../types/horde/user-details";
+import {WorkerDetails} from "../../../../types/horde/worker-details";
+import {AiHorde} from "../../../../services/ai-horde.service";
+import {MessageService} from "../../../../services/message.service";
+import {TranslatorService} from "../../../../services/translator.service";
+import {toPromise} from "../../../../helper/resolvable";
 
 @Component({
   selector: 'app-your-workers',

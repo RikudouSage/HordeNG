@@ -1,14 +1,14 @@
 import {Component, Inject, input, OnDestroy, OnInit, output, PLATFORM_ID, signal} from '@angular/core';
-import {FormatNumberPipe} from "../../../pipes/format-number.pipe";
-import {SmallBoxComponent} from "../../small-box/small-box.component";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {faCoins, faCrosshairs, faImage} from "@fortawesome/free-solid-svg-icons";
-import {UserDetails} from "../../../types/horde/user-details";
-import {AiHorde} from "../../../services/ai-horde.service";
-import {MessageService} from "../../../services/message.service";
-import {TranslatorService} from "../../../services/translator.service";
 import {isPlatformBrowser} from "@angular/common";
 import {interval, Subscription} from "rxjs";
+import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";
+import {SmallBoxComponent} from "../../../../components/small-box/small-box.component";
+import {UserDetails} from "../../../../types/horde/user-details";
+import {AiHorde} from "../../../../services/ai-horde.service";
+import {MessageService} from "../../../../services/message.service";
+import {TranslatorService} from "../../../../services/translator.service";
 
 @Component({
   selector: 'app-current-user-status',
