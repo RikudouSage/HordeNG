@@ -571,3 +571,14 @@
     }
   }
 }
+
+.lora-name {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+
+  & > * {
+    flex: 0 1 33%;
+    margin-right: 8px;
+  }
+}

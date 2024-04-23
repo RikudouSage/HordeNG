@@ -56,7 +56,7 @@ import {ModalService} from "../../services/modal.service";
 import {EnrichedPromptStyle} from "../../types/sd-repo/prompt-style";
 import {EffectiveValueComponent} from "../../components/effective-value/effective-value.component";
 import {LoraNamePipe} from "../../pipes/lora-name.pipe";
-import {faPencil, faRemove} from "@fortawesome/free-solid-svg-icons";
+import {faExternalLink, faPencil, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {LoraSelectorComponent} from "../../components/lora-selector/lora-selector.component";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
@@ -76,6 +76,7 @@ import {ModelType} from "../../types/sd-repo/model-type";
 import {Swiper} from "swiper";
 import {Navigation, Pagination, Thumbs} from "swiper/modules";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
+import {LoraModelIdPipe} from "../../pipes/lora-model-id.pipe";
 
 interface Result {
   width: number;
@@ -168,7 +169,8 @@ interface Result {
     TooltipComponent,
     ConfigureLoraComponent,
     LoraVersionIdPipe,
-    CopyButtonComponent
+    CopyButtonComponent,
+    LoraModelIdPipe
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -293,6 +295,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
   public iconEdit = signal(faPencil);
   public iconDelete = signal(faRemove);
+  public iconExternalLink = signal(faExternalLink);
 
   public form = new FormGroup({
     prompt: new FormControl<string>('', [
