@@ -146,7 +146,11 @@
         <div class="row formGroup">
           <div class="col-md-6 stay-50">
             <div class="form-group">
-              <label for="inputWidth">{{ 'app.generate.width' | transloco }} <app-tooltip [text]="'app.generate.help.width' | transloco" /></label>
+              <label for="inputWidth">
+                {{ 'app.generate.width' | transloco }}
+                (<app-aspect-ratio [first]="modifiedOptions()?.width ?? form.value.width!" [second]="modifiedOptions()?.height ?? form.value.height!" />)
+                <app-tooltip [text]="'app.generate.help.width' | transloco" />
+              </label>
               <input type="number" min="64" max="3072" step="64" formControlName="width" id="inputWidth"
                      class="form-control"/>
               <app-effective-value [value]="modifiedOptions()?.width" [original]="form.value.width" />
@@ -154,7 +158,11 @@
           </div>
           <div class="col-md-6 stay-50">
             <div class="form-group">
-              <label for="inputHeight">{{ 'app.generate.height' | transloco }} <app-tooltip [text]="'app.generate.help.height' | transloco" /></label>
+              <label for="inputHeight">
+                {{ 'app.generate.height' | transloco }}
+                (<app-aspect-ratio [first]="modifiedOptions()?.height ?? form.value.height!" [second]="modifiedOptions()?.width ?? form.value.width!" />)
+                <app-tooltip [text]="'app.generate.help.height' | transloco" />
+              </label>
               <input type="number" min="64" max="3072" step="64" formControlName="height" id="inputHeight"
                      class="form-control"/>
               <app-effective-value [value]="modifiedOptions()?.height" [original]="form.value.height" />

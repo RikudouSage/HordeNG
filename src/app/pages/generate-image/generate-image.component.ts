@@ -77,6 +77,8 @@ import {Swiper} from "swiper";
 import {Navigation, Pagination, Thumbs} from "swiper/modules";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 import {LoraModelIdPipe} from "../../pipes/lora-model-id.pipe";
+import {GreatestCommonDivisorPipe} from "../../pipes/greatest-common-divisor.pipe";
+import {AspectRatioComponent} from "../../components/aspect-ratio/aspect-ratio.component";
 
 interface Result {
   width: number;
@@ -170,7 +172,9 @@ interface Result {
     ConfigureLoraComponent,
     LoraVersionIdPipe,
     CopyButtonComponent,
-    LoraModelIdPipe
+    LoraModelIdPipe,
+    GreatestCommonDivisorPipe,
+    AspectRatioComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
