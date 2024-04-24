@@ -258,5 +258,10 @@
   "app.generate.result.kudos_cost": "Kudos cost",
   "app.generate.custom_models": "Custom models",
   "app.warning.custom_model": "Warning: This is a custom model not reviewed and tested by the Horde maintainers.",
-  "app.preview": "Full image"
+  "app.preview": "Full image",
+  "app.generate.ti_list": "Textual inversions (embeddings)",
+  "app.generate.add_tis": "Add textual inversion",
+  "app.generate.help.ti_list": "Textual inversions or embeddings are basically pregenerated prompts or negative prompts (depending on where you use them). They contain already vectorized instructions (see description for {{app.generate.clip_skip}} to learn more about how instructions are vectorized) that shape your input.",
+  "app.generate.ti_list.no_models": "No textual inversion selected.",
+  "app.ti_configure.description": "Here you can configure whether you want to automatically inject the textual inversion and what's its strength if you do."
 }

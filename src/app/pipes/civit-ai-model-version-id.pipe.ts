@@ -3,10 +3,10 @@ import {map, Observable} from "rxjs";
 import {CivitAiService} from "../services/civit-ai.service";
 
 @Pipe({
-  name: 'loraVersionId',
+  name: 'civitAiModelVersionId',
   standalone: true
 })
-export class LoraVersionIdPipe implements PipeTransform {
+export class CivitAiModelVersionIdPipe implements PipeTransform {
 
   constructor(
     private readonly civitAi: CivitAiService,
@@ -14,7 +14,7 @@ export class LoraVersionIdPipe implements PipeTransform {
   }
 
   transform(modelId: number): Observable<number> {
-    return this.civitAi.getLoraDetail(modelId).pipe(
+    return this.civitAi.getModelDetail(modelId).pipe(
       map (model => model.modelVersions[0].id),
     );
   }

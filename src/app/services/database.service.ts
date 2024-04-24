@@ -1,6 +1,11 @@
 import {Injectable} from '@angular/core';
 import {JobInProgress} from "../types/db/job-in-progress";
-import {DefaultGenerationOptions, GenerationOptions, LoraGenerationOption} from "../types/db/generation-options";
+import {
+  DefaultGenerationOptions,
+  GenerationOptions,
+  LoraGenerationOption,
+  TextualInversionGenerationOption
+} from "../types/db/generation-options";
 import {Sampler} from "../types/horde/sampler";
 import {JobMetadata} from "../types/job-metadata";
 import {AppSetting} from "../types/app-setting";
@@ -135,6 +140,7 @@ export class DatabaseService {
       styleName: <string>valuesMap['styleName'] ?? DefaultGenerationOptions.styleName,
       onlyMyWorkers: <boolean>valuesMap['onlyMyWorkers'] ?? DefaultGenerationOptions.onlyMyWorkers,
       amount: <number>valuesMap['amount'] ?? DefaultGenerationOptions.amount,
+      textualInversionList: <TextualInversionGenerationOption[]>valuesMap['textualInversionList'] ?? DefaultGenerationOptions.textualInversionList,
     };
   }
 

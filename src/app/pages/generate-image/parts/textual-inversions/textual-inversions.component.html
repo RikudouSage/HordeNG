@@ -1,0 +1,57 @@
+<ng-template #textualInversionSelector let-selected="selectedTextualInversions" let-model="currentModel">
+</ng-template>
+
+<ng-template textual-inversion #textualInversionRow let-ti="textualInversion" let-comma="comma">
+  <ng-template #addTiModal>
+
+  </ng-template>
+
+  {{ti.id | civitAiModelName:false | async}}
+  @if (ti.inject) {
+    ({{ti.inject === 'prompt' ? ('app.generate.prompt' | transloco) : ('app.generate.negative_prompt' | transloco)}}@if (ti.strength) {, {{'app.generate.lora.model_strength' | transloco}}: {{ti.strength | formatNumber}}})@if (comma){,}
+  }
+</ng-template>
+
+<div class="form-group">
+  <label>{{'app.generate.ti_list' | transloco}} <app-tooltip [text]="'app.generate.help.ti_list' | transloco" /></label>
+  <button class="btn btnBig" type="button">{{'app.generate.add_tis' | transloco}}</button>
+  @if (modifiedOptions()) {
+    <small>
+      <strong>{{'app.generate.style_effective_value' | transloco}}</strong>:
+      @for (ti of modifiedOptions(); track ti.id) {
+        <ng-container *ngTemplateOutlet="textualInversionRow; context: {textualInversion: ti, comma: !$last}" />
+      }
+    </small>
+  }
+  @if (!selectedTis().length) {
+    <p>{{'app.generate.ti_list.no_models' | transloco}}</p>
+  } @else {
+    <ul>
+      @for (textualInversion of selectedTis(); track textualInversion.id) {
+        <li>
+          <strong class="ti-name">
+            <a href="https://civitai.com/models/{{textualInversion.id}}" target="_blank">
+              <fa-icon [icon]="iconExternalLink()" />
+            </a>
+            <ng-container *ngTemplateOutlet="textualInversionRow; context: {textualInversion: textualInversion}" />
+          </strong>
+          <button (click)="openModal(editTi)" class="text-primary icon-button ml-1" type="button" [title]="'app.edit' | transloco" style="right: 40px;">
+            <fa-icon [title]="'app.edit' | transloco" [icon]="iconEdit()" size="xl" />
+          </button>
+          <button (click)="removeTextualInversion(textualInversion.id)" class="text-danger icon-button ml-1" type="button" title="{{'app.delete' | transloco}}">
+            <fa-icon title="{{'app.delete' | transloco}}" [icon]="iconDelete()" size="xl" />
+          </button>
+
+          <ng-template #editTi>
+            <app-generate-image-configure-textual-inversion
+              [name]="(textualInversion.id | civitAiModelName:false | async)!"
+              [id]="textualInversion.id"
+              [strength]="textualInversion.strength"
+              [inject]="textualInversion.inject"
+            />
+          </ng-template>
+        </li>
+      }
+    </ul>
+  }
+</div>

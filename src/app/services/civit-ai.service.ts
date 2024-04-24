@@ -47,13 +47,13 @@ export class CivitAiService {
     );
   }
 
-  public getLoraDetail(id: number): Observable<CivitAiModel> {
+  public getModelDetail(id: number): Observable<CivitAiModel> {
     return this.httpClient.get<CivitAiModel>(`https://civitai.com/api/v1/models/${id}`);
   }
 
-  public getLoraByVersion(id: number): Observable<CivitAiModel> {
+  public getModelByVersion(id: number): Observable<CivitAiModel> {
     return this.getVersionDetail(id).pipe(
-      switchMap(version => this.getLoraDetail(version.modelId)),
+      switchMap(version => this.getModelDetail(version.modelId)),
     );
   }
 

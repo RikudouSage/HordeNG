@@ -7,7 +7,7 @@ import {TranslocoPipe} from "@ngneat/transloco";
 import {BoxComponent} from "../box/box.component";
 import {PromptStyleTextComponent} from "../prompt-style-text/prompt-style-text.component";
 import {ModalService} from "../../services/modal.service";
-import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {CivitAiModelNamePipe} from "../../pipes/civit-ai-model-name.pipe";
 import {AsyncPipe} from "@angular/common";
 import {CivitAiService} from "../../services/civit-ai.service";
 import {catchError, map, Observable, of, tap} from "rxjs";
@@ -23,7 +23,7 @@ import {DebounceInputDirective} from "../../directives/debounce-input.directive"
     TranslocoPipe,
     BoxComponent,
     PromptStyleTextComponent,
-    LoraNamePipe,
+    CivitAiModelNamePipe,
     AsyncPipe,
     DebounceInputDirective
   ],
@@ -96,9 +96,9 @@ export class PromptStyleModalComponent implements OnInit {
         observable = of(this.loraNameCache[cacheKey]);
       } else {
         if (lora.is_version) {
-          observable = this.civitAi.getLoraByVersion(Number(lora.name));
+          observable = this.civitAi.getModelByVersion(Number(lora.name));
         } else {
-          observable = this.civitAi.getLoraDetail(Number(lora.name));
+          observable = this.civitAi.getModelDetail(Number(lora.name));
         }
         observable = observable.pipe(
           tap (lora => this.loraNameCache[cacheKey] = lora),

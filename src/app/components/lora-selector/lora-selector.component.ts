@@ -163,10 +163,10 @@ export class LoraSelectorComponent implements OnInit {
     const numberRegex = /[0-9]+/;
     if (numberRegex.test(value.query!)) {
       const models = await Promise.all([
-        toPromise(this.civitAi.getLoraByVersion(Number(value.query!)).pipe(
+        toPromise(this.civitAi.getModelByVersion(Number(value.query!)).pipe(
           catchError(() => of(null)),
         )),
-        toPromise(this.civitAi.getLoraDetail(Number(value.query!)).pipe(
+        toPromise(this.civitAi.getModelDetail(Number(value.query!)).pipe(
           catchError(() => of(null)),
         )),
       ]);
@@ -179,7 +179,7 @@ export class LoraSelectorComponent implements OnInit {
     if (modelUrlRegex.test(value.query!)) {
       const id = value.query!.match(modelUrlRegex)?.[1] ?? null;
       if (id !== null) {
-        const model = await toPromise(this.civitAi.getLoraDetail(Number(id)).pipe(
+        const model = await toPromise(this.civitAi.getModelDetail(Number(id)).pipe(
           catchError(() => of(null)),
         ));
         if (model !== null) {
