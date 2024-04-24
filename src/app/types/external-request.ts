@@ -1,20 +1,6 @@
-import {Sampler} from "./horde/sampler";
-import {PostProcessor} from "./horde/post-processor";
+import {GenerationOptions} from "./db/generation-options";
 
 export interface ExternalRequest {
-  request: {
-    cfgScale: number;
-    clipSkip: number;
-    height: number;
-    karras: boolean;
-    model: string;
-    negativePrompt: string;
-    nsfw: boolean;
-    prompt: string;
-    sampler: Sampler;
-    steps: number;
-    upscaler: PostProcessor;
-    width: number;
-  };
+  request: Partial<GenerationOptions>;
   seed: string;
 }
