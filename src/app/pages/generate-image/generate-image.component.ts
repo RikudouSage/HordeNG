@@ -456,7 +456,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       const decoded = new TextDecoder().decode(toByteArray(base64));
       const request = JSON.parse(decoded) as ExternalRequest;
       this.form.patchValue(request.request);
-      this.form.patchValue({seed: request.seed});
+      if (request.seed) {
+        this.form.patchValue({seed: request.seed});
+      }
     }
 
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
