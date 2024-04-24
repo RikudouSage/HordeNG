@@ -79,6 +79,9 @@ import {CopyButtonComponent} from "../../components/copy-button/copy-button.comp
 import {LoraModelIdPipe} from "../../pipes/lora-model-id.pipe";
 import {GreatestCommonDivisorPipe} from "../../pipes/greatest-common-divisor.pipe";
 import {AspectRatioComponent} from "../../components/aspect-ratio/aspect-ratio.component";
+import {ActivatedRoute} from "@angular/router";
+import {toByteArray} from "base64-js";
+import {ExternalRequest} from "../../types/external-request";
 
 interface Result {
   width: number;
@@ -389,6 +392,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     private readonly generationOptionsValidator: GenerationOptionsValidatorService,
     private readonly modalService: ModalService,
     private readonly civitAi: CivitAiService,
+    private readonly activatedRoute: ActivatedRoute,
     @Inject(DOCUMENT) private readonly document: Document,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
@@ -446,6 +450,15 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       upscaler: getUpscalers(storedOptions.postProcessors)[0] ?? null,
       genericPostProcessors: getGenericPostProcessors(storedOptions.postProcessors),
     });
+
+    if (this.activatedRoute.snapshot.queryParamMap.has('request')) {
+      const base64 = this.activatedRoute.snapshot.queryParamMap.get('request')!;
+      const decoded = new TextDecoder().decode(toByteArray(base64));
+      const request = JSON.parse(decoded) as ExternalRequest;
+      this.form.patchValue(request.request);
+      this.form.patchValue({seed: request.seed});
+    }
+
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
     if (this.form.valid) {
       this.costCalculator.calculate(this.formAsOptionsStyled).then(result => {
