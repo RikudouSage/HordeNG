@@ -451,15 +451,17 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       genericPostProcessors: getGenericPostProcessors(storedOptions.postProcessors),
     });
 
-    if (this.activatedRoute.snapshot.queryParamMap.has('request')) {
-      const base64 = this.activatedRoute.snapshot.queryParamMap.get('request')!;
-      const decoded = new TextDecoder().decode(toByteArray(base64));
-      const request = JSON.parse(decoded) as ExternalRequest;
-      this.form.patchValue(request.request);
-      if (request.seed) {
-        this.form.patchValue({seed: request.seed});
+    this.activatedRoute.queryParamMap.subscribe(paramMap => {
+      if (paramMap.has('request')) {
+        const base64 = paramMap.get('request')!;
+        const decoded = new TextDecoder().decode(toByteArray(base64));
+        const request = JSON.parse(decoded) as ExternalRequest;
+        this.form.patchValue(request.request);
+        if (request.seed) {
+          this.form.patchValue({seed: request.seed});
+        }
       }
-    }
+    });
 
     this.inProgress.set((await this.database.getJobsInProgress())[0] ?? null);
     if (this.form.valid) {
