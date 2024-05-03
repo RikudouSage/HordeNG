@@ -16,3 +16,23 @@
     margin-top: 0;
   }
 }
+
+.flex-end {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+td {
+  position: relative;
+
+  app-copy-button {
+    position: absolute;
+    top: 8px;
+    right: -8px;
+  }
+
+  &.shared {
+    padding-right: 30px;
+  }
+}

@@ -69,6 +69,7 @@
   border-bottom: 1px solid $borderColor;
   display: flex;
   justify-content: space-between;
+  background: #26252B;
 
   h3 {
     font-size: 14px;
@@ -83,7 +84,7 @@
     right: -1px;
     width: 48px;
     height: calc(100% + 2px);
-    background-color: #4c4d4f;
+    background-color: #505152;
     background-image: url("/assets/svg/arrow.svg");
     background-repeat: no-repeat;
     background-size: 10px auto;
@@ -99,6 +100,22 @@
 
 .card-body {
   padding: 15px;
+  overflow-y: auto;
+
+  &::-webkit {
+    &-scrollbar {
+      height: 10px;
+    }
+
+    &-scrollbar {
+      &-track {
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+      }
+      &-thumb {
+        background-color: white;
+      }
+    }
+  }
 
   app-worker-detail {
     margin-bottom: 15px;

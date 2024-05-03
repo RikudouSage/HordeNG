@@ -1,5 +1,9 @@
 :host {
   min-width: 100%;
+
+  &:last-child .workersDetail {
+    padding-bottom: 0 !important;
+  }
 }
 
 .workersDetail:first-of-type {

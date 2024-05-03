@@ -3,28 +3,55 @@
 @import "../../../scss/breakpoints";
 
 :host {
- min-width: 100%;
+  min-width: 100%;
   display: flex;
   flex-wrap: wrap;
 }
 
 .pagination {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   margin: 20px 0;
+  order: 2;
 
   a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #26252B;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    font-size: 16px;
     text-decoration: none;
     color: $mainTextColor;
     cursor: pointer;
-    display: inline-block;
-    margin: 0 5px;
+    margin: 0 3px;
+
+    @include mediaMax($large) {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+    }
 
     &.disabled {
       color: $mainTextDisabledColor;
       cursor: not-allowed;
     }
 
-    &.active, &:hover {
+    &:hover {
       color: $primaryColor;
+    }
+
+    &.active {
+      background: #409eff;
+      color: white;
+    }
+
+    &.disabled {
+      opacity: 0.7;
     }
   }
 }
@@ -52,6 +79,7 @@
       width: 100%;
       aspect-ratio: 1 / 1;
       object-fit: cover;
+      border-radius: 4px;
     }
   }
 }
@@ -110,8 +138,59 @@
   &:nth-of-type(2) {
     order: -1;
   }
+
+  &.wrap {
+    flex-wrap: wrap;
+  }
 }
 
 .btn {
   padding: 10px 15px;
+}
+
+.emptyGallery {
+  width: 100%;
+  min-height: calc(100vh - 125px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+  background: #26252b;
+
+  @include mediaMax($topMenuBreakpoint) {
+    margin-top: -5px;
+  }
+
+  p {
+    width: 100%;
+    color: white;
+    background: #26252b;
+    padding: 15px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.5;
+    border-radius: 4px;
+    margin: 0;
+  }
+}
+
+.pageSize {
+  order: 1;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+
+  @include mediaMax($small) {
+    justify-content: center;
+  }
+
+  span {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    background: #26252B;
+  }
 }

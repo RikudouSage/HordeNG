@@ -22,9 +22,10 @@
   overflow: auto;
   z-index: 2;
   padding: 15px;
-  max-height: 90%;
+  max-height: calc(100% - 40px);
+  max-width: calc(100% - 40px);
 
-  @include mediaMax($large) {
+  @include mediaMax($topMenuBreakpoint) {
     top: 105px;
     transform: translate(-50%, 0);
     max-height: calc(100% - 125px);
@@ -39,6 +40,7 @@
     width: calc(100% - 8vw) !important;
     top: 4vw;
     max-height: calc(100% - 23vw);
+    max-width: calc(100% - 8vw);
   }
 
   &::-webkit {
@@ -54,5 +56,44 @@
         background-color: white;
       }
     }
+  }
+}
+
+.modal-close {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  background: white;
+  z-index: 9999;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid white;
+
+  @include mediaMax($topMenuBreakpoint) {
+    top: 90px;
+    right: 5px;
+  }
+
+  @include mediaMax($small) {
+    top: 2vw;
+    right: 2vw;
+  }
+
+  &:hover {
+    svg {
+      transform: scale(1.2);
+    }
+  }
+
+  svg {
+    width: 100%;
+    max-width: 14px;
+    max-height: 14px;
+    fill: #1c1b22;
   }
 }

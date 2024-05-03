@@ -79,9 +79,15 @@
 
     <div class="pagination">
       <a [routerLink]="" [class.disabled]="currentPage() <= 1" (click)="currentPage() <= 1 ? null : loadPage(currentPage() - 1, $event)">&lt;</a>
+
       @for (page of pages(); track page) {
-        <a [routerLink]="" (click)="loadPage(page, $event)">{{page}}</a>
+        @if (page === currentPage()) {
+          <a [routerLink]="" class="active">{{page}}</a>
+        } @else {
+          <a [routerLink]="" (click)="loadPage(page, $event)">{{page}}</a>
+        }
       }
+
       <a [routerLink]="" [class.disabled]="!nextPageLinkEnabled()" (click)="nextPageLinkEnabled() ? loadPage(currentPage() + 1) : null">&gt;</a>
     </div>
   }
