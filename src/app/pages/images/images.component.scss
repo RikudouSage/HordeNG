@@ -155,11 +155,16 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  margin-top: 15px;
+  margin-top: 15px !important;
   background: #26252b;
+  flex: unset !important;
 
   @include mediaMax($topMenuBreakpoint) {
-    margin-top: -5px;
+    margin-top: -5px !important;
+  }
+
+  @include mediaMax($small) {
+    min-height: calc(100vh - 22vw);
   }
 
   p {
