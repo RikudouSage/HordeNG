@@ -1,10 +1,9 @@
 @if (loading()) {
   <app-loader />
 } @else {
-  <div class="row">
-    <div class="col-md-1"></div>
+  <div class="row wrap">
     @if (pages().length) {
-      <div class="col-md-10 text-center pagination">
+      <div class="pagination">
         @if (currentPage() > 1) {
           <a routerLink="/images?page={{currentPage() - 1}}" (click)="goToPage(currentPage() - 1)">&lt;</a>
         } @else {
@@ -23,11 +22,11 @@
           <a [routerLink]="" class="disabled">&gt;</a>
         }
       </div>
-      <div class="col-md-1 text-right">
-        @if (imagesSize()) {
-          <small>{{'app.images.size' | transloco:{size: imagesSize()! | formatNumber:2, unit: imagesSizeUnit()!} }}</small>
-        }
-      </div>
+      @if (imagesSize()) {
+        <div class="pageSize">
+          <span>{{'app.images.size' | transloco:{size: imagesSize()! | formatNumber:2, unit: imagesSizeUnit()!} }}</span>
+        </div>
+      }
     }
   </div>
 
@@ -100,7 +99,7 @@
           </ng-template>
         </div>
       } @empty {
-        <p>{{'app.images.no_image' | transloco}}</p>
+        <div class="emptyGallery"><p>{{'app.images.no_image' | transloco}}</p></div>
       }
     </div>
   </div>

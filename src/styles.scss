@@ -80,6 +80,7 @@ a {
 
 h1, h2, h3 {
   font-weight: normal;
+  line-height: 1.5;
 }
 
 .cursor-pointer {
@@ -136,4 +137,8 @@ li {
 
 .text-bold {
   font-weight: bold;
+}
+
+.col-md-12 {
+  width: 100%;
 }

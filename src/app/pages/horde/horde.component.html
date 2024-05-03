@@ -1,31 +1,33 @@
 @if (loading()) {
   <app-loader />
 } @else {
-  <div class="row text-center">
-    <div class="col-md-12 text-center">
-      <h1><transloco key="app.logged_in_as" [params]="{username: currentUser()!.username}" /></h1>
-    </div>
-  </div>
-  <div class="row mt-2">
+
+  <div class="horde">
+    <h1><transloco key="app.logged_in_as" [params]="{username: currentUser()!.username}" /></h1>
     <app-current-user-status [currentUser]="currentUser()!" (refreshRequested)="refreshCurrentUser()" />
   </div>
-  <div class="row mt-2">
-    <app-horde-status />
-  </div>
-  <div class="row mt-2">
-    <app-your-workers [currentUser]="currentUser()!" />
-  </div>
-  @if (!isAnonymous() && !isSharedKey()) {
-    <div class="row mt-2">
-      <app-transfer-kudos [currentUser]="currentUser()!" (kudosTransferred)="refreshCurrentUser()" />
-    </div>
-    <div class="row mt-2">
-      <app-shared-keys [currentUser]="currentUser()!" (sharedKeyRemoved)="onSharedKeyRemoved($event)" (sharedKeyCreated)="onSharedKeyCreated($event)" />
-    </div>
-  }
 
-  <div class="row mt-2">
-      <app-all-workers />
+  <div class="horde">
+    <div class="horde--left">
+      <div class="horde--item">
+        <app-your-workers [currentUser]="currentUser()!" />
+      </div>
+      <div class="horde--item">
+        <app-all-workers />
+      </div>
+    </div>
+    <div class="horde--right">
+      <div class="horde--item">
+        <app-horde-status />
+      </div>
+      @if (!isAnonymous() && !isSharedKey()) {
+        <div class="horde--item">
+          <app-transfer-kudos [currentUser]="currentUser()!" (kudosTransferred)="refreshCurrentUser()" />
+        </div>
+        <div class="horde--item">
+          <app-shared-keys [currentUser]="currentUser()!" (sharedKeyRemoved)="onSharedKeyRemoved($event)" (sharedKeyCreated)="onSharedKeyCreated($event)" />
+        </div>
+      }
+    </div>
   </div>
 }
-

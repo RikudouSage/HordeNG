@@ -7,7 +7,7 @@
         <table class="table key-value">
           <tr>
             <td>{{'app.shared_key.key' | transloco}}</td>
-            <td>
+            <td class="shared">
               {{sharedKey.id}}
               <app-copy-button class="ml-1" [text]="sharedKey.id" />
             </td>
@@ -101,10 +101,12 @@
           <!--                    </td>-->
           <!--                  </tr>-->
         </table>
-        <button class="btn btn-danger mt-1" (click)="removeSharedKey(sharedKey)">
-          <fa-icon [icon]="removeIcon()" />
-          {{'app.delete' | transloco}}
-        </button>
+        <div class="flex-end">
+          <button class="btn btnBig btn-danger mt-1" (click)="removeSharedKey(sharedKey)">
+            <fa-icon [icon]="removeIcon()" />
+            {{'app.delete' | transloco}}
+          </button>
+        </div>
       </app-box>
     } @empty {
       <p>{{'app.shared_keys.no_key' | transloco}}</p>
@@ -112,7 +114,7 @@
   }
 
   <div class="row mt-1">
-    <button class="btn btn-primary mr-05" (click)="openModal(createKeyModal)">{{'app.shared_keys.create' | transloco}}</button>
+    <button class="btn btnBig btn-primary mr-05" (click)="openModal(createKeyModal)">{{'app.shared_keys.create' | transloco}}</button>
   </div>
 </app-box>
 
@@ -145,7 +147,7 @@
           <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
         </div>
 
-        <button type="submit" class="btn btn-primary" [disabled]="!createSharedKeyForm.valid">{{'app.shared_keys.create.create' | transloco}}</button>
+        <button type="submit" class="btn btnBig btn-primary" [disabled]="!createSharedKeyForm.valid">{{'app.shared_keys.create.create' | transloco}}</button>
       </form>
     </div>
   </div>

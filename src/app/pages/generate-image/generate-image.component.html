@@ -378,7 +378,7 @@
                               <p>{{'app.generate.result.censored' | transloco}}</p>
                             } @else {
                               <ng-template #imageModal>
-                                <img [src]="image.source" [alt]="'app.generated_image.alt' | transloco" />
+                                <img class="resultDetail" [src]="image.source" [alt]="'app.generated_image.alt' | transloco" />
                               </ng-template>
                               <p><button type="button" class="btn btn-secondary btnBig" (click)="openModal(imageModal)">{{'app.preview' | transloco}}</button></p>
                               <p><button type="button" class="btn btn-primary btnBig" (click)="download(image)">{{'app.download' | transloco}}</button></p>

@@ -40,6 +40,10 @@
     width: 100%;
     position: relative;
     top: 80px;
+
+    @include mediaMax($large) {
+      top: 55px;
+    }
   }
 
   .progress {
@@ -441,6 +445,7 @@
 
   @include mediaMax($small) {
     margin-top: 10px;
+    gap: 15px
   }
 
   .form-group {
@@ -580,5 +585,16 @@
   & > * {
     flex: 0 1 0;
     margin-right: 8px;
+  }
+}
+
+.resultDetail {
+  max-width: 90vw;
+  max-height: 85vh;
+  width: 100%;
+  object-fit: contain;
+
+  @include mediaMax($topMenuBreakpoint) {
+    max-height: 70vh;
   }
 }
