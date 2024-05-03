@@ -1,7 +1,7 @@
 import {Component, Directive, effect, input, OnInit, output, signal, TemplateRef} from '@angular/core';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TooltipComponent} from "../../../../components/tooltip/tooltip.component";
-import {TextualInversionGenerationOption} from "../../../../types/db/generation-options";
+import {TextualInversionGenerationOption, TextualInversionInjectType} from "../../../../types/db/generation-options";
 import {LoraTextRowComponent} from "../../../../components/lora-text-row/lora-text-row.component";
 import {AsyncPipe, JsonPipe, NgTemplateOutlet} from "@angular/common";
 import {CivitAiModelNamePipe} from "../../../../pipes/civit-ai-model-name.pipe";
@@ -37,7 +37,7 @@ export class ConfigureTextualInversionsNgTemplate {
   static ngTemplateContextGuard(
     directive: ConfigureTextualInversionsNgTemplate,
     context: unknown
-  ): context is {name: string, id: number, strength?: number, inject?: 'prompt' | 'negative'} {
+  ): context is {name: string, id: number, strength?: number, inject?: TextualInversionInjectType} {
     return true;
   }
 }

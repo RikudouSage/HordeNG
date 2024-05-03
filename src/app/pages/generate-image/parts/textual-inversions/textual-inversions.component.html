@@ -2,10 +2,6 @@
 </ng-template>
 
 <ng-template textual-inversion #textualInversionRow let-ti="textualInversion" let-comma="comma">
-  <ng-template #addTiModal>
-
-  </ng-template>
-
   {{ti.id | civitAiModelName:false | async}}
   @if (ti.inject) {
     ({{ti.inject === 'prompt' ? ('app.generate.prompt' | transloco) : ('app.generate.negative_prompt' | transloco)}}@if (ti.strength) {, {{'app.generate.lora.model_strength' | transloco}}: {{ti.strength | formatNumber}}})@if (comma){,}
