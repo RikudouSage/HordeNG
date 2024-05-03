@@ -11,7 +11,10 @@ import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faExternalLink, faPencil, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {ModalService} from "../../../../services/modal.service";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ConfigureTextualInversionComponent} from "../configure-textual-inversion/configure-textual-inversion.component";
+import {
+  ConfigureTextualInversionComponent,
+  ConfigureTextualInversionResult
+} from "../configure-textual-inversion/configure-textual-inversion.component";
 
 @Directive({
   selector: 'ng-template[textual-inversion]',
@@ -84,5 +87,30 @@ export class TextualInversionsComponent {
 
   public async removeTextualInversion(id: number): Promise<void> {
     this.selectedTis.update(tis => [...tis.filter(ti => ti.id !== id)]);
+  }
+
+  public async onConfigured(target: TextualInversionGenerationOption, configuration: ConfigureTextualInversionResult): Promise<void> {
+    this.selectedTis.update(tis => {
+      const result: TextualInversionGenerationOption[] = [];
+      for (const ti of tis) {
+        if (ti.id === target.id) {
+          const newTi: TextualInversionGenerationOption = {
+            id: target.id,
+          };
+          if (configuration.strength !== null) {
+            newTi.strength = configuration.strength;
+          }
+          if (configuration.inject !== null) {
+            newTi.inject = configuration.inject;
+          }
+          result.push(newTi);
+        } else {
+          result.push({...ti});
+        }
+      }
+
+      return result;
+    });
+    await this.modalService.close();
   }
 }

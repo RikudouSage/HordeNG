@@ -9,6 +9,8 @@
   {{ti.id | civitAiModelName:false | async}}
   @if (ti.inject) {
     ({{ti.inject === 'prompt' ? ('app.generate.prompt' | transloco) : ('app.generate.negative_prompt' | transloco)}}@if (ti.strength) {, {{'app.generate.lora.model_strength' | transloco}}: {{ti.strength | formatNumber}}})@if (comma){,}
+  } @else if (ti.strength) {
+    ({{'app.generate.lora.model_strength' | transloco}}: {{ti.strength | formatNumber}})
   }
 </ng-template>
 
@@ -48,6 +50,7 @@
               [id]="textualInversion.id"
               [strength]="textualInversion.strength"
               [inject]="textualInversion.inject"
+              (configured)="onConfigured(textualInversion, $event)"
             />
           </ng-template>
         </li>

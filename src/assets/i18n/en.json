@@ -263,5 +263,8 @@
   "app.generate.add_tis": "Add textual inversion",
   "app.generate.help.ti_list": "Textual inversions or embeddings are basically pregenerated prompts or negative prompts (depending on where you use them). They contain already vectorized instructions (see description for {{app.generate.clip_skip}} to learn more about how instructions are vectorized) that shape your input.",
   "app.generate.ti_list.no_models": "No textual inversion selected.",
-  "app.ti_configure.description": "Here you can configure whether you want to automatically inject the textual inversion and what's its strength if you do."
+  "app.ti_configure.description": "Here you can configure whether you want to automatically inject the textual inversion and what's its strength if you do.",
+  "app.ti_configure.model_strength": "Strength",
+  "app.ti_configure.inject": "Injection type",
+  "app.ti_configure.inject_description": "This configures whether and where do you want to automatically inject the textual inversion. Select [b]{{app.select.empty_option}}[/b] if you plan on inserting the triggering keyword manually into your prompt or negative prompt."
 }

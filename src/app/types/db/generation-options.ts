@@ -9,9 +9,11 @@ export interface LoraGenerationOption {
   isVersionId?: boolean;
 }
 
+export type TextualInversionInjectType = 'prompt' | 'negative';
+
 export interface TextualInversionGenerationOption {
   id: number;
-  inject?: 'prompt' | 'negative';
+  inject?: TextualInversionInjectType;
   strength?: number;
 }
 
