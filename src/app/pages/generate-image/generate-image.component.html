@@ -217,7 +217,11 @@
             </ul>
           }
         </div>
-        <app-generate-image-textual-inversions [modifiedOptions]="modifiedOptions()?.textualInversionList ?? null" />
+        <app-generate-image-textual-inversions
+          [modifiedOptions]="modifiedOptions()?.textualInversionList ?? null"
+          [initialTis]="form.value.textualInversionList ?? undefined"
+          (selectedTisUpdated)="onTextualInversionsUpdated($event)"
+        />
         <div class="row formGroup">
           <div [class.col-md-6]="form.value.faceFixers?.length" [class.col-md-12]="!form.value.faceFixers?.length">
             <div class="form-group">

@@ -30,7 +30,12 @@ import {WorkerType} from "../../types/horde/worker-type";
 import {JobInProgress} from "../../types/db/job-in-progress";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
-import {DefaultGenerationOptions, GenerationOptions, LoraGenerationOption} from "../../types/db/generation-options";
+import {
+  DefaultGenerationOptions,
+  GenerationOptions,
+  LoraGenerationOption,
+  TextualInversionGenerationOption
+} from "../../types/db/generation-options";
 import {RequestStatusCheck} from "../../types/horde/request-status-check";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {HttpClient, HttpResponse} from "@angular/common/http";
@@ -368,6 +373,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     ]),
     onlyMyWorkers: new FormControl<boolean>(false),
     amount: new FormControl<number>(1),
+    textualInversionList: new FormControl<TextualInversionGenerationOption[]>([]),
   });
 
   @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
@@ -676,7 +682,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       styleName: this.chosenStyle()?.name ?? null,
       onlyMyWorkers: value.onlyMyWorkers ?? false,
       amount: value.amount ?? 1,
-      textualInversionList: [], // todo
+      textualInversionList: value.textualInversionList ?? [],
     };
   }
 
@@ -869,5 +875,11 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
     this.swiper = null;
     this.swiperThumbs = null;
+  }
+
+  public async onTextualInversionsUpdated(textualInversions: TextualInversionGenerationOption[]) {
+    this.form.patchValue({
+      textualInversionList: textualInversions,
+    });
   }
 }

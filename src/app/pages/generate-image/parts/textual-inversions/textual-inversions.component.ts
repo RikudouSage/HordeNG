@@ -1,4 +1,4 @@
-import {Component, Directive, input, signal, TemplateRef} from '@angular/core';
+import {Component, Directive, effect, input, OnInit, output, signal, TemplateRef} from '@angular/core';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TooltipComponent} from "../../../../components/tooltip/tooltip.component";
 import {TextualInversionGenerationOption} from "../../../../types/db/generation-options";
@@ -65,20 +65,35 @@ export class ConfigureTextualInversionsNgTemplate {
   templateUrl: './textual-inversions.component.html',
   styleUrl: './textual-inversions.component.scss'
 })
-export class TextualInversionsComponent {
+export class TextualInversionsComponent implements OnInit {
   public modifiedOptions = input.required<TextualInversionGenerationOption[] | null>();
-  public selectedTis = signal<TextualInversionGenerationOption[]>([{
-    id: 369342,
-    inject: "prompt",
-    strength: 1
-  }]);
+  public initialTis = input<TextualInversionGenerationOption[]>();
+
+  public selectedTis = signal<TextualInversionGenerationOption[]>([]);
   public iconExternalLink = signal(faExternalLink);
   public iconEdit = signal(faPencil);
   public iconDelete = signal(faRemove);
 
+  public selectedTisUpdated = output<TextualInversionGenerationOption[]>();
+
   constructor(
     private readonly modalService: ModalService,
   ) {
+    let initialized = false;
+    effect(() => {
+      const tis = this.selectedTis();
+      if (!initialized) {
+        initialized = true;
+        return;
+      }
+      this.selectedTisUpdated.emit(tis);
+    });
+  }
+
+  public async ngOnInit(): Promise<void> {
+    if (this.initialTis()?.length) {
+      this.selectedTis.set(this.initialTis()!);
+    }
   }
 
   public async openModal(modal: TemplateRef<any>): Promise<void> {
