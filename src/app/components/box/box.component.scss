@@ -1,8 +1,9 @@
 @import "../../../scss/colors";
+@import "../../../scss/breakpoints";
 
 :host {
   min-width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .btn-img {
@@ -14,4 +15,15 @@
   &[disabled] {
     color: $mainTextDisabledColor;
   }
+}
+
+.card-header h3:has(span) {
+  @include mediaMax($small) {
+   font-size: 12px;
+    line-height: 1.3;
+  }
+}
+
+fa-icon {
+  font-size: 1.3rem;
 }

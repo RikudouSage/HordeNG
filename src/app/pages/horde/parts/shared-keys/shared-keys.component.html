@@ -102,7 +102,7 @@
           <!--                  </tr>-->
         </table>
         <div class="flex-end">
-          <button class="btn btnBig btn-danger mt-1" (click)="removeSharedKey(sharedKey)">
+          <button class="btn btnBig btn-danger" (click)="removeSharedKey(sharedKey)">
             <fa-icon [icon]="removeIcon()" />
             {{'app.delete' | transloco}}
           </button>
@@ -113,8 +113,8 @@
     }
   }
 
-  <div class="row mt-1">
-    <button class="btn btnBig btn-primary mr-05" (click)="openModal(createKeyModal)">{{'app.shared_keys.create' | transloco}}</button>
+  <div class="flex-end p0">
+    <button class="btn btnBig btn-primary" (click)="openModal(createKeyModal)">{{'app.shared_keys.create' | transloco}}</button>
   </div>
 </app-box>
 

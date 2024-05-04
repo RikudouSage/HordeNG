@@ -7,11 +7,12 @@
 }
 
 span {
-  width: auto;
   height: auto;
   position: relative;
-  margin: 0 5px;
   opacity: 1;
+  display: inline-block;
+  width: 20px;
+  margin: 0;
 }
 
 fa-icon {

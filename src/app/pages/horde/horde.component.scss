@@ -54,7 +54,10 @@
 
 .horde--item {
   width: 100%;
-  margin-bottom: 20px;
+
+  &:has(.card-header) {
+    margin-bottom: 20px;
+  }
 }
 
 h1 {

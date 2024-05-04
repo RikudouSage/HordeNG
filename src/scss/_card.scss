@@ -70,6 +70,8 @@
   display: flex;
   justify-content: space-between;
   background: #26252B;
+  height: 45px;
+  align-items: center;
 
   h3 {
     font-size: 14px;
@@ -119,5 +121,11 @@
 
   app-worker-detail {
     margin-bottom: 15px;
+  }
+
+  &:has(table.table.key-value) {
+   .card-body:has(table.table.key-value) {
+     padding: 0;
+   }
   }
 }
