@@ -23,7 +23,7 @@
         </div>
         <div class="form-group">
           <label for="inputNegativePrompt">{{ 'app.generate.negative_prompt' | transloco }} <app-tooltip [text]="'app.generate.help.negative_prompt' | transloco" /></label>
-          <textarea type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt" auto-grow></textarea>
+          <textarea type="text" class="form-control" formControlName="negativePrompt" id="inputNegativePrompt" auto-grow style="margin-bottom:0;"></textarea>
           <app-effective-value [value]="modifiedOptions()?.negativePrompt" [original]="form.value.negativePrompt" />
         </div>
         <div class="form-group">
@@ -362,7 +362,7 @@
                           </div>
                           <div class="image-parameter-result" [class.is-open]="isOpenResult">
                             <p>
-                              <span>{{'app.generate.seed' | transloco}}: <b>{{image.seed}}</b><app-copy-button [text]="image.seed" /></span>
+                              <span>{{'app.generate.seed' | transloco}}: <b style="margin-right: 5px;">{{image.seed}}</b><app-copy-button [text]="image.seed" /></span>
                               <span>{{'app.generate.result.kudos_cost' | transloco}}: <b>{{image.kudos | formatNumber}}</b></span>
                               <span>{{'app.generate.result.size' | transloco}}: {{image.width}}x{{image.height}}</span>
                               <span>{{'app.generate.model' | transloco}}: {{image.model}}</span>

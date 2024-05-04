@@ -54,7 +54,8 @@
 
   small {
     line-height: 1.7;
-    font-size: 14px;
+    font-size: 12px;
+    color: #aeaeae;
   }
 
   .ts-wrapper {
@@ -85,6 +86,10 @@
 
   &:hover, &:focus {
     border-color: $primaryColor;
+  }
+
+  &.textarea {
+    margin-bottom: 0;
   }
 }
 

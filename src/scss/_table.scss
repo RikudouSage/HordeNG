@@ -1,9 +1,12 @@
+@import "../scss/colors";
+@import "../scss/breakpoints";
+
 .table {
   width: 100%;
 
   &.key-value {
     td:first-child {
-      font-weight: bold;
+      font-weight: 600;
     }
   }
 
@@ -13,9 +16,23 @@
     font-size: 14px;
     color: #bababa;
 
+    @include mediaMax($small) {
+      font-size: 12px;
+      line-height: 1.4;
+      padding: 5px 10px;
+    }
+
     ul {
       padding-left: 0;
       margin-bottom: 0;
+
+      li {
+        font-size: 14px;
+
+        @include mediaMax($small) {
+          font-size: 12px;
+        }
+      }
     }
   }
 
