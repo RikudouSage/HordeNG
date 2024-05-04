@@ -1,9 +1,9 @@
 import {Component, Directive, effect, input, OnInit, output, signal, TemplateRef} from '@angular/core';
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TooltipComponent} from "../../../../components/tooltip/tooltip.component";
-import {TextualInversionGenerationOption, TextualInversionInjectType} from "../../../../types/db/generation-options";
+import {TextualInversionGenerationOption} from "../../../../types/db/generation-options";
 import {LoraTextRowComponent} from "../../../../components/lora-text-row/lora-text-row.component";
-import {AsyncPipe, JsonPipe, NgTemplateOutlet} from "@angular/common";
+import {AsyncPipe, JsonPipe, KeyValuePipe, NgTemplateOutlet} from "@angular/common";
 import {CivitAiModelNamePipe} from "../../../../pipes/civit-ai-model-name.pipe";
 import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";
 import {CivitAiModelIdPipe} from "../../../../pipes/civit-ai-model-id.pipe";
@@ -15,6 +15,9 @@ import {
   ConfigureTextualInversionComponent,
   ConfigureTextualInversionResult
 } from "../configure-textual-inversion/configure-textual-inversion.component";
+import {ModelConfiguration} from "../../../../types/sd-repo/model-configuration";
+import {ToggleCheckboxComponent} from "../../../../components/toggle-checkbox/toggle-checkbox.component";
+import {TomSelectDirective} from "../../../../directives/tom-select.directive";
 
 @Directive({
   selector: 'ng-template[textual-inversion]',
@@ -25,19 +28,6 @@ export class TextualInversionsNgTemplate {
     directive: TextualInversionsNgTemplate,
     context: unknown
   ): context is {textualInversion: TextualInversionGenerationOption, comma?: boolean} {
-    return true;
-  }
-}
-
-@Directive({
-  selector: 'ng-template[configure-textual-inversion]',
-  standalone: true,
-})
-export class ConfigureTextualInversionsNgTemplate {
-  static ngTemplateContextGuard(
-    directive: ConfigureTextualInversionsNgTemplate,
-    context: unknown
-  ): context is {name: string, id: number, strength?: number, inject?: TextualInversionInjectType} {
     return true;
   }
 }
@@ -57,16 +47,19 @@ export class ConfigureTextualInversionsNgTemplate {
     FormatNumberPipe,
     CivitAiModelIdPipe,
     FaIconComponent,
-    ConfigureTextualInversionsNgTemplate,
     FormsModule,
     ReactiveFormsModule,
-    ConfigureTextualInversionComponent
+    ConfigureTextualInversionComponent,
+    KeyValuePipe,
+    ToggleCheckboxComponent,
+    TomSelectDirective
   ],
   templateUrl: './textual-inversions.component.html',
   styleUrl: './textual-inversions.component.scss'
 })
 export class TextualInversionsComponent implements OnInit {
   public modifiedOptions = input.required<TextualInversionGenerationOption[] | null>();
+  public currentModel = input.required<ModelConfiguration>();
   public initialTis = input<TextualInversionGenerationOption[]>();
 
   public selectedTis = signal<TextualInversionGenerationOption[]>([]);

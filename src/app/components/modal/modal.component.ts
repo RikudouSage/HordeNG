@@ -21,7 +21,7 @@ export class ModalComponent implements AfterViewInit {
   private modalLeaveTiming: number | null = null;
   private overlayLeaveTiming: number | null = null;
 
-  public options: ModalOptions | null = null;
+  public options: ModalOptions<any> | null = null;
 
   constructor(
     private readonly modalService: ModalService,

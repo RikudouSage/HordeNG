@@ -220,6 +220,7 @@
         <app-generate-image-textual-inversions
           [modifiedOptions]="modifiedOptions()?.textualInversionList ?? null"
           [initialTis]="form.value.textualInversionList ?? undefined"
+          [currentModel]="currentModelDetail()!"
           (selectedTisUpdated)="onTextualInversionsUpdated($event)"
         />
         <div class="row formGroup">

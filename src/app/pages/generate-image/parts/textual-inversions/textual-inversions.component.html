@@ -1,6 +1,3 @@
-<ng-template #textualInversionSelector let-selected="selectedTextualInversions" let-model="currentModel">
-</ng-template>
-
 <ng-template textual-inversion #textualInversionRow let-ti="textualInversion" let-comma="comma">
   {{ti.id | civitAiModelName:false | async}}
   @if (ti.inject) {
