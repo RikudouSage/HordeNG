@@ -7,6 +7,32 @@
   cursor: pointer;
 }
 
+.ti-name {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+
+  & > * {
+    flex: 0 1 0;
+    margin-right: 8px;
+  }
+
+  & > span {
+    display: block;
+    width: calc(100% - 80px);
+    font-size: 14px;
+    line-height: 26px;
+    font-weight: 400;
+
+    span {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
 .form-group {
   position: relative;
 
