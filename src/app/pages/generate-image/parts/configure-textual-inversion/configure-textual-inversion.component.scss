@@ -1,0 +1,26 @@
+// todo deduplicate this and lora
+@import "../../../../../scss/colors";
+@import "../../../../../scss/breakpoints";
+
+:host {
+  min-width: 100%;
+}
+
+.col-md-12,
+.form-group {
+  width: 100%;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+p {
+  font-size: 14px;
+}
+
+.btn {
+  @include mediaMax($small) {
+    margin-top: 5px;
+  }
+}
