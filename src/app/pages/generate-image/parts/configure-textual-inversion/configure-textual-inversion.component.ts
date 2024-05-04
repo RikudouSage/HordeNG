@@ -4,6 +4,7 @@ import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";
 import {TextualInversionInjectType} from "../../../../types/db/generation-options";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
+import {ModalService} from "../../../../services/modal.service";
 
 export interface ConfigureTextualInversionResult {
   inject: TextualInversionInjectType | null;
@@ -35,6 +36,11 @@ export class ConfigureTextualInversionComponent implements OnInit {
     strength: new FormControl<number | null>(null),
   });
 
+  constructor(
+    private readonly modalService: ModalService,
+  ) {
+  }
+
   public async onFormSubmitted(): Promise<void> {
     let inject: TextualInversionInjectType | null = this.form.value.inject ?? null;
     if (<string>inject === 'null') {
@@ -44,6 +50,7 @@ export class ConfigureTextualInversionComponent implements OnInit {
       inject: inject,
       strength: this.form.value.strength ?? null,
     });
+    await this.modalService.close();
   }
 
   public async ngOnInit(): Promise<void> {

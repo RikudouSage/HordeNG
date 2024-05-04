@@ -7,7 +7,14 @@
 
 <div class="form-group">
   <label>{{'app.generate.ti_list' | transloco}} <app-tooltip [text]="'app.generate.help.ti_list' | transloco" /></label>
-  <button class="btn btnBig" type="button">{{'app.generate.add_tis' | transloco}}</button>
+  <ng-template #textualInversionSelector>
+    <app-generate-image-textual-inversion-selector
+      [selectedModel]="currentModel()"
+      [selectedTis]="selectedTis()"
+      (textualInversionSelected)="onTextualInversionAdded($event)"
+    />
+  </ng-template>
+  <button class="btn btnBig" type="button" (click)="openModal(textualInversionSelector)">{{'app.generate.add_tis' | transloco}}</button>
   @if (modifiedOptions()) {
     <small>
       <strong>{{'app.generate.style_effective_value' | transloco}}</strong>:

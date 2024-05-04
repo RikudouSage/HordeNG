@@ -18,6 +18,7 @@ import {
 import {ModelConfiguration} from "../../../../types/sd-repo/model-configuration";
 import {ToggleCheckboxComponent} from "../../../../components/toggle-checkbox/toggle-checkbox.component";
 import {TomSelectDirective} from "../../../../directives/tom-select.directive";
+import {TextualInversionSelectorComponent} from "../textual-inversion-selector/textual-inversion-selector.component";
 
 @Directive({
   selector: 'ng-template[textual-inversion]',
@@ -52,7 +53,8 @@ export class TextualInversionsNgTemplate {
     ConfigureTextualInversionComponent,
     KeyValuePipe,
     ToggleCheckboxComponent,
-    TomSelectDirective
+    TomSelectDirective,
+    TextualInversionSelectorComponent
   ],
   templateUrl: './textual-inversions.component.html',
   styleUrl: './textual-inversions.component.scss'
@@ -120,5 +122,11 @@ export class TextualInversionsComponent implements OnInit {
       return result;
     });
     await this.modalService.close();
+  }
+
+  public async onTextualInversionAdded(textualInversion: TextualInversionGenerationOption): Promise<void> {
+    this.selectedTis.update(tis => {
+      return [...tis, textualInversion];
+    });
   }
 }

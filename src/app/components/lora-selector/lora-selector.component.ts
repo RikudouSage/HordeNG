@@ -19,7 +19,7 @@ import {ConfigureLoraComponent, ConfigureLoraResult} from "../configure-lora/con
 import {convertToCivitAiBase} from "../../helper/compare-model-bases";
 import {catchError, of, pairwise, startWith} from "rxjs";
 import {RouterLink} from "@angular/router";
-import {LoraSearchResponse} from "../../types/civit-ai/lora-search-response";
+import {ModelSearchResponse} from "../../types/civit-ai/model-search-response";
 import _ from 'lodash';
 
 interface LoraSearchForm {
@@ -143,7 +143,7 @@ export class LoraSelectorComponent implements OnInit {
     });
   }
 
-  public async search(): Promise<LoraSearchResponse | null> {
+  public async search(): Promise<ModelSearchResponse | null> {
     if (!this.form.valid) {
       return null;
     }
