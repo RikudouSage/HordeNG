@@ -1,4 +1,5 @@
 @import "../../../scss/colors";
+@import "../../../scss/breakpoints";
 
 :host {
   display: flex;
@@ -20,6 +21,10 @@
   l20-2 1.6s infinite linear;
   position: absolute;
   margin: 50px auto;
+
+  @include mediaMax($large) {
+    width: 50px;
+  }
 }
 
 @keyframes l20-1 {

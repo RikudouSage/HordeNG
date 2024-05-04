@@ -1,8 +1,74 @@
 @import "../../../scss/colors";
 @import "../../../scss/breakpoints";
 
+.horde {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  &:first-child {
+    align-items: flex-end;
+  }
+
+  &:nth-child(2) {
+    .horde--left {
+      @include mediaMax($extraLarge) {
+       order: 2;
+      }
+    }
+
+    .horde--right {
+      @include mediaMax($extraLarge) {
+        order: 1;
+      }
+    }
+  }
+}
+
+.horde--left {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 770px;
+
+  @include mediaMax($extraLarge) {
+    width: 100%;
+  }
+}
+
+.horde--right {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: calc(100% - 790px);
+
+  @include mediaMax($extraLarge) {
+    width: 100%;
+  }
+
+}
+
+.horde--item {
+  width: 100%;
+
+  &:has(.card-header) {
+    margin-bottom: 20px;
+  }
+}
+
 h1 {
-  margin: 50px 0 10px 0;
+  margin: 40px 0 20px 0;
+  width: 100%;
+  font-size: 20px;
+  line-height: 1.5;
+
+  @include mediaMax($topMenuBreakpoint) {
+    margin: 20px 0;
+  }
 }
 
 .row {

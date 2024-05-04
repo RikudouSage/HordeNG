@@ -21,11 +21,10 @@ app-small-box {
 
 .smallBoxGap {
   gap: 15px;
-  justify-content: center;
-  margin-bottom: 50px;
+  justify-content: flex-start;
+  margin-bottom: 20px;
 
   @include mediaMax($large) {
     flex-wrap: wrap;
-    margin-bottom: 0;
   }
 }

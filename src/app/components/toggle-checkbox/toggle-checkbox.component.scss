@@ -1,9 +1,11 @@
 @import "../../../scss/colors";
+@import "../../../scss/breakpoints";
 
 .toggle {
   cursor: pointer;
   display: inline-block;
 }
+
 .toggle-switch {
   display: inline-block;
   background: #ccc;
@@ -13,10 +15,17 @@
   position: relative;
   vertical-align: middle;
   transition: background 0.25s;
+
+  @include mediaMax($small) {
+    width: 38px;
+    height: 22px;
+  }
+
   &:before,
   &:after {
     content: "";
   }
+
   &:before {
     display: block;
     background: linear-gradient(to bottom, $mainTextColor 0%, lighten($mainTextColor, 10%) 100%);
@@ -28,25 +37,43 @@
     top: 3px;
     left: 3px;
     transition: left 0.25s;
+
+    @include mediaMax($small) {
+      width: 16px;
+      height: 16px;
+    }
   }
+
   .toggle:hover &:before {
     background: linear-gradient(to bottom, $mainTextColor 0%, $mainTextColor 100%);
   }
+
   .toggle-checkbox:checked + & {
     background: $successColor;
+
     &:before {
       left: 24px;
+
+      @include mediaMax($small) {
+        left: 18px;
+      }
     }
   }
 }
+
 .toggle-checkbox {
   position: absolute;
   visibility: hidden;
 }
+
 .toggle-label {
   margin-left: 5px;
   position: relative;
   top: 2px;
   font-size: 14px;
   margin-right: 4px;
+
+  @include mediaMax($small) {
+    margin-left: 8px;
+  }
 }

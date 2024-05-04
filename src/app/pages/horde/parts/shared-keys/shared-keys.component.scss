@@ -16,3 +16,30 @@
     margin-top: 0;
   }
 }
+
+.flex-end {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  padding: 15px;
+
+  &.p0 {
+    padding: 0;
+  }
+}
+
+td {
+  position: relative;
+
+  app-copy-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    margin: 0;
+  }
+
+  &.shared {
+    padding-right: 30px;
+  }
+}

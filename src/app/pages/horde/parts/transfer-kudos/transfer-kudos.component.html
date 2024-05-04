@@ -15,7 +15,9 @@
         <input class="form-control" type="number" id="inputTransferAmount" min="1" step="1" [max]="currentUser().kudos" formControlName="amount" />
       </div>
 
-      <button class="btn btn-primary" type="submit" [disabled]="!transferKudosForm.valid">{{'app.transfer_kudos.transfer' | transloco}}</button>
+      <div class="flex-end">
+        <button class="btn btnBig btn-primary" type="submit" [disabled]="!transferKudosForm.valid">{{'app.transfer_kudos.transfer' | transloco}}</button>
+      </div>
     </form>
   </app-box>
 }
