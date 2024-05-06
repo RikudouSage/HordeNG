@@ -11,6 +11,7 @@
   display: flex;
   justify-content: start;
   align-items: start;
+  width: calc(100% - 65px);
 
   & > * {
     flex: 0 1 0;
@@ -19,7 +20,7 @@
 
   & > span {
     display: block;
-    width: calc(100% - 80px);
+    width: calc(100% - 40px);
     font-size: 14px;
     line-height: 26px;
     font-weight: 400;
@@ -29,101 +30,7 @@
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-    }
-  }
-}
-
-.form-group {
-  position: relative;
-
-  li {
-    width: 100%;
-    display: inline-flex;
-    align-items: center;
-    position: relative;
-    line-height: 2;
-    padding: 10px 5px;
-    border-bottom: 1px solid #4c4d4f;
-    list-style: none;
-    margin: 0;
-
-    &:last-child {
-      border-bottom: 0;
-    }
-
-    &:first-child {
-      margin-top:12px;
-    }
-
-    strong {
-      max-width: 100%;
       width: 100%;
-    }
-  }
-
-  p {
-    @include mediaMax($large) {
-      font-size: 14px;
-    }
-
-    @include mediaMax($small) {
-      font-size: 12px;
-    }
-  }
-
-  .btnBig {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-
-    @include mediaMax($small) {
-      top: 15px;
-      right: 15px;
-    }
-  }
-
-  app-tooltip {
-    right: 187px;
-  }
-
-  .icon-button {
-    position: absolute;
-    right: 7px;
-  }
-
-  .ng-fa-icon {
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    //background: white;
-  }
-
-  button.icon-button {
-    background: #232323;
-    border-radius: 4px;
-    width: 30px;
-    height: 30px;
-    padding: 0;
-
-    &:nth-of-type(1) {
-      background: $primaryColor;
-      margin-right: 5px;
-
-      fa-icon {
-        font-size: 12px;
-      }
-    }
-
-    &:nth-of-type(2) {
-      background: $dangerColor;
-    }
-
-    fa-icon {
-      color: white;
-      font-size: 14px;
     }
   }
 }

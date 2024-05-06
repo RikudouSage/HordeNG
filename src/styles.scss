@@ -12,6 +12,8 @@
 @import "scss/card";
 @import "scss/tom-select";
 @import "scss/swiper";
+@import "scss/pagination";
+@import "scss/generate-image";
 
 :root {
   scroll-behavior: smooth;
@@ -121,6 +123,15 @@ li {
       text-decoration: none;
     }
   }
+}
+
+.hr {
+  width: 100%;
+  display: block;
+  background: #26252B;
+  height: 4px;
+  border-radius: 4px;
+  margin-bottom: 20px;
 }
 
 .text-warning {

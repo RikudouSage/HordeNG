@@ -1,0 +1,49 @@
+@import "../scss/colors";
+@import "../scss/breakpoints";
+
+.pagination {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px 0;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #26252B;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    font-size: 16px;
+    text-decoration: none;
+    color: $mainTextColor;
+    cursor: pointer;
+    margin: 0 3px;
+
+    @include mediaMax($large) {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+    }
+
+    &.disabled {
+      color: $mainTextDisabledColor;
+      cursor: not-allowed;
+    }
+
+    &:hover {
+      color: $primaryColor;
+    }
+
+    &.active {
+      background: #409eff;
+      color: white;
+    }
+
+    &.disabled {
+      opacity: 0.7;
+    }
+  }
+}
