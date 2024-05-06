@@ -1,0 +1,87 @@
+@if (loadingInitial()) {
+  <app-loader/>
+} @else {
+  <form (submit)="submitForm($event)">
+
+    <div class="loraModal">
+      <div class="form-group">
+        <label for="inputModelBase">{{'app.model.baseline' | transloco}}</label>
+        <select id="inputModelBase" multiple tom-select [create]="false" (change)="updateBaseModels(inputModelBase)" #inputModelBase>
+          @for (option of CivitAiBaseModel | keyvalue; track option.key) {
+            <option [value]="option.value" [selected]="baseModels().includes(option.value)">{{option.key}}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <input class="form-control" id="inputSearchTerm" placeholder="{{ 'app.lora_selector.search_term' | transloco }}" [value]="query()" (input)="query.set(inputSearchTerm.value)" #inputSearchTerm />
+      </div>
+      <div class="form-group">
+        <app-toggle-checkbox [description]="'app.lora_selector.nsfw' | transloco" [initialValue]="nsfw()" (valueChanged)="nsfw.set($event)" />
+        <button type="submit" class="btn btn-primary btnBig">{{ 'app.lora_selector.search' | transloco }}</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="hr"></div>
+
+  @if (loading()) {
+    <div class="position-relative mt-2 loader-wrapper">
+      <app-loader/>
+    </div>
+  } @else {
+    @for (item of items(); track item.id) {
+      <div class="loraItem">
+        <div class="loraImg">
+          @if (item.modelVersions.length && item.modelVersions[0].images.length) {
+            <a [href]="item.modelVersions[0].images[0].url" target="_blank">
+              <img [src]="item.modelVersions[0].images[0].url" alt="{{'app.image.model_image' | transloco}}"/>
+            </a>
+          } @else {
+            <span class="no-image">{{ 'app.image.no_image' | transloco }}</span>
+          }
+        </div>
+        <div class="loraModel">
+          <div class="loraModel--top">
+            <h3 class="text-bold">{{ item.name }}</h3>
+            <app-box [collapsible]="true" [title]="'app.model.description' | transloco">
+              <span [innerHTML]="item.description"></span>
+            </app-box>
+            <div class="loraModel--desc">
+              <strong>{{'app.model.baseline' | transloco}}</strong>: {{versionBases()[item.modelVersions[0].id]}}
+              @if (versionBases()[item.modelVersions[0].id]|modelBasesMatchWarning:selectedModel().baseline) {
+                <p class="text-warning">
+                  {{versionBases()[item.modelVersions[0].id]|modelBasesMatchWarning:selectedModel().baseline | async}}
+                </p>
+              }
+            </div>
+          </div>
+          <div class="loraModel--bottom">
+            <ng-template #configureModal>
+              <app-generate-image-configure-textual-inversion
+                [name]="item.name"
+                [id]="item.id"
+                (configured)="onConfigured(item, $event)"
+              />
+            </ng-template>
+            <a href="https://civitai.com/models/{{item.id}}" target="_blank">{{'app.lora_selector.view_on_civitai' | transloco}}</a>
+            <button class="btn btn-primary btnBig" type="button"
+                    [disabled]="selectedTiIds().includes(item.id)"
+                    (click)="selectTi(configureModal)">{{ 'app.ti_selector.use_ti' | transloco }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="pagination">
+      <a [routerLink]="" [class.disabled]="currentPage() <= 1" (click)="currentPage() <= 1 ? null : loadPage(currentPage() - 1, $event)">&lt;</a>
+
+      @for (page of pages(); track page) {
+        <a [routerLink]="" (click)="loadPage(page, $event)" [class.active]="page === currentPage()">{{page}}</a>
+      }
+
+      <a [routerLink]="" [class.disabled]="!nextPageLinkEnabled()" (click)="nextPageLinkEnabled() ? loadPage(currentPage() + 1) : null">&gt;</a>
+    </div>
+  }
+}
+

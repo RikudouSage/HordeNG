@@ -30,7 +30,12 @@ import {WorkerType} from "../../types/horde/worker-type";
 import {JobInProgress} from "../../types/db/job-in-progress";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
-import {DefaultGenerationOptions, GenerationOptions, LoraGenerationOption} from "../../types/db/generation-options";
+import {
+  DefaultGenerationOptions,
+  GenerationOptions,
+  LoraGenerationOption,
+  TextualInversionGenerationOption
+} from "../../types/db/generation-options";
 import {RequestStatusCheck} from "../../types/horde/request-status-check";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {HttpClient, HttpResponse} from "@angular/common/http";
@@ -55,7 +60,7 @@ import {PromptStyleModalComponent} from "../../components/prompt-style-modal/pro
 import {ModalService} from "../../services/modal.service";
 import {EnrichedPromptStyle} from "../../types/sd-repo/prompt-style";
 import {EffectiveValueComponent} from "../../components/effective-value/effective-value.component";
-import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {CivitAiModelNamePipe} from "../../pipes/civit-ai-model-name.pipe";
 import {faExternalLink, faPencil, faRemove} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {LoraSelectorComponent} from "../../components/lora-selector/lora-selector.component";
@@ -70,18 +75,19 @@ import {SliderWithValueComponent} from "../../components/slider-with-value/slide
 import {TooltipComponent} from "../../components/tooltip/tooltip.component";
 import {ConfigureLoraComponent, ConfigureLoraResult} from "../../components/configure-lora/configure-lora.component";
 import {CivitAiService} from "../../services/civit-ai.service";
-import {LoraVersionIdPipe} from "../../pipes/lora-version-id.pipe";
+import {CivitAiModelVersionIdPipe} from "../../pipes/civit-ai-model-version-id.pipe";
 import {ModelStyle} from "../../types/sd-repo/model-style";
 import {ModelType} from "../../types/sd-repo/model-type";
 import {Swiper} from "swiper";
 import {Navigation, Pagination, Thumbs} from "swiper/modules";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
-import {LoraModelIdPipe} from "../../pipes/lora-model-id.pipe";
+import {CivitAiModelIdPipe} from "../../pipes/civit-ai-model-id.pipe";
 import {GreatestCommonDivisorPipe} from "../../pipes/greatest-common-divisor.pipe";
 import {AspectRatioComponent} from "../../components/aspect-ratio/aspect-ratio.component";
 import {ActivatedRoute} from "@angular/router";
 import {toByteArray} from "base64-js";
 import {ExternalRequest} from "../../types/external-request";
+import {TextualInversionsComponent} from "./parts/textual-inversions/textual-inversions.component";
 
 interface Result {
   width: number;
@@ -163,7 +169,7 @@ interface Result {
     YesNoComponent,
     PromptStyleModalComponent,
     EffectiveValueComponent,
-    LoraNamePipe,
+    CivitAiModelNamePipe,
     FaIconComponent,
     LoraSelectorComponent,
     LoraTextRowComponent,
@@ -173,11 +179,12 @@ interface Result {
     SliderWithValueComponent,
     TooltipComponent,
     ConfigureLoraComponent,
-    LoraVersionIdPipe,
+    CivitAiModelVersionIdPipe,
     CopyButtonComponent,
-    LoraModelIdPipe,
+    CivitAiModelIdPipe,
     GreatestCommonDivisorPipe,
-    AspectRatioComponent
+    AspectRatioComponent,
+    TextualInversionsComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -366,6 +373,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     ]),
     onlyMyWorkers: new FormControl<boolean>(false),
     amount: new FormControl<number>(1),
+    textualInversionList: new FormControl<TextualInversionGenerationOption[]>([]),
   });
 
   @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
@@ -674,6 +682,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       styleName: this.chosenStyle()?.name ?? null,
       onlyMyWorkers: value.onlyMyWorkers ?? false,
       amount: value.amount ?? 1,
+      textualInversionList: value.textualInversionList ?? [],
     };
   }
 
@@ -799,7 +808,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   public async loraUpdated(result: ConfigureLoraResult): Promise<void> {
     const loras = this.form.value.loraList ?? [];
     for (const lora of loras) {
-      const versionId = lora.isVersionId ? lora.id : (await toPromise(this.civitAi.getLoraDetail(lora.id))).modelVersions[0].id;
+      const versionId = lora.isVersionId ? lora.id : (await toPromise(this.civitAi.getModelDetail(lora.id))).modelVersions[0].id;
       if (versionId === result.versionId) {
         lora.strengthModel = result.model;
         lora.strengthClip = result.clip;
@@ -866,5 +875,11 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
     this.swiper = null;
     this.swiperThumbs = null;
+  }
+
+  public async onTextualInversionsUpdated(textualInversions: TextualInversionGenerationOption[]) {
+    this.form.patchValue({
+      textualInversionList: textualInversions,
+    });
   }
 }

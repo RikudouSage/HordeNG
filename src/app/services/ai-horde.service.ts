@@ -82,6 +82,20 @@ export class AiHorde {
           inject_trigger: lora.injectTrigger,
           is_version: lora.isVersionId,
         })),
+        tis: options.textualInversionList.map(textualInversion => ({
+          name: String(textualInversion.id),
+          inject_ti: (() => {
+            switch (textualInversion.inject) {
+              case "prompt":
+                return "prompt";
+              case "negative":
+                return "negprompt";
+            }
+
+            return undefined;
+          })(),
+          strength: textualInversion.strength,
+        })),
         n: options.amount,
       },
       nsfw: options.nsfw,

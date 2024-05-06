@@ -21,8 +21,8 @@ export class ModalService {
   }
 
 
-  public open(content: TemplateRef<Element>, options?: ModalOptions): void {
-    const innerContent = globalAppView()!.createEmbeddedView(content);
+  public open<T>(content: TemplateRef<T>, options?: ModalOptions<T>): void {
+    const innerContent = globalAppView()!.createEmbeddedView(content, options?.context);
 
     options = this.assignDefaultOptions(options);
 
@@ -44,7 +44,7 @@ export class ModalService {
     this.releaseLock();
   }
 
-  private assignDefaultOptions(options: ModalOptions | undefined): ModalOptions {
+  private assignDefaultOptions<T>(options: ModalOptions<T> | undefined): ModalOptions<T> {
     options ??= {};
     options.animations ??= {};
     options.animations.modal ??= {};

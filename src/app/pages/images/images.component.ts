@@ -10,7 +10,7 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {DataStorage} from "../../services/image-storage/data-storage";
 import {PostProcessor} from "../../types/horde/post-processor";
-import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {CivitAiModelNamePipe} from "../../pipes/civit-ai-model-name.pipe";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
 import {DatabaseService} from "../../services/database.service";
 
@@ -27,7 +27,7 @@ interface StoredImageWithLink extends StoredImage {
     TranslocoPipe,
     FormatNumberPipe,
     YesNoComponent,
-    LoraNamePipe,
+    CivitAiModelNamePipe,
     AsyncPipe,
     LoraTextRowComponent
   ],

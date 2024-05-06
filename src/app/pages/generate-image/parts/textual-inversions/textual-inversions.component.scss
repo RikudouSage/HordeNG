@@ -1,0 +1,36 @@
+@import "../../../../../scss/colors";
+@import "../../../../../scss/breakpoints";
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.ti-name {
+  display: flex;
+  justify-content: start;
+  align-items: start;
+  width: calc(100% - 65px);
+
+  & > * {
+    flex: 0 1 0;
+    margin-right: 8px;
+  }
+
+  & > span {
+    display: block;
+    width: calc(100% - 40px);
+    font-size: 14px;
+    line-height: 26px;
+    font-weight: 400;
+
+    span {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+  }
+}

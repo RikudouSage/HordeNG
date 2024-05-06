@@ -192,7 +192,7 @@
             @for (lora of form.value.loraList!; track lora.id) {
               <li>
                 <strong class="lora-name">
-                  <a href="https://civitai.com/models/{{lora.isVersionId ? (lora.id | loraModelId | async) : lora.id}}" target="_blank">
+                  <a href="https://civitai.com/models/{{lora.isVersionId ? (lora.id | civitAiModelId | async) : lora.id}}" target="_blank">
                     <fa-icon [icon]="iconExternalLink()" />
                   </a>
                   <app-lora-text-row [lora]="lora" />
@@ -205,8 +205,8 @@
                 </button>
                 <ng-template #editLora>
                   <app-configure-lora
-                    [loraName]="(lora.id | loraName:(lora.isVersionId ?? false) | async)!"
-                    [versionId]="(lora.isVersionId ?? false) ? lora.id : (lora.id | loraVersionId | async)!"
+                    [loraName]="(lora.id | civitAiModelName:(lora.isVersionId ?? false) | async)!"
+                    [versionId]="(lora.isVersionId ?? false) ? lora.id : (lora.id | civitAiModelVersionId | async)!"
                     [clipStrength]="lora.strengthClip ?? 1"
                     [modelStrength]="lora.strengthModel ?? 1"
                     (configured)="loraUpdated($event)"
@@ -217,6 +217,12 @@
             </ul>
           }
         </div>
+        <app-generate-image-textual-inversions
+          [modifiedOptions]="modifiedOptions()?.textualInversionList ?? null"
+          [initialTis]="form.value.textualInversionList ?? undefined"
+          [currentModel]="currentModelDetail()!"
+          (selectedTisUpdated)="onTextualInversionsUpdated($event)"
+        />
         <div class="row formGroup">
           <div [class.col-md-6]="form.value.faceFixers?.length" [class.col-md-12]="!form.value.faceFixers?.length">
             <div class="form-group">

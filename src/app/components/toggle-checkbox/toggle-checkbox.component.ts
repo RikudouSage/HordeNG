@@ -1,4 +1,4 @@
-import {Component, effect, input, signal, WritableSignal} from '@angular/core';
+import {Component, effect, input, OnInit, output, signal, WritableSignal} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {OnChange, OnTouched} from "../../types/value-accessor";
 
@@ -16,9 +16,13 @@ import {OnChange, OnTouched} from "../../types/value-accessor";
     },
   ],
 })
-export class ToggleCheckboxComponent implements ControlValueAccessor {
+export class ToggleCheckboxComponent implements ControlValueAccessor, OnInit {
   private onChange: WritableSignal<OnChange<boolean> | null> = signal(null);
   private onTouched: WritableSignal<OnTouched | null> = signal(null);
+
+  private formMode = signal(true);
+
+  public initialValue = input<boolean | null>(null);
 
   public value = signal(false);
   public disabled = signal(false);
@@ -26,13 +30,26 @@ export class ToggleCheckboxComponent implements ControlValueAccessor {
   public description = input.required<string>();
   public random = signal(Math.random());
 
+  public valueChanged = output<boolean>();
+
   constructor() {
     effect(() => {
-      if (this.onChange() === null) {
-        return;
+      if (this.formMode()) {
+        if (this.onChange() === null) {
+          return;
+        }
+        (this.onChange()!)(this.value());
+      } else {
+        this.valueChanged.emit(this.value());
       }
-      (this.onChange()!)(this.value());
     });
+  }
+
+  public async ngOnInit(): Promise<void> {
+    if (this.initialValue() !== null) {
+      this.formMode.set(false);
+      this.value.set(this.initialValue()!);
+    }
   }
 
   public writeValue(value: boolean): void {

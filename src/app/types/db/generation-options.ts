@@ -9,6 +9,14 @@ export interface LoraGenerationOption {
   isVersionId?: boolean;
 }
 
+export type TextualInversionInjectType = 'prompt' | 'negative';
+
+export interface TextualInversionGenerationOption {
+  id: number;
+  inject?: TextualInversionInjectType;
+  strength?: number;
+}
+
 export interface GenerationOptions {
   prompt: string;
   negativePrompt: string | null;
@@ -31,6 +39,7 @@ export interface GenerationOptions {
   allowDowngrade: boolean;
   clipSkip: number;
   loraList: LoraGenerationOption[];
+  textualInversionList: TextualInversionGenerationOption[];
   styleName: string | null;
   onlyMyWorkers: boolean;
   amount: number;
@@ -58,6 +67,7 @@ export const DefaultGenerationOptions: GenerationOptions = {
   allowDowngrade: false,
   clipSkip: 1,
   loraList: [],
+  textualInversionList: [],
   styleName: null,
   onlyMyWorkers: false,
   amount: 1,

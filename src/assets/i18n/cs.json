@@ -257,5 +257,14 @@
   "app.generate.result.id": "ID",
   "app.generate.result.generated_by": "Vygenerováno pomocí [b]{{name}}[/b] (id: [b]{{id}}[/b])",
   "app.generate.result.kudos_cost": "Cena v kudos",
-  "app.preview": "Celý obrázek"
+  "app.preview": "Celý obrázek",
+  "app.generate.ti_list": "Textové inverze (embeddings)",
+  "app.generate.add_tis": "Přidat textovou inverzi",
+  "app.generate.help.ti_list": "Textové inverze nebo také embeddings jsou v podstatě předgenerované prompty nebo negativní prompty (záleží na tom, kde je použijete). Obsahují již vektorizované instrukce (podívejte se na popis k {{app.generate.clip_skip}} pro informaci ohledně vektorizování instrukcí) které mění vámi zadaná data.",
+  "app.generate.ti_list.no_models": "Nebyla zvolena žádná textová inverze.",
+  "app.ti_configure.description": "Zde můžete nastavit, zda chcete automaticky vložit textovou inverzi a její sílu, pokud ano.",
+  "app.ti_configure.model_strength": "Síla",
+  "app.ti_configure.inject": "Typ vložení",
+  "app.ti_configure.inject_description": "Tato možnost určuje jestli a kam chcete vložit textovou inverzi. Zvolte [b]{{app.select.empty_option}}[/b], pokud chcete klíčové slovo vložit do promptu nebo negativního promptu ručně.",
+  "app.ti_selector.use_ti": "Použít textovou inverzi"
 }

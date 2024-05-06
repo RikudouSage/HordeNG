@@ -1,4 +1,4 @@
-export interface ModalOptions {
+export interface ModalOptions<T> {
   animations?: {
     modal?: {
       enter?: string;
@@ -18,4 +18,5 @@ export interface ModalOptions {
     maxHeight?: string;
   };
   zIndex?: number;
+  context?: T;
 }

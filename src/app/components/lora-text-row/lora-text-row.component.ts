@@ -1,7 +1,7 @@
 import {Component, input} from '@angular/core';
 import {AsyncPipe} from "@angular/common";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
-import {LoraNamePipe} from "../../pipes/lora-name.pipe";
+import {CivitAiModelNamePipe} from "../../pipes/civit-ai-model-name.pipe";
 import {TranslocoPipe} from "@ngneat/transloco";
 import {LoraGenerationOption} from "../../types/db/generation-options";
 
@@ -11,7 +11,7 @@ import {LoraGenerationOption} from "../../types/db/generation-options";
   imports: [
     AsyncPipe,
     FormatNumberPipe,
-    LoraNamePipe,
+    CivitAiModelNamePipe,
     TranslocoPipe
   ],
   templateUrl: './lora-text-row.component.html',
