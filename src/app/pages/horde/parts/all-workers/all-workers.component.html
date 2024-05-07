@@ -1,4 +1,4 @@
-<app-box [title]="'app.workers.horde_workers' | transloco" [collapsible]="true" (expanded)="loadAllWorkers()" (collapsed)="pauseWorkerUpdates()">
+<app-box [title]="('app.workers.horde_workers' | transloco) + (count() === null ? '' : (' (' + count() + ')'))" [collapsible]="true" (expanded)="loadAllWorkers()" (collapsed)="pauseWorkerUpdates()">
   @if (workers() === null) {
     <app-loader />
   } @else {

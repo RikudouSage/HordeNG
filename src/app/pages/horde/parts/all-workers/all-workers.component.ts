@@ -39,6 +39,13 @@ export class AllWorkersComponent implements OnDestroy {
       return a.models.length > b.models.length ? -1 : 1;
     })
   });
+  public count = computed(() => {
+    if (this.workers() === null) {
+      return null;
+    }
+
+    return this.workers()!.length;
+  })
 
   constructor(
     private readonly api: AiHorde,
