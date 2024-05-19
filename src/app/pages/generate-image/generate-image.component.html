@@ -303,8 +303,8 @@
             </app-toggle-checkbox>
           </div>
           <div class="form-group">
-            <app-toggle-checkbox [description]="'app.generate.hires_fix' | transloco" formControlName="hiresFix">
-              <app-tooltip [text]="'app.generate.help.hires_fix' | transloco" />
+            <app-toggle-checkbox [description]="(effectiveModel() === 'Stable Cascade 1.0' ? 'app.generate.2pass' : 'app.generate.hires_fix') | transloco" formControlName="hiresFix">
+              <app-tooltip [text]="(effectiveModel() === 'Stable Cascade 1.0' ? 'app.generate.help.2pass' : 'app.generate.help.hires_fix') | transloco" />
             </app-toggle-checkbox>
           </div>
           <div class="form-group">
