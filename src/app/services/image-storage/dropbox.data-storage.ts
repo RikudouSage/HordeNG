@@ -9,6 +9,7 @@ import {DropboxService} from "../dropbox.service";
 import {DropboxUploadResponse} from "../../types/dropbox/dropbox-upload-response";
 import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
+import {OutputFormat} from "../../types/output-format";
 
 type Metadata = Record<keyof Omit<StoredImage, 'data' | 'onlyMyWorkers' | 'amount'>, string>;
 
@@ -82,6 +83,7 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
           styleName: metadata.styleName || null,
           onlyMyWorkers: false,
           amount: 1,
+          format: <OutputFormat>metadata.format || OutputFormat.Webp,
         };
       }));
     } catch (e) {
@@ -125,6 +127,7 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
       id: image.id!,
       worker: `${image.worker.name},${image.worker.id}`,
       styleName: String(image.styleName),
+      format: <OutputFormat>image.format,
     };
     await Promise.all([
       this.uploadFile(`images/${image.id}.webp`, image.data, metadata),

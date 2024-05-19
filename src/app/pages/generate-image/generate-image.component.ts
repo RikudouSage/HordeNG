@@ -88,6 +88,9 @@ import {ActivatedRoute} from "@angular/router";
 import {toByteArray} from "base64-js";
 import {ExternalRequest} from "../../types/external-request";
 import {TextualInversionsComponent} from "./parts/textual-inversions/textual-inversions.component";
+import {decodeWebP, encodePng} from "image-in-browser";
+import {addMetadata} from "meta-png";
+import {OutputFormat} from "../../types/output-format";
 
 interface Result {
   width: number;
@@ -708,11 +711,34 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     let i = 0;
     for (const response of responses) {
       ++i;
-      const image = response.body;
+      let image = response.body;
       if (image === null) {
         await this.messageService.error(this.translator.get('app.error.image_download_failed', {index: i}));
         continue;
       }
+
+      const format = (await this.database.getSetting('image_format', OutputFormat.Png)).value;
+      if (format === OutputFormat.Png) {
+        const webp = decodeWebP({
+          data: new Uint8Array(await image.arrayBuffer()),
+        });
+        let out = encodePng({
+          image: webp!,
+        });
+        out = addMetadata(out, "generationMetadata", JSON.stringify({
+          id: generations[i - 1].id,
+          worker: {
+            id: generations[i - 1].worker_id,
+            name: generations[i - 1].worker_name,
+          },
+          ...metadata,
+          model: generations[i - 1].model,
+          seed: generations[i - 1].seed,
+          generator: 'HordeNG (https://horde-ng.org)'
+        }));
+        image = new Blob([out], { type: 'image/png' });
+      }
+
       results.push({
         source: URL.createObjectURL(image),
         width: metadata.width,
@@ -738,6 +764,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
         ...metadata,
         model: generations[i - 1].model,
         seed: generations[i - 1].seed,
+        format: format,
       };
       storeImagePromises.push(storage.storeImage(storeData));
     }
@@ -794,12 +821,14 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     const response = await fetch(result.source);
     const blob = await response.blob();
 
+    const format = (await this.database.getSetting('image_format', OutputFormat.Png)).value;
+
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.display = 'none';
     this.document.body.appendChild(a);
     a.href = url;
-    a.download = `${result.prompt}.webp`;
+    a.download = `${result.prompt}.${format}`;
     a.click();
     window.URL.revokeObjectURL(url);
     a.remove();

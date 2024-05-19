@@ -19,7 +19,7 @@ import {PostProcessor} from "../../types/horde/post-processor";
 import _ from 'lodash';
 import {CacheService} from "../cache.service";
 import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
-import {GenerationOptions} from "../../types/db/generation-options";
+import {OutputFormat} from "../../types/output-format";
 
 export const S3CorsConfig = [
   {
@@ -61,6 +61,7 @@ export const S3CorsConfig = [
       "x-amz-meta-loras",
       "x-amz-meta-textualinversionlist",
       "x-amz-meta-stylename",
+      "x-amz-meta-format",
     ],
   },
 ];
@@ -188,6 +189,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         styleName: image.Metadata!['stylename'] || null,
         onlyMyWorkers: false,
         amount: 1,
+        format: <OutputFormat>image.Metadata!['format'] || OutputFormat.Webp,
       }
     });
   }
@@ -207,7 +209,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       throw new Error("S3 storage requires providing IDs beforehand.");
     }
 
-    const metadata: Record<(keyof Omit<GenerationOptions, 'worker' | 'data' | 'loraList' | 'onlyMyWorkers' | 'amount'>) | 'workerId' | 'workerName' | 'loras', string> = {
+    const metadata: Record<(keyof Omit<UnsavedStoredImage, 'worker' | 'data' | 'loraList' | 'onlyMyWorkers' | 'amount' | 'id'>) | 'workerId' | 'workerName' | 'loras', string> = {
       workerId: image.worker.id,
       workerName: image.worker.name,
       model: image.model,
@@ -233,6 +235,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       nsfw: String(Number(image.nsfw)),
       clipSkip: String(image.clipSkip),
       styleName: String(image.styleName),
+      format: image.format,
     }
 
     await client.send(new PutObjectCommand({
