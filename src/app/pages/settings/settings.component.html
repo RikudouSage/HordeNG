@@ -36,6 +36,19 @@
               }
             </select>
           </div>
+          <div class="form-group">
+            <label for="inputFormat">{{'app.output_format' | transloco}}</label>
+            <select class="form-control" formControlName="outputFormat" id="inputFormat">
+              @for (format of OutputFormat | keyvalue; track format.key) {
+                <option [value]="format.value">{{format.value}}</option>
+              }
+            </select>
+            @if (form.value.outputFormat === OutputFormat.Png) {
+              <p>{{'app.output_format.png_info' | transloco}}</p>
+            } @else {
+              <p class="text-warning">{{'app.output_format.webp_info' | transloco}}</p>
+            }
+          </div>
         </div>
         <div class="settingContent--right">
         @if (form.controls.storage.value === 's3') {

@@ -269,5 +269,8 @@
   "app.ti_configure.inject_description": "This configures whether and where do you want to automatically inject the textual inversion. Select [b]{{app.select.empty_option}}[/b] if you plan on inserting the triggering keyword manually into your prompt or negative prompt.",
   "app.ti_selector.use_ti": "Use textual inversion",
   "app.generate.2pass": "2-pass HiRes Fix",
-  "app.generate.help.2pass": "{{app.generate.help.hires_fix}} The 2-pass feature only works for Stable Cascade 1.0 and makes it possible to use HiRes fix even for small images."
+  "app.generate.help.2pass": "{{app.generate.help.hires_fix}} The 2-pass feature only works for Stable Cascade 1.0 and makes it possible to use HiRes fix even for small images.",
+  "app.output_format": "Output image format",
+  "app.output_format.png_info": "This format supports embedding the generation metadata into the image itself.",
+  "app.output_format.webp_info": "This format does not support embedding the generation metadat into the image itself."
 }

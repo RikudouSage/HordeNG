@@ -13,6 +13,7 @@ import {PostProcessor} from "../../types/horde/post-processor";
 import {CivitAiModelNamePipe} from "../../pipes/civit-ai-model-name.pipe";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
 import {DatabaseService} from "../../services/database.service";
+import {OutputFormat} from "../../types/output-format";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -158,7 +159,7 @@ export class ImagesComponent implements OnInit {
     a.style.display = 'none';
     this.document.body.appendChild(a);
     a.href = image.link;
-    a.download = `${image.prompt.trim()}.webp`;
+    a.download = `${image.prompt.trim()}.${image.format ?? OutputFormat.Webp}`;
     a.click();
     a.remove();
   }

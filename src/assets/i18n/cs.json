@@ -268,5 +268,8 @@
   "app.ti_configure.inject_description": "Tato možnost určuje jestli a kam chcete vložit textovou inverzi. Zvolte [b]{{app.select.empty_option}}[/b], pokud chcete klíčové slovo vložit do promptu nebo negativního promptu ručně.",
   "app.ti_selector.use_ti": "Použít textovou inverzi",
   "app.generate.2pass": "2-pass HiRes Fix",
-  "app.generate.help.2pass": "{{app.generate.help.hires_fix}} Možnost 2-pass funguje pouze pro Stable Cascade 1.0 a umožňuje použití HiRes fixu i pro malé obrázky."
+  "app.generate.help.2pass": "{{app.generate.help.hires_fix}} Možnost 2-pass funguje pouze pro Stable Cascade 1.0 a umožňuje použití HiRes fixu i pro malé obrázky.",
+  "app.output_format": "Formát obrázku",
+  "app.output_format.png_info": "Tento formát umožňuje ukládání obrázku včetně všech metadat pro generování.",
+  "app.output_format.webp_info": "Tento formát neumožňuje ukládání metadat pro generování přímo do obrázku."
 }

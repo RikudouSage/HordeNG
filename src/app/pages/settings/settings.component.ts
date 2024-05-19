@@ -26,6 +26,7 @@ import {DropboxCredentials} from "../../types/credentials/dropbox.credentials";
 import {DropboxDataStorage} from "../../services/image-storage/dropbox.data-storage";
 import {findBrowserLanguage} from "../../helper/language";
 import {LanguageNamePipe} from "../../pipes/language-name.pipe";
+import {OutputFormat} from "../../types/output-format";
 
 @Component({
   selector: 'app-settings',
@@ -47,6 +48,7 @@ import {LanguageNamePipe} from "../../pipes/language-name.pipe";
 })
 export class SettingsComponent implements OnInit {
   private readonly isBrowser: boolean;
+  protected readonly OutputFormat = OutputFormat;
 
   private languageChanged = signal(false);
   private originalLanguage = signal<string|null>(null);
@@ -70,6 +72,9 @@ export class SettingsComponent implements OnInit {
       Validators.required,
     ]),
     language: new FormControl<string>('language', [
+      Validators.required,
+    ]),
+    outputFormat: new FormControl<OutputFormat>(OutputFormat.Png, [
       Validators.required,
     ]),
     s3_accessKey: new FormControl<string>(''),
@@ -165,6 +170,7 @@ export class SettingsComponent implements OnInit {
         storage: storage,
         homepage: (await this.database.getSetting('homepage', 'about')).value,
         language: this.originalLanguage()!,
+        outputFormat: (await this.database.getSetting('image_format', OutputFormat.Png)).value,
       });
 
       const storages: {[key: string]: string} = {};
@@ -208,6 +214,10 @@ export class SettingsComponent implements OnInit {
       }),
       this.storeImageStorageSettings(),
       this.database.setAppLanguage(this.form.value.language!),
+      this.database.setSetting({
+        setting: 'image_format',
+        value: this.form.value.outputFormat!,
+      }),
     ]);
 
     const previous = this.authManager.apiKey();

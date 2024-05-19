@@ -1,4 +1,5 @@
 import {GenerationOptions} from "./generation-options";
+import {OutputFormat} from "../output-format";
 
 export interface UnsavedStoredImage extends GenerationOptions {
   id?: string;
@@ -9,6 +10,7 @@ export interface UnsavedStoredImage extends GenerationOptions {
   };
   model: string;
   seed: string;
+  format: OutputFormat;
 }
 
 export interface StoredImage extends UnsavedStoredImage {
