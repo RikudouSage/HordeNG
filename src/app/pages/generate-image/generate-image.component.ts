@@ -547,6 +547,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
       const response = await toPromise(this.api.checkGenerationStatus(this.inProgress()!));
       if (!response.success) {
+        if (response.statusCode === 429) {
+          return; // too many requests, just chill
+        }
         await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
         await this.database.deleteInProgressJob(this.inProgress()!);
         this.inProgress.set(null);
