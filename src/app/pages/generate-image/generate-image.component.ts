@@ -540,7 +540,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     this.chosenStyle.set((await this.database.getSetting<EnrichedPromptStyle | null>('chosen_style', null)).value)
     this.loading.set(false);
 
-    this.checkInterval ??= interval(1_000).subscribe(async () => {
+    this.checkInterval ??= interval(2_000).subscribe(async () => {
       if (!this.inProgress()) {
         return;
       }
