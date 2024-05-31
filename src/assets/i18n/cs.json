@@ -257,7 +257,7 @@
   "app.generate.result.id": "ID",
   "app.generate.result.generated_by": "Vygenerováno pomocí [b]{{name}}[/b] (id: [b]{{id}}[/b])",
   "app.generate.result.kudos_cost": "Cena v kudos",
-  "app.preview": "Celý obrázek",
+  "app.preview": "Celý obrázek",
   "app.generate.ti_list": "Textové inverze (embeddings)",
   "app.generate.add_tis": "Přidat textovou inverzi",
   "app.generate.help.ti_list": "Textové inverze nebo také embeddings jsou v podstatě předgenerované prompty nebo negativní prompty (záleží na tom, kde je použijete). Obsahují již vektorizované instrukce (podívejte se na popis k {{app.generate.clip_skip}} pro informaci ohledně vektorizování instrukcí) které mění vámi zadaná data.",
