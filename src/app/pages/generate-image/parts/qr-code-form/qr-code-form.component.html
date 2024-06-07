@@ -1,0 +1,19 @@
+<form [formGroup]="form">
+  <div class="row formGroup">
+    <div class="col-md-12">
+      <div class="form-group">
+        <app-toggle-checkbox formControlName="enabled" [description]="'app.generate_form.qr_code.enabled' | transloco">
+          <app-tooltip [text]="'app.generate_form.qr_code.tooltip' | transloco"/>
+        </app-toggle-checkbox>
+
+        @if (form.value.enabled) {
+          <div class="mt-2">
+            <label for="inputQrCodeText">{{'app.generate_form.qr_code.text' | transloco}}</label>
+            <input class="form-control mt-1" formControlName="text" id="inputQrCodeText" />
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</form>
+

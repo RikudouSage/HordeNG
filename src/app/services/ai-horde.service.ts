@@ -97,6 +97,11 @@ export class AiHorde {
           strength: textualInversion.strength,
         })),
         n: options.amount,
+        extra_texts: options.qrCode ? [{
+          text: options.qrCode,
+          reference: 'qr_code',
+        }] : undefined,
+        workflow: options.qrCode ? 'qr_code' : undefined,
       },
       nsfw: options.nsfw,
       trusted_workers: workers !== null ? false : options.trustedWorkers,

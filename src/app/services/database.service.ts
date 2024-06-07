@@ -141,6 +141,7 @@ export class DatabaseService {
       onlyMyWorkers: <boolean>valuesMap['onlyMyWorkers'] ?? DefaultGenerationOptions.onlyMyWorkers,
       amount: <number>valuesMap['amount'] ?? DefaultGenerationOptions.amount,
       textualInversionList: <TextualInversionGenerationOption[]>valuesMap['textualInversionList'] ?? DefaultGenerationOptions.textualInversionList,
+      qrCode: <string|null>valuesMap['qrCode'] ?? DefaultGenerationOptions.qrCode,
     };
   }
 

@@ -190,6 +190,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         onlyMyWorkers: false,
         amount: 1,
         format: <OutputFormat>image.Metadata!['format'] || OutputFormat.Webp,
+        qrCode: <string | null>image.Metadata!['qrCode'] || null,
       }
     });
   }
@@ -236,6 +237,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       clipSkip: String(image.clipSkip),
       styleName: String(image.styleName),
       format: image.format,
+      qrCode: String(image.qrCode),
     }
 
     await client.send(new PutObjectCommand({
