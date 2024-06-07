@@ -274,5 +274,6 @@
   "app.output_format.webp_info": "Tento formát neumožňuje ukládání metadat pro generování přímo do obrázku.",
   "app.generate_form.qr_code.enabled": "Vygenerovat QR kód",
   "app.generate_form.qr_code.tooltip": "Je-li zapnuto, AI zakomponuje QR kód s vámi zvoleným textem do obrázku a pokusí se to udělat tak, aby zapadl do obrázku.",
-  "app.generate_form.qr_code.text": "Text v QR kódu"
+  "app.generate_form.qr_code.text": "Text v QR kódu",
+  "app.error.too_many_api_errors": "Nastalo příliš mnoho api chyb v řadě, požadavek byl zrušen."
 }
