@@ -543,8 +543,26 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     this.chosenStyle.set((await this.database.getSetting<EnrichedPromptStyle | null>('chosen_style', null)).value)
     this.loading.set(false);
 
+    let errors = 0;
+    let wait = 0;
     this.checkInterval ??= interval(2_000).subscribe(async () => {
       if (!this.inProgress()) {
+        return;
+      }
+
+      if (wait) {
+        --wait;
+        return;
+      }
+
+      if (errors > 5) {
+        const job = this.inProgress()!;
+        this.inProgress.set(null);
+        await Promise.all([
+          this.messageService.error(this.translator.get('app.error.too_many_api_errors')),
+          this.database.deleteInProgressJob(job),
+          this.finalizeGenerationLoop(job),
+        ]);
         return;
       }
 
@@ -554,18 +572,25 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
           return; // too many requests, just chill
         }
         await this.messageService.error(this.translator.get('app.error.api_error', {message: response.errorResponse!.message, code: response.errorResponse!.rc}));
-        await this.database.deleteInProgressJob(this.inProgress()!);
-        this.inProgress.set(null);
+        wait = 3;
+        ++errors;
         return;
       }
+      errors = 0;
 
       const status = response.successResponse!;
       this.requestStatus.set(status);
 
       if (!status.is_possible) {
-        await toPromise(this.api.cancelJob(this.inProgress()!));
-        await this.database.deleteInProgressJob(this.inProgress()!);
+        const job = this.inProgress()!;
         this.inProgress.set(null);
+
+        await Promise.all([
+          this.finalizeGenerationLoop(job),
+          toPromise(this.api.cancelJob(job)),
+          this.database.deleteInProgressJob(job),
+        ]);
+
         await this.messageService.error(this.translator.get('app.error.generate.impossible'));
         return;
       }
@@ -574,26 +599,36 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
         this.loading.set(true);
         const job = this.inProgress() ?? (await this.database.getJobsInProgress())[0] ?? null;
         this.inProgress.set(null);
+        await this.database.deleteInProgressJob(job);
         if (job === null) {
-          throw new Error("Job cannot be null");
-        }
-
-        const resultResponse = await toPromise(this.api.getGeneratedImageResult(job));
-        if (!resultResponse.success) {
-          await this.messageService.error(this.translator.get('app.error.api_error', {message: resultResponse.errorResponse!.message, code: resultResponse.errorResponse!.rc}));
-          this.loading.set(false);
           return;
         }
 
-        const result = resultResponse.successResponse!;
-        const metadata = (await this.database.getJobMetadata(job))!;
-        await this.downloadImages(result, metadata);
-
-        await this.database.deleteInProgressJob(job);
-
-        this.loading.set(false);
+        await this.finalizeGenerationLoop(job);
       }
     });
+  }
+
+  private async finalizeGenerationLoop(job: JobInProgress): Promise<void> {
+    this.loading.set(true);
+    const resultResponse = await toPromise(this.api.getGeneratedImageResult(job));
+    if (!resultResponse.success) {
+      await this.messageService.error(this.translator.get('app.error.api_error', {message: resultResponse.errorResponse!.message, code: resultResponse.errorResponse!.rc}));
+      this.loading.set(false);
+      return;
+    }
+
+    const result = resultResponse.successResponse!;
+
+    if (!result.generations.length) {
+      this.loading.set(false);
+      return;
+    }
+
+    const metadata = (await this.database.getJobMetadata(job))!;
+    await this.downloadImages(result, metadata);
+
+    this.loading.set(false);
   }
 
   public async ngAfterViewInit(): Promise<void> {
@@ -783,13 +818,16 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
   public async cancelGeneration(): Promise<void> {
     const job = this.inProgress();
+    this.inProgress.set(null);
     if (!job) {
       return;
     }
 
-    await this.database.deleteInProgressJob(job);
-    this.inProgress.set(null);
-    await toPromise(this.api.cancelJob(job));
+    await Promise.all([
+      this.database.deleteInProgressJob(job),
+      toPromise(this.api.cancelJob(job)),
+      this.finalizeGenerationLoop(job),
+    ]);
   }
 
   public async openModal(modal: TemplateRef<any>) {
