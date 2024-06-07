@@ -91,6 +91,7 @@ import {TextualInversionsComponent} from "./parts/textual-inversions/textual-inv
 import {decodeWebP, encodePng} from "image-in-browser";
 import {addMetadata} from "meta-png";
 import {OutputFormat} from "../../types/output-format";
+import {QrCodeFormComponent} from "./parts/qr-code-form/qr-code-form.component";
 
 interface Result {
   width: number;
@@ -187,7 +188,8 @@ interface Result {
     CivitAiModelIdPipe,
     GreatestCommonDivisorPipe,
     AspectRatioComponent,
-    TextualInversionsComponent
+    TextualInversionsComponent,
+    QrCodeFormComponent
   ],
   templateUrl: './generate-image.component.html',
   styleUrl: './generate-image.component.scss'
@@ -377,6 +379,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     onlyMyWorkers: new FormControl<boolean>(false),
     amount: new FormControl<number>(1),
     textualInversionList: new FormControl<TextualInversionGenerationOption[]>([]),
+    qrCode: new FormControl<string | null>(null),
   });
 
   @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
@@ -689,6 +692,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       onlyMyWorkers: value.onlyMyWorkers ?? false,
       amount: value.amount ?? 1,
       textualInversionList: value.textualInversionList ?? [],
+      qrCode: value.qrCode ?? null,
     };
   }
 

@@ -110,6 +110,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       clipSkip: String(image.clipSkip),
       styleName: String(image.styleName),
       format: image.format,
+      qrCode: String(image.qrCode),
     };
 
     await this.storeOption(`image.metadata.${image.id}`, metadata);
@@ -182,6 +183,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
         onlyMyWorkers: false,
         amount: 1,
         format: <OutputFormat>metadata['format'] || OutputFormat.Webp,
+        qrCode: metadata['qrCode'] || null,
       }
     }));
   }

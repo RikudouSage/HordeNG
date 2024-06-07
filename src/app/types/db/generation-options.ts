@@ -43,6 +43,7 @@ export interface GenerationOptions {
   styleName: string | null;
   onlyMyWorkers: boolean;
   amount: number;
+  qrCode: string | null;
 }
 
 export const DefaultGenerationOptions: GenerationOptions = {
@@ -71,4 +72,5 @@ export const DefaultGenerationOptions: GenerationOptions = {
   styleName: null,
   onlyMyWorkers: false,
   amount: 1,
+  qrCode: null,
 };
