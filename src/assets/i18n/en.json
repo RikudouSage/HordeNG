@@ -273,7 +273,7 @@
   "app.output_format": "Output image format",
   "app.output_format.png_info": "This format supports embedding the generation metadata into the image itself.",
   "app.output_format.webp_info": "This format does not support embedding the generation metadat into the image itself.",
-  "app.generate_form.qr_code.enabled": "Generate QR code",
-  "app.generate_form.qr_code.tooltip": "When enabled, the AI will incorporate a QR code containing a text you specify into the image, trying to blend it into the image itself",
+  "app.generate_form.qr_code.enabled": "Generate a QR code",
+  "app.generate_form.qr_code.tooltip": "When enabled, the AI will incorporate a QR code containing a text you specify into the image, trying to blend it into the image itself.",
   "app.generate_form.qr_code.text": "QR code text"
 }
