@@ -1,5 +1,15 @@
 import {Component, OnDestroy, OnInit, signal} from '@angular/core';
-import {ControlValueAccessor, FormControl, FormGroup, NG_VALUE_ACCESSOR, ReactiveFormsModule} from "@angular/forms";
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormControl,
+  FormGroup,
+  NG_VALIDATORS,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validator
+} from "@angular/forms";
 import {OnChange, OnTouched} from "../../../../types/value-accessor";
 import {ToggleCheckboxComponent} from "../../../../components/toggle-checkbox/toggle-checkbox.component";
 import {TranslocoPipe} from "@ngneat/transloco";
@@ -23,9 +33,14 @@ import {Subscriptions} from "../../../../helper/subscriptions";
       multi: true,
       useExisting: QrCodeFormComponent,
     },
+    {
+      provide: NG_VALIDATORS,
+      multi: true,
+      useExisting: QrCodeFormComponent,
+    },
   ],
 })
-export class QrCodeFormComponent implements ControlValueAccessor, OnInit, OnDestroy {
+export class QrCodeFormComponent implements ControlValueAccessor, OnInit, OnDestroy, Validator {
   private subscriptions = new Subscriptions();
 
   private onTouched = signal<OnTouched | null>(null);
@@ -68,5 +83,15 @@ export class QrCodeFormComponent implements ControlValueAccessor, OnInit, OnDest
 
   public setDisabledState(isDisabled: boolean) {
     isDisabled ? this.form.disable() : this.form.enable();
+  }
+
+  public validate(control: AbstractControl<any, any>): ValidationErrors | null {
+    if (this.form.value.enabled && !this.form.value.text) {
+      return {
+        required: true,
+      };
+    }
+
+    return null;
   }
 }
