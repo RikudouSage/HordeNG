@@ -15,6 +15,14 @@ import {ToggleCheckboxComponent} from "../../../../components/toggle-checkbox/to
 import {TranslocoPipe} from "@ngneat/transloco";
 import {TooltipComponent} from "../../../../components/tooltip/tooltip.component";
 import {Subscriptions} from "../../../../helper/subscriptions";
+import {QrCodePosition} from "../../../../types/qr-code-position.enum";
+
+export interface QrCodeComponentValue {
+  text: string | null;
+  positionX: number | null;
+  positionY: number | null;
+  markersPrompt: string | null;
+}
 
 @Component({
   selector: 'app-qr-code-form',
@@ -44,11 +52,17 @@ export class QrCodeFormComponent implements ControlValueAccessor, OnInit, OnDest
   private subscriptions = new Subscriptions();
 
   private onTouched = signal<OnTouched | null>(null);
-  private onChange = signal<OnChange<string | null> | null>(null);
+  private onChange = signal<OnChange<QrCodeComponentValue> | null>(null);
 
   public form = new FormGroup({
     enabled: new FormControl<boolean>(false),
     text: new FormControl<string | null>(null),
+    customPosition: new FormControl<boolean>(false),
+    position: new FormControl<QrCodePosition | null>(null),
+    positionX: new FormControl<number | null>(null),
+    positionY: new FormControl<number | null>(null),
+    customMarkersPrompt: new FormControl<boolean>(false),
+    markersPrompt: new FormControl<string | null>(null),
   });
 
   public async ngOnInit(): Promise<void> {
@@ -58,7 +72,12 @@ export class QrCodeFormComponent implements ControlValueAccessor, OnInit, OnDest
       }
 
       (this.onTouched()!)();
-      (this.onChange()!)(changes.enabled ? (changes.text ?? null) : null);
+      (this.onChange()!)({
+        text: changes.enabled ? (changes.text ?? null) : null,
+        positionY: changes.position ? (changes.positionY ?? null) : null,
+        positionX: changes.position ? (changes.positionX ?? null) : null,
+        markersPrompt: changes.customMarkersPrompt ? (changes.markersPrompt ?? null) : null,
+      });
     }));
   }
 
@@ -66,14 +85,28 @@ export class QrCodeFormComponent implements ControlValueAccessor, OnInit, OnDest
     this.subscriptions.unsubscribe();
   }
 
-  public writeValue(obj: string | null): void {
+  public writeValue(obj: string | QrCodeComponentValue | null): void {
+    if (typeof obj === 'string') {
+      obj = {
+        text: obj,
+        markersPrompt: null,
+        positionX: null,
+        positionY: null,
+      };
+    }
     this.form.patchValue({
-      text: obj,
-      enabled: (obj ?? '') !== '',
+      text: obj?.text ?? null,
+      enabled: (obj?.text ?? '') !== '',
+      markersPrompt: obj?.markersPrompt ?? null,
+      customMarkersPrompt: (obj?.markersPrompt ?? '') !== '',
+      position: QrCodePosition.Custom,
+      positionX: obj?.positionX ?? null,
+      positionY: obj?.positionY ?? null,
+      customPosition: Boolean(obj?.positionX ?? null) && Boolean(obj?.positionY ?? null),
     });
   }
 
-  public registerOnChange(fn: OnChange<string | null>): void {
+  public registerOnChange(fn: OnChange<QrCodeComponentValue>): void {
     this.onChange.set(fn);
   }
 

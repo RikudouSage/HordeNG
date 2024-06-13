@@ -20,6 +20,7 @@ import _ from 'lodash';
 import {CacheService} from "../cache.service";
 import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
 import {OutputFormat} from "../../types/output-format";
+import {parseQrCodeFromRawValue} from "../../helper/qr-code-migration-helper";
 
 export const S3CorsConfig = [
   {
@@ -190,7 +191,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         onlyMyWorkers: false,
         amount: 1,
         format: <OutputFormat>image.Metadata!['format'] || OutputFormat.Webp,
-        qrCode: <string | null>image.Metadata!['qrCode'] || null,
+        qrCode: parseQrCodeFromRawValue(image.Metadata!['qrCode']),
       }
     });
   }

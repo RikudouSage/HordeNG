@@ -91,7 +91,7 @@ import {TextualInversionsComponent} from "./parts/textual-inversions/textual-inv
 import {decodeWebP, encodePng} from "image-in-browser";
 import {addMetadata} from "meta-png";
 import {OutputFormat} from "../../types/output-format";
-import {QrCodeFormComponent} from "./parts/qr-code-form/qr-code-form.component";
+import {QrCodeComponentValue, QrCodeFormComponent} from "./parts/qr-code-form/qr-code-form.component";
 
 interface Result {
   width: number;
@@ -379,7 +379,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     onlyMyWorkers: new FormControl<boolean>(false),
     amount: new FormControl<number>(1),
     textualInversionList: new FormControl<TextualInversionGenerationOption[]>([]),
-    qrCode: new FormControl<string | null>(null),
+    qrCode: new FormControl<QrCodeComponentValue | null>(null),
   });
 
   @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
