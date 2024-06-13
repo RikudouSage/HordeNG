@@ -1,8 +1,8 @@
 export enum QrCodePosition {
-  Center,
-  BottomLeft,
-  BottomRight,
-  TopRight,
-  TopLeft,
-  Custom,
+  Center = 'center',
+  BottomLeft = 'bottom-left',
+  BottomRight = 'bottom-right',
+  TopRight = 'top-right',
+  TopLeft = 'top-left',
+  Custom = 'custom',
 }

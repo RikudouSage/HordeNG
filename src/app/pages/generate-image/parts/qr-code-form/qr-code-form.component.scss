@@ -1,0 +1,26 @@
+.coordinates {
+  display: flex;
+
+  & > * {
+    flex-basis: 25%;
+  }
+
+  .form-control {
+    margin-right: 2vw;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  label {
+    padding-top: 11px;
+    flex-shrink: 2;
+    flex-grow: 0;
+    display: block;
+  }
+
+  input {
+    flex-grow: 1;
+    flex-shrink: 0;
+  }
+}
