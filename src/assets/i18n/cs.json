@@ -275,5 +275,16 @@
   "app.generate_form.qr_code.enabled": "Vygenerovat QR kód",
   "app.generate_form.qr_code.tooltip": "Je-li zapnuto, AI zakomponuje QR kód s vámi zvoleným textem do obrázku a pokusí se to udělat tak, aby zapadl do obrázku.",
   "app.generate_form.qr_code.text": "Text v QR kódu",
-  "app.error.too_many_api_errors": "Nastalo příliš mnoho api chyb v řadě, požadavek byl zrušen."
+  "app.error.too_many_api_errors": "Nastalo příliš mnoho api chyb v řadě, požadavek byl zrušen.",
+  "app.generate_form.qr_code.custom_position": "Upravit pozici QR kódu",
+  "app.generate_form.qr_code.custom_position.tooltip": "Umožňuje nastavit pozici QR kódu, buď relativní, nebo absolutní v režimu vlastních souřadnic.",
+  "app.generate_form.qr_code.custom_position.title": "Vlastní pozice",
+  "app.generate_form.qr_code.position.center": "Střed",
+  "app.generate_form.qr_code.position.bottom_left": "Dole vlevo",
+  "app.generate_form.qr_code.position.bottom_right": "Dole vpravo",
+  "app.generate_form.qr_code.position.top_left": "Nahoře vlevo",
+  "app.generate_form.qr_code.position.top_right": "Nahoře vpravo",
+  "app.generate_form.qr_code.position.custom": "Vlastní souřadnice",
+  "app.generate_form.qr_code.position.custom.x": "Souřadnice X",
+  "app.generate_form.qr_code.position.custom.y": "Souřadnice Y"
 }
