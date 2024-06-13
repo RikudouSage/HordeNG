@@ -68,27 +68,25 @@ export class AiHorde {
           text: options.qrCode.text,
           reference: 'qr_code',
         });
-      }
-      if (options.qrCode?.positionX) {
-        extraTexts ??= [];
-        extraTexts.push({
-          text: String(options.qrCode.positionX),
-          reference: 'x_offset',
-        });
-      }
-      if (options.qrCode?.positionY) {
-        extraTexts ??= [];
-        extraTexts.push({
-          text: String(options.qrCode.positionY),
-          reference: 'y_offset',
-        });
-      }
-      if (options.qrCode?.markersPrompt) {
-        extraTexts ??= [];
-        extraTexts.push({
-          text: options.qrCode.markersPrompt,
-          reference: 'function_layer_prompt',
-        });
+
+        if (options.qrCode?.positionX) {
+          extraTexts.push({
+            text: String(options.qrCode.positionX),
+            reference: 'x_offset',
+          });
+        }
+        if (options.qrCode?.positionY) {
+          extraTexts.push({
+            text: String(options.qrCode.positionY),
+            reference: 'y_offset',
+          });
+        }
+        if (options.qrCode?.markersPrompt) {
+          extraTexts.push({
+            text: options.qrCode.markersPrompt,
+            reference: 'function_layer_prompt',
+          });
+        }
       }
 
       return this.sendRequest<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>(HttpMethod.Post, `generate/async`, {
@@ -129,7 +127,7 @@ export class AiHorde {
           })),
           n: options.amount,
           extra_texts: extraTexts,
-          workflow: options.qrCode ? 'qr_code' : undefined,
+          workflow: options.qrCode?.text ? 'qr_code' : undefined,
         },
         nsfw: options.nsfw,
         trusted_workers: workers !== null ? false : options.trustedWorkers,
