@@ -276,5 +276,16 @@
   "app.generate_form.qr_code.enabled": "Generate a QR code",
   "app.generate_form.qr_code.tooltip": "When enabled, the AI will incorporate a QR code containing a text you specify into the image, trying to blend it into the image itself.",
   "app.generate_form.qr_code.text": "QR code text",
-  "app.error.too_many_api_errors": "There were way too many consecutive api errors, cancelling the request."
+  "app.error.too_many_api_errors": "There were way too many consecutive api errors, cancelling the request.",
+  "app.generate_form.qr_code.custom_position": "Customize QR code position",
+  "app.generate_form.qr_code.custom_position.tooltip": "This allows you to set the position of the QR code, either relative or absolute if you choose a fully custom mode.",
+  "app.generate_form.qr_code.custom_position.title": "Custom position",
+  "app.generate_form.qr_code.position.center": "Center",
+  "app.generate_form.qr_code.position.bottom_left": "Bottom left",
+  "app.generate_form.qr_code.position.bottom_right": "Bottom right",
+  "app.generate_form.qr_code.position.top_left": "Top left",
+  "app.generate_form.qr_code.position.top_right": "Top right",
+  "app.generate_form.qr_code.position.custom": "Custom coordinates",
+  "app.generate_form.qr_code.position.custom.x": "X coordinate",
+  "app.generate_form.qr_code.position.custom.y": "Y coordinate"
 }

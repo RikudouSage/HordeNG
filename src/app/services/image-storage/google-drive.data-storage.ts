@@ -9,6 +9,7 @@ import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
 import {OutputFormat} from "../../types/output-format";
+import {parseQrCodeFromRawValue} from "../../helper/qr-code-migration-helper";
 import TokenResponse = google.accounts.oauth2.TokenResponse;
 
 @Injectable({
@@ -183,7 +184,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
         onlyMyWorkers: false,
         amount: 1,
         format: <OutputFormat>metadata['format'] || OutputFormat.Webp,
-        qrCode: metadata['qrCode'] || null,
+        qrCode: parseQrCodeFromRawValue(metadata['qrCode']),
       }
     }));
   }

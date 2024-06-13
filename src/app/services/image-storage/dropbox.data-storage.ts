@@ -10,6 +10,7 @@ import {DropboxUploadResponse} from "../../types/dropbox/dropbox-upload-response
 import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {OutputFormat} from "../../types/output-format";
+import {parseQrCodeFromRawValue} from "../../helper/qr-code-migration-helper";
 
 type Metadata = Record<keyof Omit<StoredImage, 'data' | 'onlyMyWorkers' | 'amount'>, string>;
 
@@ -84,7 +85,7 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
           onlyMyWorkers: false,
           amount: 1,
           format: <OutputFormat>metadata.format || OutputFormat.Webp,
-          qrCode: metadata.qrCode || null,
+          qrCode: parseQrCodeFromRawValue(metadata.qrCode),
         };
       }));
     } catch (e) {

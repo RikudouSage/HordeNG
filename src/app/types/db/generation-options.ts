@@ -1,5 +1,6 @@
 import {Sampler} from "../horde/sampler";
 import {PostProcessor} from "../horde/post-processor";
+import {QrCodeComponentValue} from "../../pages/generate-image/parts/qr-code-form/qr-code-form.component";
 
 export interface LoraGenerationOption {
   id: number;
@@ -43,7 +44,7 @@ export interface GenerationOptions {
   styleName: string | null;
   onlyMyWorkers: boolean;
   amount: number;
-  qrCode: string | null;
+  qrCode: QrCodeComponentValue | null;
 }
 
 export const DefaultGenerationOptions: GenerationOptions = {

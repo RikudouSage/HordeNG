@@ -296,7 +296,7 @@
             </div>
           </div>
         </div>
-        <app-qr-code-form formControlName="qrCode" />
+        <app-qr-code-form formControlName="qrCode" [imageWidth]="form.value.width!" [imageHeight]="form.value.height!" />
         <div class="row formGroup--checks">
           <div class="form-group">
             <app-toggle-checkbox [description]="'app.generate.karras' | transloco" formControlName="karras">

@@ -60,58 +60,85 @@ export class AiHorde {
   public generateImage(options: GenerationOptions): Observable<ApiResponse<AsyncGenerationResponse>>;
   public generateImage<TDryRun extends boolean>(options: GenerationOptions, dryRun: TDryRun): Observable<ApiResponse<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>>;
   public generateImage<TDryRun extends boolean>(options: GenerationOptions, dryRun: TDryRun = <TDryRun>false): Observable<ApiResponse<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>> {
-    const resultFactory = (workers: string[] | null = null) => this.sendRequest<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>(HttpMethod.Post, `generate/async`, {
-      prompt: options.negativePrompt ? `${options.prompt} ### ${options.negativePrompt}` : options.prompt,
-      params: {
-        sampler_name: options.sampler,
-        cfg_scale: options.cfgScale,
-        denoising_strength: options.denoisingStrength,
-        height: options.height,
-        width: options.width,
-        steps: options.steps,
-        karras: options.karras,
-        post_processing: options.postProcessors,
-        seed: options.seed ?? undefined,
-        hires_fix: options.hiresFix,
-        facefixer_strength: options.faceFixerStrength,
-        clip_skip: options.clipSkip,
-        loras: options.loraList.map(lora => ({
-          name: String(lora.id),
-          model: lora.strengthModel,
-          clip: lora.strengthClip,
-          inject_trigger: lora.injectTrigger,
-          is_version: lora.isVersionId,
-        })),
-        tis: options.textualInversionList.map(textualInversion => ({
-          name: String(textualInversion.id),
-          inject_ti: (() => {
-            switch (textualInversion.inject) {
-              case "prompt":
-                return "prompt";
-              case "negative":
-                return "negprompt";
-            }
-
-            return undefined;
-          })(),
-          strength: textualInversion.strength,
-        })),
-        n: options.amount,
-        extra_texts: options.qrCode ? [{
-          text: options.qrCode,
+    const resultFactory = (workers: string[] | null = null) => {
+      let extraTexts: {text: string, reference: string}[] | undefined = undefined;
+      if (options.qrCode?.text) {
+        extraTexts ??= [];
+        extraTexts.push({
+          text: options.qrCode.text,
           reference: 'qr_code',
-        }] : undefined,
-        workflow: options.qrCode ? 'qr_code' : undefined,
-      },
-      nsfw: options.nsfw,
-      trusted_workers: workers !== null ? false : options.trustedWorkers,
-      slow_workers: workers !== null ? true : options.slowWorkers,
-      censor_nsfw: options.censorNsfw,
-      models: [options.model],
-      dry_run: dryRun,
-      allow_downgrade: options.allowDowngrade,
-      workers: workers !== null ? workers : undefined,
-    });
+        });
+
+        if (options.qrCode?.positionX) {
+          extraTexts.push({
+            text: String(options.qrCode.positionX),
+            reference: 'x_offset',
+          });
+        }
+        if (options.qrCode?.positionY) {
+          extraTexts.push({
+            text: String(options.qrCode.positionY),
+            reference: 'y_offset',
+          });
+        }
+        if (options.qrCode?.markersPrompt) {
+          extraTexts.push({
+            text: options.qrCode.markersPrompt,
+            reference: 'function_layer_prompt',
+          });
+        }
+      }
+
+      return this.sendRequest<TDryRun extends true ? KudosCostResponse : AsyncGenerationResponse>(HttpMethod.Post, `generate/async`, {
+        prompt: options.negativePrompt ? `${options.prompt} ### ${options.negativePrompt}` : options.prompt,
+        params: {
+          sampler_name: options.sampler,
+          cfg_scale: options.cfgScale,
+          denoising_strength: options.denoisingStrength,
+          height: options.height,
+          width: options.width,
+          steps: options.steps,
+          karras: options.karras,
+          post_processing: options.postProcessors,
+          seed: options.seed ?? undefined,
+          hires_fix: options.hiresFix,
+          facefixer_strength: options.faceFixerStrength,
+          clip_skip: options.clipSkip,
+          loras: options.loraList.map(lora => ({
+            name: String(lora.id),
+            model: lora.strengthModel,
+            clip: lora.strengthClip,
+            inject_trigger: lora.injectTrigger,
+            is_version: lora.isVersionId,
+          })),
+          tis: options.textualInversionList.map(textualInversion => ({
+            name: String(textualInversion.id),
+            inject_ti: (() => {
+              switch (textualInversion.inject) {
+                case "prompt":
+                  return "prompt";
+                case "negative":
+                  return "negprompt";
+              }
+
+              return undefined;
+            })(),
+            strength: textualInversion.strength,
+          })),
+          n: options.amount,
+          extra_texts: extraTexts,
+          workflow: options.qrCode?.text ? 'qr_code' : undefined,
+        },
+        nsfw: options.nsfw,
+        trusted_workers: workers !== null ? false : options.trustedWorkers,
+        slow_workers: workers !== null ? true : options.slowWorkers,
+        censor_nsfw: options.censorNsfw,
+        models: [options.model],
+        dry_run: dryRun,
+        allow_downgrade: options.allowDowngrade,
+        workers: workers !== null ? workers : undefined,
+      });
+    };
 
     if (!options.onlyMyWorkers) {
       return resultFactory();

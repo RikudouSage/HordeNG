@@ -11,6 +11,36 @@
             <label for="inputQrCodeText">{{'app.generate_form.qr_code.text' | transloco}}</label>
             <input class="form-control mt-1" formControlName="text" id="inputQrCodeText" />
           </div>
+
+          <div class="mt-2">
+            <app-toggle-checkbox formControlName="customPosition" [description]="'app.generate_form.qr_code.custom_position' | transloco">
+              <app-tooltip [text]="'app.generate_form.qr_code.custom_position.tooltip' | transloco" />
+            </app-toggle-checkbox>
+          </div>
+
+          @if (form.value.customPosition) {
+            <div class="mt-2">
+              <label for="inputCustomPosition">{{'app.generate_form.qr_code.custom_position.title' | transloco}}</label>
+              <select id="inputCustomPosition" tom-select [maxItems]="1" [create]="false" class="mt-1" formControlName="position">
+                <option [value]="QrCodePosition.Center">{{'app.generate_form.qr_code.position.center' | transloco}}</option>
+                <option [value]="QrCodePosition.BottomLeft">{{'app.generate_form.qr_code.position.bottom_left' | transloco}}</option>
+                <option [value]="QrCodePosition.BottomRight">{{'app.generate_form.qr_code.position.bottom_right' | transloco}}</option>
+                <option [value]="QrCodePosition.TopLeft">{{'app.generate_form.qr_code.position.top_left' | transloco}}</option>
+                <option [value]="QrCodePosition.TopRight">{{'app.generate_form.qr_code.position.top_right' | transloco}}</option>
+                <option [value]="QrCodePosition.Custom">{{'app.generate_form.qr_code.position.custom' | transloco}}</option>
+              </select>
+            </div>
+
+            @if (form.value.position === QrCodePosition.Custom) {
+              <div class="mt-1 coordinates">
+                <label for="inputCustomPositionX">{{'app.generate_form.qr_code.position.custom.x' | transloco}}</label>
+                <input id="inputCustomPositionX" class="form-control" formControlName="positionX" type="number" min="0" [max]="imageWidth()" />
+
+                <label for="inputCustomPositionY">{{'app.generate_form.qr_code.position.custom.y' | transloco}}</label>
+                <input id="inputCustomPositionY" class="form-control" formControlName="positionY" type="number" min="0" [max]="imageHeight()" />
+              </div>
+            }
+          }
         }
       </div>
     </div>
