@@ -14,7 +14,6 @@ import {PostProcessor} from "../types/horde/post-processor";
 import {PaginatedResult} from "../types/paginated-result";
 import {Order} from "../types/order";
 import {PartialCacheItem} from "../types/cache-item";
-import {parseQrCodeFromRawValue} from "../helper/qr-code-migration-helper";
 
 @Injectable({
   providedIn: 'root'
@@ -142,7 +141,7 @@ export class DatabaseService {
       onlyMyWorkers: <boolean>valuesMap['onlyMyWorkers'] ?? DefaultGenerationOptions.onlyMyWorkers,
       amount: <number>valuesMap['amount'] ?? DefaultGenerationOptions.amount,
       textualInversionList: <TextualInversionGenerationOption[]>valuesMap['textualInversionList'] ?? DefaultGenerationOptions.textualInversionList,
-      qrCode: parseQrCodeFromRawValue(valuesMap['qrCode']) ?? DefaultGenerationOptions.qrCode,
+      qrCode: valuesMap['qrCode'] ?? DefaultGenerationOptions.qrCode,
     };
   }
 
