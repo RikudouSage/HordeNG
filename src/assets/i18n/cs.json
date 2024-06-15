@@ -286,5 +286,7 @@
   "app.generate_form.qr_code.position.top_right": "Nahoře vpravo",
   "app.generate_form.qr_code.position.custom": "Vlastní souřadnice",
   "app.generate_form.qr_code.position.custom.x": "Souřadnice X",
-  "app.generate_form.qr_code.position.custom.y": "Souřadnice Y"
+  "app.generate_form.qr_code.position.custom.y": "Souřadnice Y",
+  "app.generate_form.qr_code.custom_markers_prompt": "Vlastní prompt pro markery",
+  "app.generate_form.qr_code.custom_markers_prompt.tooltip": "Můžete dodat vlastní prompt pro markery QR kódu (tři velké černé čtverce). Mějte na paměti, že možnosti úpravy nejsou moc velké, protože čtverce musí pořád být čitelné čtečkami."
 }

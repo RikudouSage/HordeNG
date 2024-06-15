@@ -41,6 +41,18 @@
               </div>
             }
           }
+
+          <div class="mt-2">
+            <app-toggle-checkbox formControlName="customMarkersPrompt" [description]="'app.generate_form.qr_code.custom_markers_prompt' | transloco">
+              <app-tooltip [text]="'app.generate_form.qr_code.custom_markers_prompt.tooltip' | transloco" />
+            </app-toggle-checkbox>
+          </div>
+
+          @if (form.value.customMarkersPrompt) {
+            <div class="mt-1">
+              <input type="text" class="form-control mt-1" formControlName="markersPrompt" [attr.aria-label]="'app.generate_form.qr_code.custom_markers_prompt' | transloco" />
+            </div>
+          }
         }
       </div>
     </div>
