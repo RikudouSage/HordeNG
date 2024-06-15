@@ -200,6 +200,12 @@ export class QrCodeFormComponent implements ControlValueAccessor, OnInit, OnDest
       }
     }
 
+    if (this.form.value.customMarkersPrompt && !this.form.value.markersPrompt) {
+      return {
+        markersPrompt: true,
+      };
+    }
+
     return null;
   }
 
