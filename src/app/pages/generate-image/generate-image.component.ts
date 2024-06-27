@@ -474,6 +474,9 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
         if (request.seed) {
           this.form.patchValue({seed: request.seed});
         }
+        if (request.model) {
+          this.form.patchValue({model: request.model});
+        }
       }
     });
 
