@@ -14,6 +14,7 @@ import {catchError, map, Observable, of, tap} from "rxjs";
 import {CivitAiModel} from "../../types/civit-ai/civit-ai-model";
 import {TranslatorService} from "../../services/translator.service";
 import {DebounceInputDirective} from "../../directives/debounce-input.directive";
+import {CacheableImageComponent} from "../cacheable-image/cacheable-image.component";
 
 @Component({
   selector: 'app-prompt-style-modal',
@@ -26,7 +27,8 @@ import {DebounceInputDirective} from "../../directives/debounce-input.directive"
     CivitAiModelNamePipe,
     AsyncPipe,
     DebounceInputDirective,
-    NgOptimizedImage
+    NgOptimizedImage,
+    CacheableImageComponent
   ],
   templateUrl: './prompt-style-modal.component.html',
   styleUrl: './prompt-style-modal.component.scss'

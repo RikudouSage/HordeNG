@@ -47,13 +47,17 @@
 
                   @if (style.examples) {
                     <h3 class="example-title">{{'app.model.examples' | transloco}}</h3>
-                    <div class="examples mt-1">
-                      @for (image of style.examples; track image) {
-                        <a [href]="image" target="_blank" [style.background-image]="'url(' + image + ')'" class="mr-1">
-                          <img [src]="image" [alt]="'app.model.example_number' | transloco:{number: $index + 1}">
-                        </a>
-                      }
-                    </div>
+                    @defer (on viewport) {
+                      <div class="examples mt-1">
+                        @for (image of style.examples; track image) {
+                          <a [href]="image" target="_blank" class="mr-1">
+                            <app-img [src]="image" [alt]="'app.model.example_number' | transloco:{number: $index + 1}" />
+                          </a>
+                        }
+                      </div>
+                    } @placeholder () {
+                      <app-loader />
+                    }
                   }
 
                   <button class="btn btn-primary btnBig" (click)="useStyle(style)">{{'app.prompt_style.use' | transloco}}</button>
