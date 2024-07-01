@@ -16,6 +16,8 @@ import {GoogleDriveDataStorage} from "./services/image-storage/google-drive.data
 import {DropboxDataStorage} from "./services/image-storage/dropbox.data-storage";
 import {provideServiceWorker} from '@angular/service-worker';
 import {ParagraphTranspiler} from "./services/transloco/paragraph-transpiler";
+import {provideTranslocoMessageformat} from "@jsverse/transloco-messageformat";
+import {environment} from "../environments/environment";
 
 export const DATA_STORAGE = new InjectionToken<DataStorage<Credentials>>('ImageStorage');
 
@@ -38,6 +40,9 @@ export const appConfig: ApplicationConfig = {
     defaultTranslocoMarkupTranspilers(),
     provideTranslationMarkupTranspiler(ParagraphTranspiler),
     provideAnimations(),
+    provideTranslocoMessageformat({
+      enableCache: environment.prod || true,
+    }),
     provideToastr({
       maxOpened: 3,
       preventDuplicates: true,
