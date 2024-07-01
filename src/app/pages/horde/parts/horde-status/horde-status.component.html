@@ -11,6 +11,11 @@
     <p>
       <transloco key="app.horde.stats_minute" [params]="{mps: performanceStatus()!.past_minute_megapixelsteps | formatNumber}"/>
     </p>
+    @if (secondsUntilDone()) {
+      <p>
+        <transloco key="app.horde.stats.estimate" [params]="{estimate: secondsUntilDone()! | printSeconds | async}" />
+      </p>
+    }
   </app-box>
 } @else {
   <app-loader />

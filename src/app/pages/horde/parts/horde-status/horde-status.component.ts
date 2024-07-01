@@ -1,8 +1,8 @@
-import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
+import {Component, computed, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {interval, Subscription} from "rxjs";
 import {TranslocoPipe} from "@jsverse/transloco";
-import {isPlatformBrowser} from "@angular/common";
+import {AsyncPipe, isPlatformBrowser} from "@angular/common";
 import {BoxComponent} from "../../../../components/box/box.component";
 import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";
 import {LoaderComponent} from "../../../../components/loader/loader.component";
@@ -11,6 +11,7 @@ import {AiHorde} from "../../../../services/ai-horde.service";
 import {MessageService} from "../../../../services/message.service";
 import {TranslatorService} from "../../../../services/translator.service";
 import {toPromise} from "../../../../helper/resolvable";
+import {PrintSecondsPipe} from "../../../../pipes/print-seconds.pipe";
 
 @Component({
   selector: 'app-horde-status',
@@ -20,7 +21,9 @@ import {toPromise} from "../../../../helper/resolvable";
     TranslocoMarkupComponent,
     TranslocoPipe,
     FormatNumberPipe,
-    LoaderComponent
+    LoaderComponent,
+    PrintSecondsPipe,
+    AsyncPipe
   ],
   templateUrl: './horde-status.component.html',
   styleUrl: './horde-status.component.scss'
@@ -30,6 +33,17 @@ export class HordeStatusComponent implements OnInit, OnDestroy {
   private readonly isBrowser: boolean;
 
   public performanceStatus: WritableSignal<HordePerformance | null> = signal(null);
+  public secondsUntilDone = computed(() => {
+    if (this.performanceStatus() === null) {
+      return null;
+    }
+
+    const pastMinute = this.performanceStatus()!.past_minute_megapixelsteps;
+    const perSecond = pastMinute / 60;
+    const queued = this.performanceStatus()!.queued_megapixelsteps;
+
+    return Math.round(queued / perSecond);
+  });
 
   constructor(
     private readonly api: AiHorde,

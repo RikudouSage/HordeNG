@@ -289,5 +289,6 @@
   "app.generate_form.qr_code.position.custom.x": "X coordinate",
   "app.generate_form.qr_code.position.custom.y": "Y coordinate",
   "app.generate_form.qr_code.custom_markers_prompt": "Custom markers prompt",
-  "app.generate_form.qr_code.custom_markers_prompt.tooltip": "You can provide a custom prompt to be used for the QR code markers (the three big black squares). Note that the possibilities are limited because the squares still must be recognizable by readers."
+  "app.generate_form.qr_code.custom_markers_prompt.tooltip": "You can provide a custom prompt to be used for the QR code markers (the three big black squares). Note that the possibilities are limited because the squares still must be recognizable by readers.",
+  "app.horde.stats.estimate": "With current performance it will take around [b]{{estimate}}[/b] until the whole queue is cleared."
 }
