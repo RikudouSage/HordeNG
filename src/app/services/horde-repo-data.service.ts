@@ -5,6 +5,7 @@ import {from, map, Observable, of, switchMap, tap, zip} from "rxjs";
 import {ModelConfigurations} from "../types/sd-repo/model-configuration";
 import {CategoriesResponse, EnrichedPromptStyle, PromptStyles} from "../types/sd-repo/prompt-style";
 import {mergeDeep} from "../helper/merge-deep";
+import {StylePreviews} from "../types/style-preview";
 
 interface SdxlPromptStyle {
   name: string;
@@ -96,7 +97,20 @@ export class HordeRepoDataService {
             );
           }),
         );
-      })
+      }),
+      switchMap(styles => {
+        return this.httpClient.get<StylePreviews>('https://raw.githubusercontent.com/amiantos/AI-Horde-Styles-Previews/main/previews.json').pipe(
+          map (previews => {
+            return styles.map(style => {
+              if (typeof previews[style.name] !== 'undefined') {
+                style.examples = Object.values(previews[style.name]);
+              }
+
+              return style;
+            });
+          }),
+        );
+      }),
     );
   }
 

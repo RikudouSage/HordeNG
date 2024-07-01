@@ -8,7 +8,7 @@ import {BoxComponent} from "../box/box.component";
 import {PromptStyleTextComponent} from "../prompt-style-text/prompt-style-text.component";
 import {ModalService} from "../../services/modal.service";
 import {CivitAiModelNamePipe} from "../../pipes/civit-ai-model-name.pipe";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, NgOptimizedImage} from "@angular/common";
 import {CivitAiService} from "../../services/civit-ai.service";
 import {catchError, map, Observable, of, tap} from "rxjs";
 import {CivitAiModel} from "../../types/civit-ai/civit-ai-model";
@@ -25,7 +25,8 @@ import {DebounceInputDirective} from "../../directives/debounce-input.directive"
     PromptStyleTextComponent,
     CivitAiModelNamePipe,
     AsyncPipe,
-    DebounceInputDirective
+    DebounceInputDirective,
+    NgOptimizedImage
   ],
   templateUrl: './prompt-style-modal.component.html',
   styleUrl: './prompt-style-modal.component.scss'
