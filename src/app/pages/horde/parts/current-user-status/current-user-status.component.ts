@@ -1,5 +1,5 @@
 import {Component, Inject, input, OnDestroy, OnInit, output, PLATFORM_ID, signal} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {faCoins, faCrosshairs, faImage} from "@fortawesome/free-solid-svg-icons";
 import {isPlatformBrowser} from "@angular/common";
 import {interval, Subscription} from "rxjs";

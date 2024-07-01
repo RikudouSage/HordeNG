@@ -1,5 +1,5 @@
 import {Component, computed, OnDestroy, signal} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {interval, Subscription} from "rxjs";
 import {BoxComponent} from "../../../../components/box/box.component";
 import {LoaderComponent} from "../../../../components/loader/loader.component";

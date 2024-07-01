@@ -1,5 +1,5 @@
 import {Component, input} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 
 
 @Component({

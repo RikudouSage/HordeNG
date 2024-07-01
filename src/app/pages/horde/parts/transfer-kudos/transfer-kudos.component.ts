@@ -1,7 +1,7 @@
 import {Component, input, output, signal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {BoxComponent} from "../../../../components/box/box.component";
 import {LoaderComponent} from "../../../../components/loader/loader.component";
 import {UserDetails} from "../../../../types/horde/user-details";

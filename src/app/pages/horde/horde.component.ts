@@ -5,7 +5,7 @@ import {UserDetails} from "../../types/horde/user-details";
 import {toPromise} from "../../helper/resolvable";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {SmallBoxComponent} from "../../components/small-box/small-box.component";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";

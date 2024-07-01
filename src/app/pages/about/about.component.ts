@@ -1,7 +1,7 @@
 import {Component, signal} from '@angular/core';
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {environment} from "../../../environments/environment";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 
 @Component({
   selector: 'app-about',

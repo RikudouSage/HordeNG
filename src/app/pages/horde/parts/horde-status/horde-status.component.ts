@@ -1,7 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, WritableSignal} from '@angular/core';
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {interval, Subscription} from "rxjs";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {isPlatformBrowser} from "@angular/common";
 import {BoxComponent} from "../../../../components/box/box.component";
 import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";

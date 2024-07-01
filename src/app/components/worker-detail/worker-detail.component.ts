@@ -3,7 +3,7 @@ import {WorkerDetails} from "../../types/horde/worker-details";
 import {WorkerType} from "../../types/horde/worker-type";
 import {BoxButton, BoxComponent} from "../box/box.component";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
-import {TranslocoPipe, TranslocoService} from "@ngneat/transloco";
+import {TranslocoPipe, TranslocoService} from "@jsverse/transloco";
 import {YesNoComponent} from "../yes-no/yes-no.component";
 import {MathSqrtPipe} from "../../pipes/math-sqrt.pipe";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";

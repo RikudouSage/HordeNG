@@ -18,7 +18,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
 import {LoaderComponent} from "../../components/loader/loader.component";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {AsyncPipe, DOCUMENT, isPlatformBrowser, JsonPipe, KeyValuePipe, NgOptimizedImage} from "@angular/common";
 import {AppValidators} from "../../helper/app-validators";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
