@@ -29,4 +29,5 @@ export interface CategoriesResponse {
 export interface EnrichedPromptStyle extends PromptStyle {
   name: string;
   category: string;
+  examples?: string[];
 }

@@ -75,6 +75,7 @@ h2 {
 
     .card-header {
       background: #1d1e1f;
+      padding-bottom: 21px;
 
       @include mediaMax($small) {
         border-bottom: 0;
@@ -150,4 +151,27 @@ app-box {
 
 strong {
   font-weight: 600;
+}
+
+.examples {
+  display: flex;
+
+  a {
+    display: block;
+    height: 10vw;
+    width: 10vw;
+    font-size: 0;
+
+    img {
+      object-fit: cover;
+      height: 10vw;
+      width: 10vw;
+    }
+  }
+}
+
+h3.example-title {
+  font-weight: bold;
+  margin-top: 1vh;
+  margin-bottom: 0.5vh;
 }
