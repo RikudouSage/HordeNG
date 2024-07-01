@@ -4,7 +4,7 @@ import {provideRouter} from '@angular/router';
 import {routes} from './app.routes';
 import {provideHttpClient, withFetch} from '@angular/common/http';
 import {TranslocoHttpLoader} from './transloco-loader';
-import {provideTransloco} from '@ngneat/transloco';
+import {provideTransloco} from '@jsverse/transloco';
 import {defaultTranslocoMarkupTranspilers, provideTranslationMarkupTranspiler} from "ngx-transloco-markup";
 import {provideAnimations} from "@angular/platform-browser/animations";
 import {provideToastr} from "ngx-toastr";

@@ -12,7 +12,7 @@ import {
 } from "@angular/forms";
 import {OnChange, OnTouched} from "../../../../types/value-accessor";
 import {ToggleCheckboxComponent} from "../../../../components/toggle-checkbox/toggle-checkbox.component";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {TooltipComponent} from "../../../../components/tooltip/tooltip.component";
 import {Subscriptions} from "../../../../helper/subscriptions";
 import {QrCodePosition} from "../../../../types/qr-code-position.enum";

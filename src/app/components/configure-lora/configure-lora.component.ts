@@ -1,5 +1,5 @@
 import {Component, input, OnInit, output} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ModalService} from "../../services/modal.service";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";

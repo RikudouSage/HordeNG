@@ -3,7 +3,7 @@ import {HordeRepoDataService} from "../../services/horde-repo-data.service";
 import {EnrichedPromptStyle} from "../../types/sd-repo/prompt-style";
 import {toPromise} from "../../helper/resolvable";
 import {LoaderComponent} from "../loader/loader.component";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {BoxComponent} from "../box/box.component";
 import {PromptStyleTextComponent} from "../prompt-style-text/prompt-style-text.component";
 import {ModalService} from "../../services/modal.service";

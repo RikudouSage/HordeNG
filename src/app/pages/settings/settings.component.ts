@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, PLATFORM_ID, Signal, signal, WritableSignal} from '@angular/core';
-import {TranslocoPipe, TranslocoService} from "@ngneat/transloco";
+import {TranslocoPipe, TranslocoService} from "@jsverse/transloco";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthManagerService} from "../../services/auth-manager.service";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";

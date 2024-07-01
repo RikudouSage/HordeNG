@@ -10,7 +10,7 @@ import {ToastrService} from "ngx-toastr";
 import {TranslatorService} from "./services/translator.service";
 import {FooterComponent} from "./components/footer/footer.component";
 import {MessageService} from "./services/message.service";
-import {TranslocoService} from "@ngneat/transloco";
+import {TranslocoService} from "@jsverse/transloco";
 import {DatabaseService} from "./services/database.service";
 import {findBrowserLanguage} from "./helper/language";
 import {isPlatformBrowser} from "@angular/common";

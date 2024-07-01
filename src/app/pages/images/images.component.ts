@@ -4,7 +4,7 @@ import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {AsyncPipe, DOCUMENT, isPlatformBrowser} from "@angular/common";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {StoredImage} from "../../types/db/stored-image";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {ModalService} from "../../services/modal.service";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";

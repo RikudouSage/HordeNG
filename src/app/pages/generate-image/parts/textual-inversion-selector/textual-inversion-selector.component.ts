@@ -18,7 +18,7 @@ import {ModelBasesMatchWarningPipe} from "../../../../pipes/model-bases-match-wa
 import {ReactiveFormsModule} from "@angular/forms";
 import {ToggleCheckboxComponent} from "../../../../components/toggle-checkbox/toggle-checkbox.component";
 import {TomSelectDirective} from "../../../../directives/tom-select.directive";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {TextualInversionGenerationOption} from "../../../../types/db/generation-options";
 import {RouterLink} from "@angular/router";
 import {

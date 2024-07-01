@@ -1,5 +1,5 @@
 import {Component, Inject, input, OnDestroy, OnInit, PLATFORM_ID, signal} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {isPlatformBrowser} from "@angular/common";
 import {interval, Subscription} from "rxjs";
 import {BoxComponent} from "../../../../components/box/box.component";

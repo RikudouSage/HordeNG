@@ -1,5 +1,5 @@
 import {Component, Directive, effect, input, OnInit, output, signal, TemplateRef} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {TooltipComponent} from "../../../../components/tooltip/tooltip.component";
 import {TextualInversionGenerationOption} from "../../../../types/db/generation-options";
 import {LoraTextRowComponent} from "../../../../components/lora-text-row/lora-text-row.component";

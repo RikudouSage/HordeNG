@@ -1,5 +1,5 @@
 import {Component, effect, input, OnInit, output, Signal, signal, TemplateRef} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";

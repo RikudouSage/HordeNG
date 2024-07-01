@@ -6,7 +6,7 @@ import {CivitAiService} from "../../services/civit-ai.service";
 import {CivitAiModel} from "../../types/civit-ai/civit-ai-model";
 import {DatabaseService} from "../../services/database.service";
 import {toPromise} from "../../helper/resolvable";
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {ToggleCheckboxComponent} from "../toggle-checkbox/toggle-checkbox.component";
 import {BoxComponent} from "../box/box.component";
 import {TomSelectDirective} from "../../directives/tom-select.directive";

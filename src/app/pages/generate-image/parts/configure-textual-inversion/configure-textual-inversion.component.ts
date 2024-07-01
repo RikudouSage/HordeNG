@@ -1,5 +1,5 @@
 import {Component, input, OnInit, output} from '@angular/core';
-import {TranslocoPipe} from "@ngneat/transloco";
+import {TranslocoPipe} from "@jsverse/transloco";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
 import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";
 import {TextualInversionInjectType} from "../../../../types/db/generation-options";

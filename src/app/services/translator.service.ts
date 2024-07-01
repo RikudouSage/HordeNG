@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HashMap, TranslocoService} from "@ngneat/transloco";
+import {HashMap, TranslocoService} from "@jsverse/transloco";
 import {map, Observable, of, switchMap, tap} from "rxjs";
 
 @Injectable({
