@@ -24,29 +24,27 @@ export class PrintSecondsPipe implements PipeTransform {
 
     const seconds = remainder;
 
-    let shouldPrint = false;
     const values = new Map<string, number>();
     values.set(await toPromise(this.translator.get('app.days', {value: days})), days);
     values.set(await toPromise(this.translator.get('app.hours', {value: hours})), hours);
     values.set(await toPromise(this.translator.get('app.minutes', {value: minutes})), minutes);
     values.set(await toPromise(this.translator.get('app.seconds', {value: seconds})), seconds);
 
-    let result = '';
-    for (const description of values.keys()) {
-      const value = values.get(description)!;
-      if (value > 0) {
-        shouldPrint = true;
-      }
-
-      if (!shouldPrint) {
-        continue;
-      }
-
-      result += `${value} ${description}, `;
+    while (values.get([...values.keys()][0]) === 0) {
+      values.delete([...values.keys()][0]);
     }
 
-    result = result.substring(0, result.length - 2);
+    while (values.get([...values.keys()][values.size - 1]) === 0) {
+      values.delete([...values.keys()][values.size - 1]);
+    }
 
-    return result;
+    const parts = [];
+    for (const description of values.keys()) {
+      const value = values.get(description)!;
+
+      parts.push(`${value} ${description}`);
+    }
+
+    return parts.join(', ');
   }
 }
