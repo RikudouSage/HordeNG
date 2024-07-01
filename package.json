@@ -29,6 +29,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@jsverse/transloco": "^7.0.0",
+    "@jsverse/transloco-messageformat": "^7.0.1",
     "@types/autosize": "^4.0.3",
     "@types/gapi": "^0.0.47",
     "@types/gapi.client.drive-v3": "^0.0.4",

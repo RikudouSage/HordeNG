@@ -8,4 +8,5 @@ export const environment = {
   maintainer: 'Rikudou',
   apiUrl: 'https://aihorde.net/api',
   apiVersion: 'v2',
+  prod: true,
 };
