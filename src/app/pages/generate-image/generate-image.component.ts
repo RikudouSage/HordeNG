@@ -380,6 +380,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     amount: new FormControl<number>(1),
     textualInversionList: new FormControl<TextualInversionGenerationOption[]>([]),
     qrCode: new FormControl<QrCodeComponentValue | null>(null),
+    transparent: new FormControl<boolean>(false),
   });
 
   @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
@@ -731,6 +732,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       amount: value.amount ?? 1,
       textualInversionList: value.textualInversionList ?? [],
       qrCode: value.qrCode ?? null,
+      transparent: value.transparent ?? false,
     };
   }
 

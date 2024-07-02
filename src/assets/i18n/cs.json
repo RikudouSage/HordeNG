@@ -289,5 +289,7 @@
   "app.generate_form.qr_code.position.custom.y": "Souřadnice Y",
   "app.generate_form.qr_code.custom_markers_prompt": "Vlastní prompt pro markery",
   "app.generate_form.qr_code.custom_markers_prompt.tooltip": "Můžete dodat vlastní prompt pro markery QR kódu (tři velké černé čtverce). Mějte na paměti, že možnosti úpravy nejsou moc velké, protože čtverce musí pořád být čitelné čtečkami.",
-  "app.horde.stats.estimate": "Současným tempeme bude trvat přibližně [b]{{estimate}}[/b], než se odbaví celá fronta."
+  "app.horde.stats.estimate": "Současným tempeme bude trvat přibližně [b]{{estimate}}[/b], než se odbaví celá fronta.",
+  "app.generate.transparent": "Průhledný obrázek [beta]",
+  "app.generate.help.transparent": "Je-li povoleno, obrázek se vygeneruje s průhledným pozadím. Jedná se o beta funkci, mějte prosím strpení, pokud vám to nebude fungovat."
 }

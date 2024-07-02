@@ -142,6 +142,7 @@ export class DatabaseService {
       amount: <number>valuesMap['amount'] ?? DefaultGenerationOptions.amount,
       textualInversionList: <TextualInversionGenerationOption[]>valuesMap['textualInversionList'] ?? DefaultGenerationOptions.textualInversionList,
       qrCode: valuesMap['qrCode'] ?? DefaultGenerationOptions.qrCode,
+      transparent: <boolean>valuesMap['transparent'] ?? false,
     };
   }
 
