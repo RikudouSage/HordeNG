@@ -49,6 +49,10 @@
               <p class="text-warning">{{'app.output_format.webp_info' | transloco}}</p>
             }
           </div>
+          <div class="form-group">
+            <app-toggle-checkbox [description]="'app.notifications.enabled' | transloco" formControlName="notifications" />
+            <p>{{'app.notifications.explanation' | transloco}}</p>
+          </div>
         </div>
         <div class="settingContent--right">
         @if (form.controls.storage.value === 's3') {

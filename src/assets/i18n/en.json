@@ -292,5 +292,7 @@
   "app.generate_form.qr_code.custom_markers_prompt.tooltip": "You can provide a custom prompt to be used for the QR code markers (the three big black squares). Note that the possibilities are limited because the squares still must be recognizable by readers.",
   "app.horde.stats.estimate": "With current performance it will take around [b]{{estimate}}[/b] until the whole queue is cleared.",
   "app.generate.transparent": "Transparent image [beta]",
-  "app.generate.help.transparent": "When enabled, the image will be generated with a transparent background. Note that this is a beta feature, so don't go threatening to eat my cat if it doesn't work for you."
+  "app.generate.help.transparent": "When enabled, the image will be generated with a transparent background. Note that this is a beta feature, so don't go threatening to eat my cat if it doesn't work for you.",
+  "app.notifications.enabled": "Enable notifications",
+  "app.notifications.explanation": "From time to time, we might show you a notification about new features, new Horde events etc. These are not system notifications, we won't disturb you when you're not inside this app."
 }

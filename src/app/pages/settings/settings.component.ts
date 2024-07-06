@@ -27,6 +27,7 @@ import {DropboxDataStorage} from "../../services/image-storage/dropbox.data-stor
 import {findBrowserLanguage} from "../../helper/language";
 import {LanguageNamePipe} from "../../pipes/language-name.pipe";
 import {OutputFormat} from "../../types/output-format";
+import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
 
 @Component({
   selector: 'app-settings',
@@ -41,7 +42,8 @@ import {OutputFormat} from "../../types/output-format";
     JsonPipe,
     CopyButtonComponent,
     TranslocoMarkupComponent,
-    LanguageNamePipe
+    LanguageNamePipe,
+    ToggleCheckboxComponent
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
@@ -75,6 +77,9 @@ export class SettingsComponent implements OnInit {
       Validators.required,
     ]),
     outputFormat: new FormControl<OutputFormat>(OutputFormat.Png, [
+      Validators.required,
+    ]),
+    notifications: new FormControl<boolean>(false, [
       Validators.required,
     ]),
     s3_accessKey: new FormControl<string>(''),
@@ -171,6 +176,7 @@ export class SettingsComponent implements OnInit {
         homepage: (await this.database.getSetting('homepage', 'about')).value,
         language: this.originalLanguage()!,
         outputFormat: (await this.database.getSetting('image_format', OutputFormat.Png)).value,
+        notifications: (await this.database.getSetting('notificationsEnabled', true)).value,
       });
 
       const storages: {[key: string]: string} = {};
@@ -217,6 +223,10 @@ export class SettingsComponent implements OnInit {
       this.database.setSetting({
         setting: 'image_format',
         value: this.form.value.outputFormat!,
+      }),
+      this.database.setSetting({
+        setting: 'notificationsEnabled',
+        value: this.form.value.notifications ?? false,
       }),
     ]);
 
