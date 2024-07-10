@@ -68,3 +68,19 @@
   padding: 10px 15px;
 }
 
+.highlighted {
+  border: 1px solid $dangerColor;
+  animation: pulse-shadow 0.5s 6;
+}
+
+@keyframes pulse-shadow {
+  0% {
+    box-shadow: 0 0 5px $dangerColor;
+  }
+  50% {
+    box-shadow: 0 0 20px $dangerColor;
+  }
+  100% {
+    box-shadow: 0 0 5px $dangerColor;
+  }
+}

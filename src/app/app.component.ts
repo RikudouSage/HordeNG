@@ -1,5 +1,5 @@
-import {Component, Inject, OnInit, PLATFORM_ID, signal, ViewContainerRef} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
+import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, ViewContainerRef} from '@angular/core';
+import {Router, RouterOutlet} from '@angular/router';
 import {TopMenuComponent} from "./components/top-menu/top-menu.component";
 import {AiHorde} from "./services/ai-horde.service";
 import {AuthManagerService} from "./services/auth-manager.service";
@@ -14,6 +14,9 @@ import {TranslocoService} from "@jsverse/transloco";
 import {DatabaseService} from "./services/database.service";
 import {findBrowserLanguage} from "./helper/language";
 import {isPlatformBrowser} from "@angular/common";
+import {NotificationService} from "./services/notification.service";
+import {interval, startWith} from "rxjs";
+import {Subscriptions} from "./helper/subscriptions";
 
 @Component({
   selector: 'app-root',
@@ -22,9 +25,10 @@ import {isPlatformBrowser} from "@angular/common";
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   private readonly isBrowser: boolean;
   private updateChecked = signal(false);
+  private readonly subscriptions = new Subscriptions();
 
   constructor(
     private readonly aiHorde: AiHorde,
@@ -36,6 +40,8 @@ export class AppComponent implements OnInit {
     private readonly transloco: TranslocoService,
     private readonly database: DatabaseService,
     @Inject(PLATFORM_ID) platformId: string,
+    private readonly notifications: NotificationService,
+    private readonly router: Router,
     view: ViewContainerRef,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -51,6 +57,41 @@ export class AppComponent implements OnInit {
       } else if (typeof navigator !== 'undefined') {
         this.transloco.setActiveLang(findBrowserLanguage(availableLanguages) ?? 'en')
       }
+
+      let currentlyDisplayed: string | null = null;
+      this.subscriptions.add(interval(60_000).pipe(startWith(0)).subscribe(async () => {
+        const notification = await this.notifications.getNotificationToDisplay();
+        if (notification === null) {
+          return;
+        }
+        if (notification.id === currentlyDisplayed) {
+          return;
+        }
+
+        const item = this.toastr.info(
+          notification.description ? notification.description : notification.title,
+          notification.description ? notification.title : undefined,
+          {
+            closeButton: true,
+            disableTimeOut: true,
+          }
+        );
+        currentlyDisplayed = notification.id;
+        this.subscriptions.add(item.onTap.subscribe(() => {
+          if (notification.link) {
+            if (notification.link.startsWith('/')) {
+              console.log(notification.link)
+              this.router.navigateByUrl(notification.link);
+            } else {
+              window.open(notification.link, "_blank");
+            }
+          }
+        }));
+        this.subscriptions.add(item.onHidden.subscribe(async () => {
+          currentlyDisplayed = null;
+          await this.notifications.markAsRead(notification);
+        }));
+      }));
     }
 
     if (this.updates.isEnabled) {
@@ -88,5 +129,9 @@ export class AppComponent implements OnInit {
     if (typeof navigator !== 'undefined' && !await navigator.storage.persisted()) {
       await navigator.storage.persist();
     }
+  }
+
+  public ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

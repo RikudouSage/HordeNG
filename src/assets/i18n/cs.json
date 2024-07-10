@@ -291,5 +291,7 @@
   "app.generate_form.qr_code.custom_markers_prompt.tooltip": "Můžete dodat vlastní prompt pro markery QR kódu (tři velké černé čtverce). Mějte na paměti, že možnosti úpravy nejsou moc velké, protože čtverce musí pořád být čitelné čtečkami.",
   "app.horde.stats.estimate": "Současným tempeme bude trvat přibližně [b]{{estimate}}[/b], než se odbaví celá fronta.",
   "app.generate.transparent": "Průhledný obrázek [beta]",
-  "app.generate.help.transparent": "Je-li povoleno, obrázek se vygeneruje s průhledným pozadím. Jedná se o beta funkci, mějte prosím strpení, pokud vám to nebude fungovat."
+  "app.generate.help.transparent": "Je-li povoleno, obrázek se vygeneruje s průhledným pozadím. Jedná se o beta funkci, mějte prosím strpení, pokud vám to nebude fungovat.",
+  "app.notifications.enabled": "Povolit notifikace",
+  "app.notifications.explanation": "Čas od času vám můžeme ukázat notifikace s informacemi o změnách, eventech Hordy apod. Nejedná se o standardní systémové notifikace, zobrazí se pouze pokud máte otevřenu aplikaci."
 }

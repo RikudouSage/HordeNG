@@ -14,6 +14,7 @@ import {PostProcessor} from "../types/horde/post-processor";
 import {PaginatedResult} from "../types/paginated-result";
 import {Order} from "../types/order";
 import {PartialCacheItem} from "../types/cache-item";
+import {Notification} from "../types/notification";
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,7 @@ export class DatabaseService {
     GenerationMetadata: 'generation_metadata',
     Settings: 'settings',
     Cache: 'cache',
+    Notifications: 'notifications',
   };
 
   public async getAppLanguage(): Promise<string | null> {
@@ -158,6 +160,21 @@ export class DatabaseService {
     await this.removeItem(this.ObjectStores.GenerationMetadata, metadata.requestId);
   }
 
+  public async getNotificationsByIds(ids: string[]): Promise<Notification[]> {
+    return (await this.getAll<Notification>(this.ObjectStores.Notifications))
+      .filter(notification => ids.includes(notification.id));
+  }
+
+  public async removeNotifications(ids: string[]): Promise<void> {
+    const promises = ids.map(id => this.removeItem(this.ObjectStores.Notifications, id));
+    await Promise.all(promises);
+  }
+
+  public async storeNotifications(notifications: Notification[]) {
+    const promises = notifications.map(notification => this.setValue(this.ObjectStores.Notifications, notification));
+    await Promise.all(promises);
+  }
+
   private async getAll<T>(storeName: string): Promise<T[]> {
     const db = await this.getDatabase();
     const transaction = db.transaction(storeName, "readonly");
@@ -255,7 +272,7 @@ export class DatabaseService {
     }
 
     return new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open("horde_ng", 2);
+      const request = indexedDB.open("horde_ng", 3);
       request.onsuccess = () => {
         this._database = request.result;
         resolve(request.result);
@@ -297,6 +314,12 @@ export class DatabaseService {
             case 1:
               db.createObjectStore(this.ObjectStores.Cache, {
                 keyPath: 'key',
+                autoIncrement: false,
+              });
+              break;
+            case 2:
+              db.createObjectStore(this.ObjectStores.Notifications, {
+                keyPath: 'id',
                 autoIncrement: false,
               });
               break;

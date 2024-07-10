@@ -9,4 +9,5 @@ export const environment = {
   apiUrl: 'https://aihorde.net/api',
   apiVersion: 'v2',
   prod: true,
+  eventsUrl: 'https://raw.githubusercontent.com/FriendsOfAiHorde/HordeEvents/main/results.horde-ng.min.json',
 };

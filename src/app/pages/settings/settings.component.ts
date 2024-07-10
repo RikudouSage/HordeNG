@@ -27,6 +27,8 @@ import {DropboxDataStorage} from "../../services/image-storage/dropbox.data-stor
 import {findBrowserLanguage} from "../../helper/language";
 import {LanguageNamePipe} from "../../pipes/language-name.pipe";
 import {OutputFormat} from "../../types/output-format";
+import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-settings',
@@ -41,7 +43,8 @@ import {OutputFormat} from "../../types/output-format";
     JsonPipe,
     CopyButtonComponent,
     TranslocoMarkupComponent,
-    LanguageNamePipe
+    LanguageNamePipe,
+    ToggleCheckboxComponent
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'
@@ -60,6 +63,7 @@ export class SettingsComponent implements OnInit {
   public s3CorsConfig: Signal<any> = signal(S3CorsConfig);
 
   public availableLanguages: Signal<string[]>;
+  public fragment = signal<string | null>(null);
 
   public form = new FormGroup({
     apiKey: new FormControl<string>(this.authManager.anonymousApiKey, [
@@ -75,6 +79,9 @@ export class SettingsComponent implements OnInit {
       Validators.required,
     ]),
     outputFormat: new FormControl<OutputFormat>(OutputFormat.Png, [
+      Validators.required,
+    ]),
+    notifications: new FormControl<boolean>(false, [
       Validators.required,
     ]),
     s3_accessKey: new FormControl<string>(''),
@@ -119,6 +126,7 @@ export class SettingsComponent implements OnInit {
     private readonly storageManager: DataStorageManagerService,
     private readonly database: DatabaseService,
     private readonly transloco: TranslocoService,
+    private readonly activatedRoute: ActivatedRoute,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -171,6 +179,7 @@ export class SettingsComponent implements OnInit {
         homepage: (await this.database.getSetting('homepage', 'about')).value,
         language: this.originalLanguage()!,
         outputFormat: (await this.database.getSetting('image_format', OutputFormat.Png)).value,
+        notifications: (await this.database.getSetting('notificationsEnabled', true)).value,
       });
 
       const storages: {[key: string]: string} = {};
@@ -182,6 +191,10 @@ export class SettingsComponent implements OnInit {
 
     this.form.controls.language.valueChanges.subscribe(language => {
       this.languageChanged.set(language !== this.originalLanguage());
+    });
+
+    this.activatedRoute.fragment.subscribe(fragment => {
+      this.fragment.set(fragment);
     });
 
     this.loading.set(false);
@@ -217,6 +230,10 @@ export class SettingsComponent implements OnInit {
       this.database.setSetting({
         setting: 'image_format',
         value: this.form.value.outputFormat!,
+      }),
+      this.database.setSetting({
+        setting: 'notificationsEnabled',
+        value: this.form.value.notifications ?? false,
       }),
     ]);
 
