@@ -28,6 +28,7 @@ import {findBrowserLanguage} from "../../helper/language";
 import {LanguageNamePipe} from "../../pipes/language-name.pipe";
 import {OutputFormat} from "../../types/output-format";
 import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-settings',
@@ -62,6 +63,7 @@ export class SettingsComponent implements OnInit {
   public s3CorsConfig: Signal<any> = signal(S3CorsConfig);
 
   public availableLanguages: Signal<string[]>;
+  public fragment = signal<string | null>(null);
 
   public form = new FormGroup({
     apiKey: new FormControl<string>(this.authManager.anonymousApiKey, [
@@ -124,6 +126,7 @@ export class SettingsComponent implements OnInit {
     private readonly storageManager: DataStorageManagerService,
     private readonly database: DatabaseService,
     private readonly transloco: TranslocoService,
+    private readonly activatedRoute: ActivatedRoute,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -188,6 +191,10 @@ export class SettingsComponent implements OnInit {
 
     this.form.controls.language.valueChanges.subscribe(language => {
       this.languageChanged.set(language !== this.originalLanguage());
+    });
+
+    this.activatedRoute.fragment.subscribe(fragment => {
+      this.fragment.set(fragment);
     });
 
     this.loading.set(false);

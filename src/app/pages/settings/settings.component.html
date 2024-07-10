@@ -49,7 +49,7 @@
               <p class="text-warning">{{'app.output_format.webp_info' | transloco}}</p>
             }
           </div>
-          <div class="form-group">
+          <div class="form-group" [class.highlighted]="fragment() === 'notifications'">
             <app-toggle-checkbox [description]="'app.notifications.enabled' | transloco" formControlName="notifications" />
             <p>{{'app.notifications.explanation' | transloco}}</p>
           </div>
