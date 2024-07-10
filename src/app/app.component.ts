@@ -100,7 +100,7 @@ export class AppComponent implements OnInit, OnDestroy {
           return;
         }
         if (event.type === 'VERSION_READY') {
-          const toast = this.toastr.info(
+          const toast = this.toastr.success(
             await toPromise(this.translator.get('app.new_version.available')),
             await toPromise(this.translator.get('app.new_version.title')),
             {
