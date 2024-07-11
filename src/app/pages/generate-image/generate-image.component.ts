@@ -108,51 +108,6 @@ interface Result {
   prompt: string;
 }
 
-// const fakeData: Result[] = [
-//   {
-//     width: 453,
-//     height: 600,
-//     source: 'https://pixlr.com/images/index/ai-image-generator-three.webp',
-//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
-//     workerName: 'Fake worker',
-//     model: 'Fake model',
-//     seed: '123',
-//     id: 'b1ddf95e-7825-4a02-82a1-a09e7734f2c4',
-//     censored: false,
-//     kudos: 30,
-//     postProcessors: '',
-//     prompt: 'Some fake prompt',
-//   },
-//   {
-//     width: 866,
-//     height: 360,
-//     source: 'https://t4.ftcdn.net/jpg/02/56/10/07/360_F_256100731_qNLp6MQ3FjYtA3Freu9epjhsAj2cwU9c.jpg',
-//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
-//     workerName: 'Fake worker',
-//     model: 'Fake model',
-//     seed: '123',
-//     id: '8a3936a2-f935-4bc3-acf3-025a9151e452',
-//     censored: false,
-//     kudos: 30,
-//     postProcessors: '',
-//     prompt: 'Some fake prompt',
-//   },
-//   {
-//     width: 540,
-//     height: 360,
-//     source: 'https://t3.ftcdn.net/jpg/02/70/35/00/360_F_270350073_WO6yQAdptEnAhYKM5GuA9035wbRnVJSr.jpg',
-//     workerId: 'a48caa64-5bbc-4ba9-85fd-5c6b6414d7bf',
-//     workerName: 'Fake worker',
-//     model: 'Fake model',
-//     seed: '123',
-//     id: '806cde5e-45d4-4709-b82e-fa3cb14f27ed',
-//     censored: false,
-//     kudos: 30,
-//     postProcessors: '',
-//     prompt: 'Some fake prompt',
-//   },
-// ];
-
 @Component({
   selector: 'app-generate-image',
   standalone: true,
@@ -195,6 +150,8 @@ interface Result {
   styleUrl: './generate-image.component.scss'
 })
 export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit {
+  private readonly convertWorkerJobName: string = 'convertToPng';
+
   private readonly isBrowser: boolean;
 
   protected readonly Sampler = Sampler;
@@ -205,6 +162,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   private checkInterval: Subscription | null = null;
   private swiper: Swiper | null = null;
   private swiperThumbs: Swiper | null = null;
+  private readonly worker: Worker | null = null;
+  private convertImageWorkerResponse: Blob | null = null;
 
   private currentModelName: WritableSignal<string> = signal('');
   private currentPrompt: WritableSignal<string> = signal('');
@@ -440,6 +399,15 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       this.initializeSwiper();
       this.initializeSwiperThumbs();
     });
+
+    if (typeof Worker !== 'undefined') {
+      this.worker = new Worker(new URL('./generate-image.worker', import.meta.url));
+      this.worker.onmessage = ({ data }) => {
+        if (data.type === this.convertWorkerJobName) {
+          this.convertImageWorkerResponse = data.result;
+        }
+      };
+    }
   }
 
   public async ngOnInit(): Promise<void> {
@@ -766,24 +734,51 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
 
       const format = (await this.database.getSetting('image_format', OutputFormat.Png)).value;
       if (format === OutputFormat.Png) {
-        const webp = decodeWebP({
-          data: new Uint8Array(await image.arrayBuffer()),
-        });
-        let out = encodePng({
-          image: webp!,
-        });
-        out = addMetadata(out, "generationMetadata", JSON.stringify({
-          id: generations[i - 1].id,
-          worker: {
-            id: generations[i - 1].worker_id,
-            name: generations[i - 1].worker_name,
-          },
-          ...metadata,
-          model: generations[i - 1].model,
-          seed: generations[i - 1].seed,
-          generator: 'HordeNG (https://horde-ng.org)'
-        }));
-        image = new Blob([out], { type: 'image/png' });
+        if (this.worker) {
+          this.worker.postMessage({
+            type: this.convertWorkerJobName,
+            data: await image.arrayBuffer(),
+            generationMetadata: {
+              id: generations[i - 1].id,
+              worker: {
+                id: generations[i - 1].worker_id,
+                name: generations[i - 1].worker_name,
+              },
+              ...metadata,
+              model: generations[i - 1].model,
+              seed: generations[i - 1].seed,
+              generator: 'HordeNG (https://horde-ng.org)'
+            }
+          });
+          image = await new Promise<Blob>(resolve => {
+            const subscription = interval(2000).subscribe(() => {
+              if (this.convertImageWorkerResponse !== null) {
+                subscription.unsubscribe();
+                resolve(this.convertImageWorkerResponse);
+                this.convertImageWorkerResponse = null;
+              }
+            });
+          });
+        } else {
+          const webp = decodeWebP({
+            data: new Uint8Array(await image.arrayBuffer()),
+          });
+          let out = encodePng({
+            image: webp!,
+          });
+          out = addMetadata(out, "generationMetadata", JSON.stringify({
+            id: generations[i - 1].id,
+            worker: {
+              id: generations[i - 1].worker_id,
+              name: generations[i - 1].worker_name,
+            },
+            ...metadata,
+            model: generations[i - 1].model,
+            seed: generations[i - 1].seed,
+            generator: 'HordeNG (https://horde-ng.org)'
+          }));
+          image = new Blob([out], { type: 'image/png' });
+        }
       }
 
       results.push({
