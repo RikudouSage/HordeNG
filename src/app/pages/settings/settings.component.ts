@@ -29,6 +29,7 @@ import {LanguageNamePipe} from "../../pipes/language-name.pipe";
 import {OutputFormat} from "../../types/output-format";
 import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
 import {ActivatedRoute} from "@angular/router";
+import {SettingKey} from "../../types/setting-keys";
 
 @Component({
   selector: 'app-settings',
@@ -84,6 +85,10 @@ export class SettingsComponent implements OnInit {
     notifications: new FormControl<boolean>(false, [
       Validators.required,
     ]),
+    notificationsHordeNgNews: new FormControl<boolean>(false),
+    notificationsMarketing: new FormControl<boolean>(false),
+    notificationsHordeNews: new FormControl<boolean>(false),
+    notificationsParties: new FormControl<boolean>(false),
     s3_accessKey: new FormControl<string>(''),
     s3_secretKey: new FormControl<string>(''),
     s3_bucket: new FormControl<string>(''),
@@ -179,7 +184,11 @@ export class SettingsComponent implements OnInit {
         homepage: (await this.database.getSetting('homepage', 'about')).value,
         language: this.originalLanguage()!,
         outputFormat: (await this.database.getSetting('image_format', OutputFormat.Png)).value,
-        notifications: (await this.database.getSetting('notificationsEnabled', true)).value,
+        notifications: (await this.database.getSetting(SettingKey.NotificationsEnabled, true)).value,
+        notificationsHordeNews: (await this.database.getSetting(SettingKey.NotificationsHordeNewsEnabled, true)).value,
+        notificationsParties: (await this.database.getSetting(SettingKey.NotificationsPartiesEnabled, true)).value,
+        notificationsHordeNgNews: (await this.database.getSetting(SettingKey.NotificationsHordeNgNewsEnabled, true)).value,
+        notificationsMarketing: (await this.database.getSetting(SettingKey.NotificationsMarketingEnabled, true)).value,
       });
 
       const storages: {[key: string]: string} = {};
@@ -232,8 +241,24 @@ export class SettingsComponent implements OnInit {
         value: this.form.value.outputFormat!,
       }),
       this.database.setSetting({
-        setting: 'notificationsEnabled',
+        setting: SettingKey.NotificationsEnabled,
         value: this.form.value.notifications ?? false,
+      }),
+      this.database.setSetting({
+        setting: SettingKey.NotificationsHordeNewsEnabled,
+        value: this.form.value.notificationsHordeNews,
+      }),
+      this.database.setSetting({
+        setting: SettingKey.NotificationsPartiesEnabled,
+        value: this.form.value.notificationsParties,
+      }),
+      this.database.setSetting({
+        setting: SettingKey.NotificationsMarketingEnabled,
+        value: this.form.value.notificationsMarketing,
+      }),
+      this.database.setSetting({
+        setting: SettingKey.NotificationsHordeNgNewsEnabled,
+        value: this.form.value.notificationsHordeNgNews,
       }),
     ]);
 

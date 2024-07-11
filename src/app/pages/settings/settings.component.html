@@ -52,6 +52,13 @@
           <div class="form-group" [class.highlighted]="fragment() === 'notifications'">
             <app-toggle-checkbox [description]="'app.notifications.enabled' | transloco" formControlName="notifications" />
             <p>{{'app.notifications.explanation' | transloco}}</p>
+
+            @if (form.value.notifications) {
+              <app-toggle-checkbox [description]="'app.notifications.horde_ng_news' | transloco" formControlName="notificationsHordeNgNews" />
+              <app-toggle-checkbox [description]="'app.notifications.horde_news' | transloco" formControlName="notificationsHordeNews" />
+              <app-toggle-checkbox [description]="'app.notifications.parties' | transloco" formControlName="notificationsParties" />
+              <app-toggle-checkbox [description]="'app.notifications.marketing' | transloco" formControlName="notificationsMarketing" />
+            }
           </div>
         </div>
         <div class="settingContent--right">

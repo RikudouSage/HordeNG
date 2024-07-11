@@ -293,5 +293,9 @@
   "app.generate.transparent": "Průhledný obrázek [beta]",
   "app.generate.help.transparent": "Je-li povoleno, obrázek se vygeneruje s průhledným pozadím. Jedná se o beta funkci, mějte prosím strpení, pokud vám to nebude fungovat.",
   "app.notifications.enabled": "Povolit notifikace",
-  "app.notifications.explanation": "Čas od času vám můžeme ukázat notifikace s informacemi o změnách, eventech Hordy apod. Nejedná se o standardní systémové notifikace, zobrazí se pouze pokud máte otevřenu aplikaci."
+  "app.notifications.explanation": "Čas od času vám můžeme ukázat notifikace s informacemi o změnách, eventech Hordy apod. Nejedná se o standardní systémové notifikace, zobrazí se pouze pokud máte otevřenu aplikaci.",
+  "app.notifications.horde_ng_news": "Novinky ohledně HordeNG (to je ta aplikace, ve které právě jste)",
+  "app.notifications.horde_news": "Novinky o AI Hordě",
+  "app.notifications.parties": "Notifikace o nových Discord parties",
+  "app.notifications.marketing": "Notifikace o dalších projektech, které se netýkají HordeNG"
 }

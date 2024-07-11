@@ -1,3 +1,10 @@
+export enum Channel {
+  FrontendNews = 'frontend-news',
+  Marketing = 'marketing',
+  HordeNews = 'horde-news',
+  Parties = 'parties',
+}
+
 export interface Notification {
   id: string;
   title: string;
@@ -5,4 +12,5 @@ export interface Notification {
   validUntil: string;
   description?: string;
   link?: string;
+  channels?: Channel[];
 }
