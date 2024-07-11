@@ -161,8 +161,12 @@ export class DatabaseService {
   }
 
   public async getNotificationsByIds(ids: string[]): Promise<Notification[]> {
-    return (await this.getAll<Notification>(this.ObjectStores.Notifications))
+    return (await this.getNotifications())
       .filter(notification => ids.includes(notification.id));
+  }
+
+  public async getNotifications(): Promise<Notification[]> {
+    return await this.getAll<Notification>(this.ObjectStores.Notifications);
   }
 
   public async removeNotifications(ids: string[]): Promise<void> {

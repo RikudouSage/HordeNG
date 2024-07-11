@@ -31,17 +31,30 @@ export class NotificationService {
       return null;
     }
 
-    const notifications = await this.getNotifications();
-    let notification: Notification | null = null;
+    let notifications: Notification[];
+    notifications = await this.getNotifications();
+    notifications = await this.filterByChannel(notifications);
+    notifications = await this.filterByConstraints(notifications);
 
-    while (notifications.length > 0 && notification === null) {
-      notification = notifications.shift() ?? null;
-      if (notification === null) {
-        continue;
-      }
+    return notifications.length ? notifications[0] : null;
+  }
+
+  public async markAsRead(notification: Notification): Promise<void> {
+    await this.database.storeNotifications([notification]);
+  }
+
+  private async cleanup(current: string[], existing: string[]) {
+    const toRemove = existing.filter(item => !current.includes(item));
+    await this.database.removeNotifications(toRemove);
+  }
+
+  private async filterByChannel(notifications: Notification[]): Promise<Notification[]> {
+    const result: Notification[] = [];
+
+    for (const notification of notifications) {
       const channels = notification.channels;
       if (!channels) { // no channels, the notification can be displayed
-        break;
+        continue;
       }
 
       let canSend = false;
@@ -66,24 +79,50 @@ export class NotificationService {
         if (!setting.value) {
           continue;
         }
+
         canSend = true;
         break;
       }
 
-      if (!canSend) {
-        notification = null;
+      if (canSend) {
+        result.push(notification);
       }
     }
 
-    return notification;
+    return result;
   }
 
-  public async markAsRead(notification: Notification): Promise<void> {
-    await this.database.storeNotifications([notification]);
-  }
+  private async filterByConstraints(notifications: Notification[]): Promise<Notification[]> {
+    const result: Notification[] = [];
 
-  private async cleanup(current: string[], existing: string[]) {
-    const toRemove = existing.filter(item => !current.includes(item));
-    await this.database.removeNotifications(toRemove);
+    let seen: Notification[] | null = null;
+    for (const notification of notifications) {
+      if (!notification.data?.["horde-ng"]) {
+        result.push(notification);
+        continue;
+      }
+
+      const data = notification.data["horde-ng"];
+      if (data.requiredVersion && environment.appVersion !== data.requiredVersion) {
+        continue;
+      }
+
+      if (data.onlyIfNotSeen) {
+        seen ??= await this.database.getNotifications();
+        if (seen.map(item => item.id).includes(data.onlyIfNotSeen)) {
+          continue;
+        }
+      }
+      if (data.onlyIfSeen) {
+        seen ??= await this.database.getNotifications();
+        if (!seen.map(item => item.id).includes(data.onlyIfSeen)) {
+          continue;
+        }
+      }
+
+      result.push(notification);
+    }
+
+    return result;
   }
 }

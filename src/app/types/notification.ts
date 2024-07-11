@@ -5,6 +5,12 @@ export enum Channel {
   Parties = 'parties',
 }
 
+export interface HordeNgData {
+  requiredVersion: string
+  onlyIfSeen: string;
+  onlyIfNotSeen: string;
+}
+
 export interface Notification {
   id: string;
   title: string;
@@ -13,4 +19,7 @@ export interface Notification {
   description?: string;
   link?: string;
   channels?: Channel[];
+  data?: {
+    'horde-ng'?: Partial<HordeNgData>,
+  },
 }
