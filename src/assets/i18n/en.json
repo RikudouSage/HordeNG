@@ -295,7 +295,7 @@
   "app.generate.help.transparent": "When enabled, the image will be generated with a transparent background. Note that this is a beta feature, so don't go threatening to eat my cat if it doesn't work for you.",
   "app.notifications.enabled": "Enable notifications",
   "app.notifications.explanation": "From time to time, we might show you a notification about new features, new Horde events etc. These are not system notifications, we won't disturb you when you're not inside this app.",
-  "app.notifications.horde_ng_news": "News about HordeNG (the app you're on right now)",
+  "app.notifications.horde_ng_news": "News about HordeNG",
   "app.notifications.horde_news": "News about AI Horde",
   "app.notifications.parties": "Notifications about new Discord parties",
   "app.notifications.marketing": "Notifications about other projects not related to HordeNG"
