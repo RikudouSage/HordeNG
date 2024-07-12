@@ -3,6 +3,7 @@ export enum Channel {
   Marketing = 'marketing',
   HordeNews = 'horde-news',
   Parties = 'parties',
+  Other = 'other',
 }
 
 export interface HordeNgData {

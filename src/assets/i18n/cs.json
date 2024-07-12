@@ -297,5 +297,6 @@
   "app.notifications.horde_ng_news": "Novinky ohledně HordeNG",
   "app.notifications.horde_news": "Novinky o AI Hordě",
   "app.notifications.parties": "Notifikace o nových Discord parties",
-  "app.notifications.marketing": "Notifikace o dalších projektech, které se netýkají HordeNG"
+  "app.notifications.marketing": "Notifikace o dalších projektech, které se netýkají HordeNG",
+  "app.notifications.others": "Ostatní notifikace, které nepatří do žádné kategorie"
 }

@@ -298,5 +298,6 @@
   "app.notifications.horde_ng_news": "News about HordeNG",
   "app.notifications.horde_news": "News about AI Horde",
   "app.notifications.parties": "Notifications about new Discord parties",
-  "app.notifications.marketing": "Notifications about other projects not related to HordeNG"
+  "app.notifications.marketing": "Notifications about other projects not related to HordeNG",
+  "app.notifications.others": "Other notifications that don't fit in any other category"
 }

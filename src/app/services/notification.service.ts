@@ -58,7 +58,7 @@ export class NotificationService {
       }
 
       let canSend = false;
-      for (const channel of channels) {
+      loop: for (const channel of channels) {
         let settingName: SettingKey;
         switch (channel) {
           case Channel.FrontendNews:
@@ -73,6 +73,12 @@ export class NotificationService {
           case Channel.Parties:
             settingName = SettingKey.NotificationsPartiesEnabled;
             break;
+          case Channel.Other:
+            settingName = SettingKey.NotificationsOtherEnabled;
+            break;
+          default:
+            canSend = true;
+            break loop;
         }
 
         const setting = await this.database.getSetting(settingName, true);

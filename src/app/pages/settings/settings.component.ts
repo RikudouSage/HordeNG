@@ -89,6 +89,7 @@ export class SettingsComponent implements OnInit {
     notificationsMarketing: new FormControl<boolean>(false),
     notificationsHordeNews: new FormControl<boolean>(false),
     notificationsParties: new FormControl<boolean>(false),
+    notificationsOther: new FormControl<boolean>(false),
     s3_accessKey: new FormControl<string>(''),
     s3_secretKey: new FormControl<string>(''),
     s3_bucket: new FormControl<string>(''),
@@ -189,6 +190,7 @@ export class SettingsComponent implements OnInit {
         notificationsParties: (await this.database.getSetting(SettingKey.NotificationsPartiesEnabled, true)).value,
         notificationsHordeNgNews: (await this.database.getSetting(SettingKey.NotificationsHordeNgNewsEnabled, true)).value,
         notificationsMarketing: (await this.database.getSetting(SettingKey.NotificationsMarketingEnabled, true)).value,
+        notificationsOther: (await this.database.getSetting(SettingKey.NotificationsOtherEnabled, true)).value,
       });
 
       const storages: {[key: string]: string} = {};
@@ -259,6 +261,10 @@ export class SettingsComponent implements OnInit {
       this.database.setSetting({
         setting: SettingKey.NotificationsHordeNgNewsEnabled,
         value: this.form.value.notificationsHordeNgNews,
+      }),
+      this.database.setSetting({
+        setting: SettingKey.NotificationsOtherEnabled,
+        value: this.form.value.notificationsOther,
       }),
     ]);
 
