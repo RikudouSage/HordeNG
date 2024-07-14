@@ -88,7 +88,7 @@ import {ActivatedRoute} from "@angular/router";
 import {toByteArray} from "base64-js";
 import {ExternalRequest} from "../../types/external-request";
 import {TextualInversionsComponent} from "./parts/textual-inversions/textual-inversions.component";
-import {decodeWebP, encodePng} from "image-in-browser";
+import {decodeWebP, encodeJpg, encodePng} from "image-in-browser";
 import {addMetadata} from "meta-png";
 import {OutputFormat} from "../../types/output-format";
 import {QrCodeComponentValue, QrCodeFormComponent} from "./parts/qr-code-form/qr-code-form.component";
@@ -150,7 +150,7 @@ interface Result {
   styleUrl: './generate-image.component.scss'
 })
 export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit {
-  private readonly convertWorkerJobName: string = 'convertToPng';
+  private readonly convertToPngJobName: string = 'convertToPng';
 
   private readonly isBrowser: boolean;
 
@@ -403,7 +403,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     if (typeof Worker !== 'undefined') {
       this.worker = new Worker(new URL('./generate-image.worker', import.meta.url));
       this.worker.onmessage = ({ data }) => {
-        if (data.type === this.convertWorkerJobName) {
+        if (data.type === this.convertToPngJobName) {
           this.convertImageWorkerResponse = data.result;
         }
       };
@@ -733,52 +733,21 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       }
 
       const format = (await this.database.getSetting('image_format', OutputFormat.Png)).value;
+      const generationMetadata = {
+        id: generations[i - 1].id,
+        worker: {
+          id: generations[i - 1].worker_id,
+          name: generations[i - 1].worker_name,
+        },
+        ...metadata,
+        model: generations[i - 1].model,
+        seed: generations[i - 1].seed,
+        generator: 'HordeNG (https://horde-ng.org)'
+      };
       if (format === OutputFormat.Png) {
-        if (this.worker) {
-          this.worker.postMessage({
-            type: this.convertWorkerJobName,
-            data: await image.arrayBuffer(),
-            generationMetadata: {
-              id: generations[i - 1].id,
-              worker: {
-                id: generations[i - 1].worker_id,
-                name: generations[i - 1].worker_name,
-              },
-              ...metadata,
-              model: generations[i - 1].model,
-              seed: generations[i - 1].seed,
-              generator: 'HordeNG (https://horde-ng.org)'
-            }
-          });
-          image = await new Promise<Blob>(resolve => {
-            const subscription = interval(2000).subscribe(() => {
-              if (this.convertImageWorkerResponse !== null) {
-                subscription.unsubscribe();
-                resolve(this.convertImageWorkerResponse);
-                this.convertImageWorkerResponse = null;
-              }
-            });
-          });
-        } else {
-          const webp = decodeWebP({
-            data: new Uint8Array(await image.arrayBuffer()),
-          });
-          let out = encodePng({
-            image: webp!,
-          });
-          out = addMetadata(out, "generationMetadata", JSON.stringify({
-            id: generations[i - 1].id,
-            worker: {
-              id: generations[i - 1].worker_id,
-              name: generations[i - 1].worker_name,
-            },
-            ...metadata,
-            model: generations[i - 1].model,
-            seed: generations[i - 1].seed,
-            generator: 'HordeNG (https://horde-ng.org)'
-          }));
-          image = new Blob([out], { type: 'image/png' });
-        }
+        image = await this.convertToPng(image, generationMetadata);
+      } else if (format === OutputFormat.Jpeg) {
+        image = await this.convertToJpeg(image, generationMetadata);
       }
 
       results.push({
@@ -955,5 +924,43 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     this.form.patchValue({
       textualInversionList: textualInversions,
     });
+  }
+
+  private async convertToPng(image: Blob, generationsMetadata: any): Promise<Blob> {
+    if (this.worker) {
+      this.worker.postMessage({
+        type: this.convertToPngJobName,
+        data: await image.arrayBuffer(),
+        generationMetadata: generationsMetadata,
+      });
+      return await new Promise<Blob>(resolve => {
+        const subscription = interval(2000).subscribe(() => {
+          if (this.convertImageWorkerResponse !== null) {
+            subscription.unsubscribe();
+            resolve(this.convertImageWorkerResponse);
+            this.convertImageWorkerResponse = null;
+          }
+        });
+      });
+    } else {
+      const webp = decodeWebP({
+        data: new Uint8Array(await image.arrayBuffer()),
+      });
+      let out = encodePng({
+        image: webp!,
+      });
+      out = addMetadata(out, "generationMetadata", JSON.stringify(generationsMetadata));
+      return new Blob([out], { type: 'image/png' });
+    }
+  }
+
+  private async convertToJpeg(image: Blob, generationMetadata: any) {
+    const webp = decodeWebP({
+      data: new Uint8Array(await image.arrayBuffer()),
+    });
+    let out = encodeJpg({
+      image: webp!,
+    });
+    return new Blob([out], { type: 'image/jpeg' });
   }
 }

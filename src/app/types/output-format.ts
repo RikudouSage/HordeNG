@@ -1,4 +1,5 @@
 export enum OutputFormat {
   Png = 'png',
-  Webp = 'webp'
+  Webp = 'webp',
+  Jpeg = 'jpeg',
 }
