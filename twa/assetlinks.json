@@ -8,7 +8,8 @@
       "namespace": "android_app",
       "package_name": "org.horde_ng.twa",
       "sha256_cert_fingerprints": [
-        "EC:22:41:CA:5E:AF:20:FD:46:31:C5:CF:5F:F2:F7:2B:9A:BB:9B:65:A2:3A:36:16:25:FA:C9:5F:51:C2:E0:30"
+        "EC:22:41:CA:5E:AF:20:FD:46:31:C5:CF:5F:F2:F7:2B:9A:BB:9B:65:A2:3A:36:16:25:FA:C9:5F:51:C2:E0:30",
+        "25:2F:29:9D:26:75:44:F7:DC:64:32:86:4A:D8:C1:7F:EA:FD:18:6D:7B:69:01:CD:75:E5:3E:25:2B:F8:0E:15"
       ]
     }
   }
