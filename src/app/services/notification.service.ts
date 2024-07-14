@@ -5,6 +5,7 @@ import {Channel, Notification} from "../types/notification";
 import {environment} from "../../environments/environment";
 import {toPromise} from "../helper/resolvable";
 import {SettingKey} from "../types/setting-keys";
+import {CacheService} from "./cache.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class NotificationService {
   constructor(
     private readonly database: DatabaseService,
     private readonly httpClient: HttpClient,
+    private readonly cache: CacheService,
   ) {}
 
   private async getNotifications(): Promise<Notification[]> {
@@ -31,12 +33,24 @@ export class NotificationService {
       return null;
     }
 
+    const cacheItem = await this.cache.getItem<boolean>('notificationSeen');
+    if (cacheItem.isHit) {
+      return null;
+    }
+
     let notifications: Notification[];
     notifications = await this.getNotifications();
     notifications = await this.filterByChannel(notifications);
     notifications = await this.filterByConstraints(notifications);
 
-    return notifications.length ? notifications[0] : null;
+    const notification = notifications.length ? notifications[0] : null;
+    if (notification !== null) {
+      cacheItem.value = true;
+      cacheItem.expiresAfter(2 * 60 * 60);
+      await this.cache.save(cacheItem);
+    }
+
+    return notification;
   }
 
   public async markAsRead(notification: Notification): Promise<void> {
