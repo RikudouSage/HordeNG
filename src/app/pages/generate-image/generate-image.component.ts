@@ -88,10 +88,9 @@ import {ActivatedRoute} from "@angular/router";
 import {toByteArray} from "base64-js";
 import {ExternalRequest} from "../../types/external-request";
 import {TextualInversionsComponent} from "./parts/textual-inversions/textual-inversions.component";
-import {decodeWebP, encodeJpg, encodePng} from "image-in-browser";
-import {addMetadata} from "meta-png";
 import {OutputFormat} from "../../types/output-format";
 import {QrCodeComponentValue, QrCodeFormComponent} from "./parts/qr-code-form/qr-code-form.component";
+import {convertToJpeg, convertToPng} from "../../helper/image-converter";
 
 interface Result {
   width: number;
@@ -151,6 +150,7 @@ interface Result {
 })
 export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly convertToPngJobName: string = 'convertToPng';
+  private readonly convertToJpegJobName: string = 'convertToJpeg';
 
   private readonly isBrowser: boolean;
 
@@ -403,7 +403,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     if (typeof Worker !== 'undefined') {
       this.worker = new Worker(new URL('./generate-image.worker', import.meta.url));
       this.worker.onmessage = ({ data }) => {
-        if (data.type === this.convertToPngJobName) {
+        if (data.type === this.convertToPngJobName || data.type === this.convertToJpegJobName) {
           this.convertImageWorkerResponse = data.result;
         }
       };
@@ -943,24 +943,28 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
         });
       });
     } else {
-      const webp = decodeWebP({
-        data: new Uint8Array(await image.arrayBuffer()),
-      });
-      let out = encodePng({
-        image: webp!,
-      });
-      out = addMetadata(out, "generationMetadata", JSON.stringify(generationsMetadata));
-      return new Blob([out], { type: 'image/png' });
+      return await convertToPng(image, generationsMetadata);
     }
   }
 
   private async convertToJpeg(image: Blob, generationMetadata: any) {
-    const webp = decodeWebP({
-      data: new Uint8Array(await image.arrayBuffer()),
-    });
-    let out = encodeJpg({
-      image: webp!,
-    });
-    return new Blob([out], { type: 'image/jpeg' });
+    if (this.worker) {
+      this.worker.postMessage({
+        type: this.convertToJpegJobName,
+        data: await image.arrayBuffer(),
+        generationMetadata: generationMetadata,
+      });
+      return await new Promise<Blob>(resolve => {
+        const subscription = interval(2000).subscribe(() => {
+          if (this.convertImageWorkerResponse !== null) {
+            subscription.unsubscribe();
+            resolve(this.convertImageWorkerResponse);
+            this.convertImageWorkerResponse = null;
+          }
+        });
+      });
+    } else {
+      return await convertToJpeg(image, generationMetadata);
+    }
   }
 }

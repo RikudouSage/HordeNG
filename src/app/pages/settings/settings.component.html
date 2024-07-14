@@ -43,7 +43,7 @@
                 <option [value]="format.value">{{format.value}}</option>
               }
             </select>
-            @if (form.value.outputFormat === OutputFormat.Png) {
+            @if (form.value.outputFormat === OutputFormat.Png || form.value.outputFormat === OutputFormat.Jpeg) {
               <p>{{'app.output_format.png_info' | transloco}}</p>
             } @else {
               <p class="text-warning">{{'app.output_format.webp_info' | transloco}}</p>
