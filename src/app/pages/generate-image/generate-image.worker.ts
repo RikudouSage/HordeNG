@@ -8,7 +8,6 @@ interface ConvertFormatData {
 }
 
 addEventListener('message', ({ data }) => {
-  console.log(self.atob)
   let result: any;
   switch (data.type) {
     case 'convertToPng':
