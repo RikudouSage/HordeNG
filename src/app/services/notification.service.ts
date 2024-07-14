@@ -123,8 +123,11 @@ export class NotificationService {
       }
 
       const data = notification.data["horde-ng"];
-      if (data.requiredVersion && environment.appVersion !== data.requiredVersion) {
-        continue;
+      if (data.requiredVersion) {
+        const requiredVersions = Array.isArray(data.requiredVersion) ? data.requiredVersion : [data.requiredVersion];
+        if (!requiredVersions.includes(environment.appVersion)) {
+          continue;
+        }
       }
 
       if (data.onlyIfNotSeen) {

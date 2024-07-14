@@ -7,7 +7,7 @@ export enum Channel {
 }
 
 export interface HordeNgData {
-  requiredVersion: string
+  requiredVersion: string | string[];
   onlyIfSeen: string;
   onlyIfNotSeen: string;
 }
