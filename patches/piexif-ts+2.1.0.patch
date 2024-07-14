@@ -1,0 +1,37 @@
+diff --git a/node_modules/piexif-ts/dist/index.d.ts b/node_modules/piexif-ts/dist/index.d.ts
+--- a/node_modules/piexif-ts/package.json
++++ b/node_modules/piexif-ts/package.json
+@@ -3,8 +3,6 @@
+   "version": "2.1.0",
+   "description": "Read and write exif with typescript!",
+   "main": "dist/piexif.js",
+-  "module": "dist/piexif.es.js",
+-  "browser": "dist/piexif.browser.js",
+   "types": "dist/index.d.ts",
+   "files": [
+     "dist/piexif.js",
+diff --git a/node_modules/piexif-ts/dist/piexif.js b/node_modules/piexif-ts/dist/piexif.js
+index c3d251b..5a7be67 100644
+--- a/node_modules/piexif-ts/dist/piexif.js
++++ b/node_modules/piexif-ts/dist/piexif.js
+@@ -1728,15 +1728,15 @@
+       }
+       return unpacked;
+   };
+-  const _isBrowser = new Function('try {return this===window;}catch(e){ return false;}')();
+-  const atob = _isBrowser
+-      ? window.atob
++  const atobAndBtoa = typeof self !== 'undefined' && typeof self.btoa !== 'undefined' && typeof self.atob !== 'undefined';
++  const atob = atobAndBtoa
++      ? self.atob
+       : (input) => {
+           const decoded = Buffer.from(input, 'base64');
+           return decoded;
+       };
+-  const btoa = _isBrowser
+-      ? window.btoa
++  const btoa = atobAndBtoa
++      ? self.btoa
+       : (input) => {
+           const buf = Buffer.from(input);
+           const encoded = buf.toString('base64');

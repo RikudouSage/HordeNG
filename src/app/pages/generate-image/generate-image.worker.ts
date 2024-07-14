@@ -1,30 +1,20 @@
 /// <reference lib="webworker" />
 
-import {decodeWebP, encodePng} from "image-in-browser";
-import {addMetadata} from "meta-png";
+import {convertToJpegSync, convertToPngSync} from "../../helper/image-converter";
 
-interface ConvertToPngData {
+interface ConvertFormatData {
   data: ArrayBuffer;
   generationMetadata: any;
-}
-
-function convertToPng(data: ConvertToPngData): Blob {
-  const webp = decodeWebP({
-    data: new Uint8Array(data.data),
-  });
-  let out = encodePng({
-    image: webp!,
-  });
-  out = addMetadata(out, "generationMetadata", JSON.stringify(data.generationMetadata));
-
-  return new Blob([out], { type: 'image/png' });
 }
 
 addEventListener('message', ({ data }) => {
   let result: any;
   switch (data.type) {
     case 'convertToPng':
-      result = convertToPng(data);
+      result = convertToPngSync(new Uint8Array((<ConvertFormatData>data).data), data.generationMetadata);
+      break;
+    case 'convertToJpeg':
+      result = convertToJpegSync(new Uint8Array((<ConvertFormatData>data).data), data.generationMetadata);
       break;
     default:
       console.error(`Unsupported type "${data.type}".`);
