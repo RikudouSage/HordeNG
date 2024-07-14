@@ -36,7 +36,7 @@
               }
             </select>
           </div>
-          <div class="form-group">
+          <div class="form-group" [class.highlighted]="fragment() === 'format'">
             <label for="inputFormat">{{'app.output_format' | transloco}}</label>
             <select class="form-control" formControlName="outputFormat" id="inputFormat">
               @for (format of OutputFormat | keyvalue; track format.key) {
