@@ -298,5 +298,7 @@
   "app.notifications.horde_news": "Novinky o AI Hordě",
   "app.notifications.parties": "Notifikace o nových Discord parties",
   "app.notifications.marketing": "Notifikace o dalších projektech, které se netýkají HordeNG",
-  "app.notifications.others": "Ostatní notifikace, které nepatří do žádné kategorie"
+  "app.notifications.others": "Ostatní notifikace, které nepatří do žádné kategorie",
+  "app.discord": "Discord",
+  "app.discord.join": "Náš Discord server"
 }

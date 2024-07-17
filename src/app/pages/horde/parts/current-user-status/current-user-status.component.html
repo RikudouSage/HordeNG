@@ -8,4 +8,11 @@
   <app-small-box [title]="'app.generated' | transloco" color="#409eff" [icon]="generatedIcon()">
     {{currentUser().records.fulfillment.image | formatNumber}}
   </app-small-box>
+
+  <a href="https://discord.gg/3DxrhksKzn" target="_blank">
+    <app-small-box [title]="'app.discord' | transloco" color="#5865f2" [icon]="discord()">
+      {{'app.discord.join' | transloco}}
+      <fa-icon [icon]="externalLink()" size="xs" />
+    </app-small-box>
+  </a>
 </div>

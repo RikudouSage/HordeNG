@@ -27,4 +27,13 @@ app-small-box {
   @include mediaMax($large) {
     flex-wrap: wrap;
   }
+
+  & > a {
+    color: white;
+    text-decoration: none;
+
+    @include mediaMax($large) {
+      flex-grow: 1;
+    }
+  }
 }

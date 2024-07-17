@@ -1,6 +1,6 @@
 import {Component, Inject, input, OnDestroy, OnInit, output, PLATFORM_ID, signal} from '@angular/core';
 import {TranslocoPipe} from "@jsverse/transloco";
-import {faCoins, faCrosshairs, faImage} from "@fortawesome/free-solid-svg-icons";
+import {faCoins, faCrosshairs, faExternalLinkAlt, faImage} from "@fortawesome/free-solid-svg-icons";
 import {isPlatformBrowser} from "@angular/common";
 import {interval, Subscription} from "rxjs";
 import {FormatNumberPipe} from "../../../../pipes/format-number.pipe";
@@ -9,6 +9,8 @@ import {UserDetails} from "../../../../types/horde/user-details";
 import {AiHorde} from "../../../../services/ai-horde.service";
 import {MessageService} from "../../../../services/message.service";
 import {TranslatorService} from "../../../../services/translator.service";
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {faDiscord} from "@fortawesome/free-brands-svg-icons";
 
 @Component({
   selector: 'app-current-user-status',
@@ -16,7 +18,8 @@ import {TranslatorService} from "../../../../services/translator.service";
   imports: [
     FormatNumberPipe,
     SmallBoxComponent,
-    TranslocoPipe
+    TranslocoPipe,
+    FaIconComponent
   ],
   templateUrl: './current-user-status.component.html',
   styleUrl: './current-user-status.component.scss'
@@ -30,6 +33,8 @@ export class CurrentUserStatusComponent implements OnInit, OnDestroy {
   public kudosIcon = signal(faCoins);
   public requestedIcon = signal(faImage);
   public generatedIcon = signal(faCrosshairs);
+  public externalLink = signal(faExternalLinkAlt);
+  public discord = signal(faDiscord);
 
   public refreshRequested = output();
 
