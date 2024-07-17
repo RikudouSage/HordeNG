@@ -18,8 +18,11 @@ import {provideServiceWorker} from '@angular/service-worker';
 import {ParagraphTranspiler} from "./services/transloco/paragraph-transpiler";
 import {provideTranslocoMessageformat} from "@jsverse/transloco-messageformat";
 import {environment} from "../environments/environment";
+import {DiscordLinkNotificationEnricher} from "./services/notification/discord-link.notification-enricher";
+import {NotificationEnricher} from "./services/notification/notification.enricher";
 
 export const DATA_STORAGE = new InjectionToken<DataStorage<Credentials>>('ImageStorage');
+export const NOTIFICATION_ENRICHER = new InjectionToken<NotificationEnricher>('NotificationEnricher');
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -61,5 +64,6 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
+    {useClass: DiscordLinkNotificationEnricher, provide: NOTIFICATION_ENRICHER, multi: true},
   ],
 };

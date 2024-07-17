@@ -301,5 +301,6 @@
   "app.notifications.marketing": "Notifications about other projects not related to HordeNG",
   "app.notifications.others": "Other notifications that don't fit in any other category",
   "app.discord": "Discord",
-  "app.discord.join": "Join our Discord"
+  "app.discord.join": "Join our Discord",
+  "app.notification.discord": "Tip: If you haven't joined the AI Horde Discord server, go to the Horde page here in HordeNG where you can find an up to date Discord invite."
 }

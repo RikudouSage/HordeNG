@@ -14,7 +14,7 @@ import {PostProcessor} from "../types/horde/post-processor";
 import {PaginatedResult} from "../types/paginated-result";
 import {Order} from "../types/order";
 import {PartialCacheItem} from "../types/cache-item";
-import {Notification} from "../types/notification";
+import {HordeNotification} from "../types/horde-notification";
 
 @Injectable({
   providedIn: 'root'
@@ -160,13 +160,13 @@ export class DatabaseService {
     await this.removeItem(this.ObjectStores.GenerationMetadata, metadata.requestId);
   }
 
-  public async getNotificationsByIds(ids: string[]): Promise<Notification[]> {
+  public async getNotificationsByIds(ids: string[]): Promise<HordeNotification[]> {
     return (await this.getNotifications())
       .filter(notification => ids.includes(notification.id));
   }
 
-  public async getNotifications(): Promise<Notification[]> {
-    return await this.getAll<Notification>(this.ObjectStores.Notifications);
+  public async getNotifications(): Promise<HordeNotification[]> {
+    return await this.getAll<HordeNotification>(this.ObjectStores.Notifications);
   }
 
   public async removeNotifications(ids: string[]): Promise<void> {
@@ -174,7 +174,7 @@ export class DatabaseService {
     await Promise.all(promises);
   }
 
-  public async storeNotifications(notifications: Notification[]) {
+  public async storeNotifications(notifications: HordeNotification[]) {
     const promises = notifications.map(notification => this.setValue(this.ObjectStores.Notifications, notification));
     await Promise.all(promises);
   }

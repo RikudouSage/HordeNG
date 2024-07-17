@@ -14,7 +14,7 @@ import {TranslocoService} from "@jsverse/transloco";
 import {DatabaseService} from "./services/database.service";
 import {findBrowserLanguage} from "./helper/language";
 import {isPlatformBrowser} from "@angular/common";
-import {NotificationService} from "./services/notification.service";
+import {NotificationService} from "./services/notification/notification.service";
 import {interval, startWith} from "rxjs";
 import {Subscriptions} from "./helper/subscriptions";
 

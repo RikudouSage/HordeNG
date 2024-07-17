@@ -1,11 +1,13 @@
-import {Injectable} from '@angular/core';
-import {DatabaseService} from "./database.service";
+import {Inject, Injectable} from '@angular/core';
+import {DatabaseService} from "../database.service";
 import {HttpClient} from "@angular/common/http";
-import {Channel, Notification} from "../types/notification";
-import {environment} from "../../environments/environment";
-import {toPromise} from "../helper/resolvable";
-import {SettingKey} from "../types/setting-keys";
-import {CacheService} from "./cache.service";
+import {Channel, HordeNotification} from "../../types/horde-notification";
+import {environment} from "../../../environments/environment";
+import {toPromise} from "../../helper/resolvable";
+import {SettingKey} from "../../types/setting-keys";
+import {CacheService} from "../cache.service";
+import {NotificationEnricher} from "./notification.enricher";
+import {NOTIFICATION_ENRICHER} from "../../app.config";
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +17,12 @@ export class NotificationService {
     private readonly database: DatabaseService,
     private readonly httpClient: HttpClient,
     private readonly cache: CacheService,
+    @Inject(NOTIFICATION_ENRICHER)
+    private readonly enrichers: NotificationEnricher[],
   ) {}
 
-  private async getNotifications(): Promise<Notification[]> {
-    const notifications = await toPromise(this.httpClient.get<Notification[]>(environment.eventsUrl));
+  private async getNotifications(): Promise<HordeNotification[]> {
+    const notifications = await toPromise(this.httpClient.get<HordeNotification[]>(environment.eventsUrl));
     const existing = (await this.database.getNotificationsByIds(notifications.map(notification => notification.id)))
       .map(notification => notification.id);
 
@@ -27,7 +31,7 @@ export class NotificationService {
     return notifications.filter(notification => !existing.includes(notification.id));
   }
 
-  public async getNotificationToDisplay(): Promise<Notification | null> {
+  public async getNotificationToDisplay(): Promise<HordeNotification | null> {
     const enabled = await this.database.getSetting('notificationsEnabled', true);
     if (!enabled.value) {
       return null;
@@ -38,22 +42,31 @@ export class NotificationService {
       return null;
     }
 
-    let notifications: Notification[];
+    let notifications: HordeNotification[];
     notifications = await this.getNotifications();
     notifications = await this.filterByChannel(notifications);
     notifications = await this.filterByConstraints(notifications);
 
-    const notification = notifications.length ? notifications[0] : null;
-    if (notification !== null) {
-      cacheItem.value = true;
-      cacheItem.expiresAfter(2 * 60 * 60);
-      await this.cache.save(cacheItem);
+    let notification = notifications.length ? notifications[0] : null;
+
+    if (notification === null) {
+      return null;
+    }
+
+    cacheItem.value = true;
+    cacheItem.expiresAfter(2 * 60 * 60);
+    await this.cache.save(cacheItem);
+
+    for (const enricher of this.enrichers) {
+      if (await enricher.supports(notification)) {
+        notification = await enricher.enrich(notification);
+      }
     }
 
     return notification;
   }
 
-  public async markAsRead(notification: Notification): Promise<void> {
+  public async markAsRead(notification: HordeNotification): Promise<void> {
     await this.database.storeNotifications([notification]);
   }
 
@@ -62,8 +75,8 @@ export class NotificationService {
     await this.database.removeNotifications(toRemove);
   }
 
-  private async filterByChannel(notifications: Notification[]): Promise<Notification[]> {
-    const result: Notification[] = [];
+  private async filterByChannel(notifications: HordeNotification[]): Promise<HordeNotification[]> {
+    const result: HordeNotification[] = [];
 
     for (const notification of notifications) {
       const channels = notification.channels;
@@ -112,10 +125,10 @@ export class NotificationService {
     return result;
   }
 
-  private async filterByConstraints(notifications: Notification[]): Promise<Notification[]> {
-    const result: Notification[] = [];
+  private async filterByConstraints(notifications: HordeNotification[]): Promise<HordeNotification[]> {
+    const result: HordeNotification[] = [];
 
-    let seen: Notification[] | null = null;
+    let seen: HordeNotification[] | null = null;
     for (const notification of notifications) {
       if (!notification.data?.["horde-ng"]) {
         result.push(notification);

@@ -300,5 +300,6 @@
   "app.notifications.marketing": "Notifikace o dalších projektech, které se netýkají HordeNG",
   "app.notifications.others": "Ostatní notifikace, které nepatří do žádné kategorie",
   "app.discord": "Discord",
-  "app.discord.join": "Náš Discord server"
+  "app.discord.join": "Náš Discord server",
+  "app.notification.discord": "Tip: Pokud jste se ještě nepřidali k Discordu AI Hordy, jděte na stránku Horda zde v HordeNG, kde najdete aktuální pozvánku na Discord."
 }

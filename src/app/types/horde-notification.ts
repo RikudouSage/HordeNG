@@ -12,7 +12,7 @@ export interface HordeNgData {
   onlyIfNotSeen: string;
 }
 
-export interface Notification {
+export interface HordeNotification {
   id: string;
   title: string;
   validSince: string;
