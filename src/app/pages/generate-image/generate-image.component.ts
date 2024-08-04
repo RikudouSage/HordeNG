@@ -4,6 +4,7 @@ import {
   computed,
   effect,
   ElementRef,
+  HostListener,
   Inject,
   OnDestroy,
   OnInit,
@@ -966,5 +967,11 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     } else {
       return await convertToJpeg(image, generationMetadata);
     }
+  }
+
+  @HostListener('window:keydown.control.enter', ['$event'])
+  public async onCtrlEnterPressed(event: KeyboardEvent) {
+    event.preventDefault();
+    await this.generateImage();
   }
 }
