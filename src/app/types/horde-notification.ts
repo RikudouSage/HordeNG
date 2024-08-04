@@ -12,6 +12,7 @@ export interface HordeNgData {
   onlyIfNotSeen: string;
   desktopOnly: boolean;
   mobileOnly: boolean;
+  translations: Record<string, { description?: string; title?: string }>
 }
 
 export interface HordeNotification {

@@ -9,6 +9,8 @@ import {CacheService} from "../cache.service";
 import {NotificationEnricher} from "./notification.enricher";
 import {NOTIFICATION_ENRICHER} from "../../app.config";
 import {DeviceDetectorService} from "ngx-device-detector";
+import {findBrowserLanguage} from "../../helper/language";
+import {TranslocoService} from "@jsverse/transloco";
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +23,7 @@ export class NotificationService {
     @Inject(NOTIFICATION_ENRICHER)
     private readonly enrichers: NotificationEnricher[],
     private readonly deviceDetector: DeviceDetectorService,
+    private readonly transloco: TranslocoService,
   ) {}
 
   private async getNotifications(): Promise<HordeNotification[]> {
@@ -30,7 +33,17 @@ export class NotificationService {
 
     await this.cleanup(notifications.map(notification => notification.id), existing);
 
-    return notifications.filter(notification => !existing.includes(notification.id));
+    const availableLanguages = this.transloco.getAvailableLangs().map(language => typeof language === 'string' ? language : language.id)
+    const language = (await this.database.getAppLanguage()) ?? findBrowserLanguage(availableLanguages) ?? 'en';
+
+    return notifications.filter(notification => !existing.includes(notification.id))
+      .map(notification => {
+        const translation = notification.data?.["horde-ng"]?.translations?.[language] ?? null;
+        notification.description = translation?.description ?? notification.description;
+        notification.title = translation?.title ?? notification.title;
+
+        return notification;
+      });
   }
 
   public async getNotificationToDisplay(): Promise<HordeNotification | null> {
@@ -83,6 +96,7 @@ export class NotificationService {
     for (const notification of notifications) {
       const channels = notification.channels;
       if (!channels) { // no channels, the notification can be displayed
+        result.push(notification);
         continue;
       }
 
