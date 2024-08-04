@@ -6282,6 +6282,13 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
+ngx-device-detector@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-device-detector/-/ngx-device-detector-8.0.0.tgz#9d7523fbfc23f7655375ac5ef750e510e709464f"
+  integrity sha512-ik6EwUKnlN+xwoWHzyJp5+V+QRWYrmpTqAvRwa16xBnAVd7/i3jElN7MZjs/InwcYz7AW3XcSNeu+XRvtHgb9w==
+  dependencies:
+    tslib "^2.0.0"
+
 ngx-tippy-wrapper@^6.3.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/ngx-tippy-wrapper/-/ngx-tippy-wrapper-6.3.0.tgz#981b165bcaddd08f28ac5daf20125ad7cbaa32c4"

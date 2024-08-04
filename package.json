@@ -42,6 +42,7 @@
     "image-in-browser": "^2.7.1",
     "lodash": "^4.17.21",
     "meta-png": "^1.0.6",
+    "ngx-device-detector": "^8.0.0",
     "ngx-tippy-wrapper": "^6.3.0",
     "ngx-toastr": "^18.0.0",
     "ngx-transloco-markup": "^6.0.0",

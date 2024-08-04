@@ -8,6 +8,7 @@ import {SettingKey} from "../../types/setting-keys";
 import {CacheService} from "../cache.service";
 import {NotificationEnricher} from "./notification.enricher";
 import {NOTIFICATION_ENRICHER} from "../../app.config";
+import {DeviceDetectorService} from "ngx-device-detector";
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class NotificationService {
     private readonly cache: CacheService,
     @Inject(NOTIFICATION_ENRICHER)
     private readonly enrichers: NotificationEnricher[],
+    private readonly deviceDetector: DeviceDetectorService,
   ) {}
 
   private async getNotifications(): Promise<HordeNotification[]> {
@@ -154,6 +156,13 @@ export class NotificationService {
         if (!seen.map(item => item.id).includes(data.onlyIfSeen)) {
           continue;
         }
+      }
+
+      if (data.desktopOnly && !this.deviceDetector.isDesktop()) {
+        continue;
+      }
+      if (data.mobileOnly && !this.deviceDetector.isMobile() && !this.deviceDetector.isTablet()) {
+        continue;
       }
 
       result.push(notification);

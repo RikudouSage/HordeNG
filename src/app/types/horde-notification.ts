@@ -10,6 +10,8 @@ export interface HordeNgData {
   requiredVersion: string | string[];
   onlyIfSeen: string;
   onlyIfNotSeen: string;
+  desktopOnly: boolean;
+  mobileOnly: boolean;
 }
 
 export interface HordeNotification {
