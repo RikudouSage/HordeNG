@@ -20,8 +20,8 @@
     "path": "/app/horde_ng.keystore",
     "alias": "horde_ng"
   },
-  "appVersionName": "3",
-  "appVersionCode": 3,
+  "appVersionName": "4",
+  "appVersionCode": 4,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://horde-ng.org/manifest.webmanifest",
@@ -43,5 +43,5 @@
   ],
   "additionalTrustedOrigins": [],
   "retainedBundles": [],
-  "appVersion": "3"
+  "appVersion": "4"
 }

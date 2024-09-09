@@ -26,7 +26,7 @@ def twaManifest = [
     launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
     name: 'HordeNG', // The application name.
     launcherName: 'HordeNG', // The name shown on the Android Launcher.
-    themeColor: '#409EFF', // The color used for the status bar.
+    themeColor: '#1C1B22', // The color used for the status bar.
     themeColorDark: '#000000', // The color used for the dark status bar.
     navigationColor: '#000000', // The color used for the navigation bar.
     navigationColorDark: '#000000', // The color used for the dark navbar.
@@ -51,13 +51,13 @@ def twaManifest = [
 ]
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     defaultConfig {
         applicationId "org.horde_ng.twa"
         minSdkVersion 19
-        targetSdkVersion 33
-        versionCode 3
-        versionName "3"
+        targetSdkVersion 34
+        versionCode 4
+        versionName "4"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
@@ -69,19 +69,19 @@ android {
         def launchUrl = "https://" + twaManifest.hostName + twaManifest.launchUrl
         resValue "string", "launchUrl", launchUrl
 
-        
+
             // The URL the Web Manifest for the Progressive Web App that the TWA points to. This
             // is used by Chrome OS and Meta Quest to open the Web version of the PWA instead of
             // the TWA, as it will probably give a better user experience for non-mobile devices.
             resValue "string", "webManifestUrl", 'https://horde-ng.org/manifest.webmanifest'
-        
 
-        
+
+
             // This is used by Meta Quest.
             resValue "string", "fullScopeUrl", 'https://horde-ng.org/'
-        
 
-        
+
+
 
         // The hostname is used when building the intent-filter, so the TWA is able to
         // handle Intents to open host url of the application.
@@ -107,13 +107,13 @@ android {
         // compile. If not set, the navigation bar color defaults to #000000 - black.
         resValue "color", "navigationColorDark", twaManifest.navigationColorDark
 
-        // This attribute sets the navbar divider color for the TWA. It can be either 
-        // set here or in `res/values/colors.xml`. Setting in both places is an error and the app 
+        // This attribute sets the navbar divider color for the TWA. It can be either
+        // set here or in `res/values/colors.xml`. Setting in both places is an error and the app
         // will not compile. If not set, the divider color defaults to #00000000 - transparent.
         resValue "color", "navigationDividerColor", twaManifest.navigationDividerColor
 
-        // This attribute sets the dark navbar divider color for the TWA. It can be either 
-        // set here or in `res/values/colors.xml`. Setting in both places is an error and the 
+        // This attribute sets the dark navbar divider color for the TWA. It can be either
+        // set here or in `res/values/colors.xml`. Setting in both places is an error and the
         //app will not compile. If not set, the divider color defaults to #000000 - black.
         resValue "color", "navigationDividerColorDark", twaManifest.navigationDividerColorDark
 
@@ -197,12 +197,12 @@ task generateShorcutsFile {
 preBuild.dependsOn(generateShorcutsFile)
 
 repositories {
-    
+
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    
+
         implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
-    
+
 }
