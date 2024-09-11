@@ -20,4 +20,6 @@ export enum CivitAiBaseModel {
   PlaygroundV2 = "Playground V2",
   PixArtA = "PixArt A",
   Other = "Other",
+  Flux1S = "Flux.1 S",
+  Flux1D = "Flux.1 D",
 }

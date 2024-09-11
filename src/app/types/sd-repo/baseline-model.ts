@@ -3,4 +3,5 @@ export enum BaselineModel {
   StableDiffusion1 = 'stable diffusion 1',
   StableDiffusionXl = 'stable_diffusion_xl',
   StableCascade = 'stable_cascade',
+  Flux1 = 'flux_1',
 }

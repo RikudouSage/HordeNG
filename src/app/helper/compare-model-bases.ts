@@ -28,6 +28,8 @@ export function convertToCivitAiBase(hordeBase: BaselineModel): CivitAiBaseModel
       ];
     case BaselineModel.StableCascade:
       return [CivitAiBaseModel.StableCascade];
+    case BaselineModel.Flux1:
+      return [CivitAiBaseModel.Flux1S];
   }
 }
 
