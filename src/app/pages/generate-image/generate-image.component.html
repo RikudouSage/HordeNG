@@ -70,6 +70,11 @@
                     {{'app.generation.validation.steps' | transloco:{min: currentModelDetail()!.requirements!.min_steps, max: currentModelDetail()!.requirements!.max_steps} }}
                   } @else if (error === OptionsValidationError.CfgScale) {
                     {{'app.generation.validation.cfg_scale' | transloco:{expected: currentModelDetail()!.requirements!.cfg_scale!} }}
+                  } @else if (error === OptionsValidationError.CfgScaleMinMax) {
+                    {{'app.generation.validation.cfg_scale_min_max' | transloco:{
+                      min: currentModelDetail()!.requirements!.min_cfg_scale!,
+                      max: currentModelDetail()!.requirements!.max_cfg_scale!
+                    } }}
                   }
                 </li>
               }

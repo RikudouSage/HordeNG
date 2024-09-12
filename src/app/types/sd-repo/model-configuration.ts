@@ -28,6 +28,8 @@ export interface ModelRequirements {
   samplers?: Sampler[],
   schedulers?: 'karras'[];
   clip_skip?: number;
+  min_cfg_scale?: number;
+  max_cfg_scale?: number;
 }
 
 export interface ModelConfiguration {

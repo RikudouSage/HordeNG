@@ -9,6 +9,7 @@ export enum OptionsValidationError {
   Steps,
   Sampler,
   Karras,
+  CfgScaleMinMax,
 }
 
 export type OptionsValidationErrors = OptionsValidationError[];
@@ -37,6 +38,12 @@ export class GenerationOptionsValidatorService {
 
     if (modelConfig.requirements.cfg_scale !== undefined && options.cfgScale !== modelConfig.requirements.cfg_scale) {
       errors.push(OptionsValidationError.CfgScale);
+    }
+    if (modelConfig.requirements.min_cfg_scale !== undefined && options.cfgScale < modelConfig.requirements.min_cfg_scale) {
+      errors.push(OptionsValidationError.CfgScaleMinMax);
+    }
+    if (modelConfig.requirements.max_cfg_scale !== undefined && options.cfgScale > modelConfig.requirements.max_cfg_scale) {
+      errors.push(OptionsValidationError.CfgScaleMinMax);
     }
     if (modelConfig.requirements.clip_skip !== undefined && options.clipSkip !== modelConfig.requirements.clip_skip) {
       errors.push(OptionsValidationError.ClipSkip);

@@ -167,6 +167,7 @@
   "app.generation.validation.steps": "Steps must be between {{min}} and {{max}}",
   "app.generation.validation.model_not_found": "The requested model was not found",
   "app.generation.validation.cfg_scale": "CFG scale must be {{expected}}",
+  "app.generation.validation.cfg_scale_min_max": "CFG scale must be between {{min}} and {{max}}",
   "app.generate.use_style": "Use existing style",
   "app.prompt_style.choose": "Choose a style for your prompt",
   "app.prompt_style.use": "Use style",

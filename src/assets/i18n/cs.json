@@ -167,6 +167,7 @@
   "app.generation.validation.steps": "Kroky musí být mezi {{min}} a {{max}}",
   "app.generation.validation.model_not_found": "Požadovaný model nebyl nalezen",
   "app.generation.validation.cfg_scale": "Měřítko CFG musí být {{expected}}",
+  "app.generation.validation.cfg_scale_min_max": "Měřítko CFG musí být mezi {{min}} a {{max}}",
   "app.generate.use_style": "Použít styl",
   "app.prompt_style.choose": "Zvolte styl pro svůj prompt",
   "app.prompt_style.use": "Použít styl",
