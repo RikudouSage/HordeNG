@@ -302,5 +302,7 @@
   "app.notifications.others": "Ostatní notifikace, které nepatří do žádné kategorie",
   "app.discord": "Discord",
   "app.discord.join": "Náš Discord server",
-  "app.notification.discord": "Tip: Pokud jste se ještě nepřidali k Discordu AI Hordy, jděte na stránku Horda zde v HordeNG, kde najdete aktuální pozvánku na Discord."
+  "app.notification.discord": "Tip: Pokud jste se ještě nepřidali k Discordu AI Hordy, jděte na stránku Horda zde v HordeNG, kde najdete aktuální pozvánku na Discord.",
+  "app.settings.clear_cache": "Vymazat cache",
+  "app.settings.clear_cache.success": "Cache byla úspěšně vymazána."
 }

@@ -55,6 +55,10 @@ export class DatabaseService {
     await this.removeItem(this.ObjectStores.Cache, key);
   }
 
+  public async getAllCacheItems(): Promise<PartialCacheItem<any>[]> {
+    return this.getAll(this.ObjectStores.Cache);
+  }
+
   public async storeImage(image: UnsavedStoredImage): Promise<IDBValidKey> {
     return await this.setValue(this.ObjectStores.Images, image);
   }

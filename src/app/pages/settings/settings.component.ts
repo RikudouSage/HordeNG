@@ -30,6 +30,7 @@ import {OutputFormat} from "../../types/output-format";
 import {ToggleCheckboxComponent} from "../../components/toggle-checkbox/toggle-checkbox.component";
 import {ActivatedRoute} from "@angular/router";
 import {SettingKey} from "../../types/setting-keys";
+import {CacheService} from "../../services/cache.service";
 
 @Component({
   selector: 'app-settings',
@@ -133,6 +134,7 @@ export class SettingsComponent implements OnInit {
     private readonly database: DatabaseService,
     private readonly transloco: TranslocoService,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly cache: CacheService,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -374,5 +376,12 @@ export class SettingsComponent implements OnInit {
       google_drive_access_key: credentials.accessToken,
       google_drive_expires_at: credentials.expiresAt,
     });
+  }
+
+  public async clearCache(): Promise<void> {
+    this.loading.set(true);
+    await this.cache.removeAll();
+    await this.messageService.success(this.translator.get('app.settings.clear_cache.success'))
+    this.loading.set(false);
   }
 }

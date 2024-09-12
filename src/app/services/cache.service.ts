@@ -50,4 +50,14 @@ export class CacheService {
 
     await this.database.removeCacheItem(keyOrCacheItem);
   }
+
+  public async removeAll(): Promise<void> {
+    const items = await this.database.getAllCacheItems();
+    const promises: Promise<any>[] = [];
+    for (const item of items) {
+      promises.push(this.database.removeCacheItem(item.key));
+    }
+
+    await Promise.all(promises);
+  }
 }
