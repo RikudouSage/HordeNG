@@ -8,7 +8,7 @@ import {SettingKey} from "../../types/setting-keys";
 import {CacheService} from "../cache.service";
 import {NotificationEnricher} from "./notification.enricher";
 import {NOTIFICATION_ENRICHER} from "../../app.config";
-import {DeviceDetectorService} from "ngx-device-detector";
+import {DeviceDetectorService, OS} from "ngx-device-detector";
 import {findBrowserLanguage} from "../../helper/language";
 import {TranslocoService} from "@jsverse/transloco";
 
@@ -176,6 +176,9 @@ export class NotificationService {
         continue;
       }
       if (data.mobileOnly && !this.deviceDetector.isMobile() && !this.deviceDetector.isTablet()) {
+        continue;
+      }
+      if (data.androidOnly && this.deviceDetector.getDeviceInfo().os !== OS.ANDROID) {
         continue;
       }
 
