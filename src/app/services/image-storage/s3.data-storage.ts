@@ -21,6 +21,8 @@ import {CacheService} from "../cache.service";
 import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
 import {OutputFormat} from "../../types/output-format";
 import {parseQrCodeFromRawValue} from "../../helper/qr-code-migration-helper";
+import {BehaviorSubject} from "rxjs";
+import {ProgressUpdater} from "../../helper/progress-updater";
 
 export const S3CorsConfig = [
   {
@@ -122,7 +124,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
     }));
   }
 
-  protected override async getFreshImages(): Promise<StoredImage[]> {
+  protected override async getFreshImages(progressUpdater: BehaviorSubject<ProgressUpdater>): Promise<StoredImage[]> {
     const client = await this.getClient();
     const prefix = await this.getPrefix();
     const bucket = await this.getBucket();
@@ -146,11 +148,15 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       .map(object => object.Key!)
     ;
 
+    progressUpdater.next({loaded: 0, total: keys.length});
     const imagesResult = await Promise.all(keys.map(key => {
       return client.send(new GetObjectCommand({
         Bucket: bucket,
         Key: key,
-      }));
+      })).then(result => {
+        progressUpdater.next({loaded: progressUpdater.value.loaded! + 1, total: progressUpdater.value.total});
+        return result;
+      });
     }));
     const bodies = await Promise.all(imagesResult.map(
       image => image.Body!.transformToByteArray().then(body => new Blob([body])),

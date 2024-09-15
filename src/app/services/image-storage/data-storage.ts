@@ -1,8 +1,8 @@
 import {Credentials} from "../../types/credentials/credentials";
 import {Resolvable} from "../../helper/resolvable";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
-import {PaginatedResult} from "../../types/paginated-result";
 import {GenerationOptions} from "../../types/db/generation-options";
+import {ImageLoader} from "../../helper/image-loader";
 
 export interface DataStorage<TCredentials extends Credentials> {
   get name(): string;
@@ -10,7 +10,7 @@ export interface DataStorage<TCredentials extends Credentials> {
   validateCredentials(credentials: TCredentials): Promise<boolean | string>;
   storeImage(image: UnsavedStoredImage): Promise<StoredImage>;
   storeImagesInCache(...image: StoredImage[]): Promise<void>;
-  loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>>;
+  loadImages(page: number, perPage: number): ImageLoader | Promise<ImageLoader>;
   deleteImage(image: StoredImage): Promise<void>;
   storeOption(option: string, value: any): Promise<void>;
   getOption<T>(option: string, defaultValue: T): Promise<T>;

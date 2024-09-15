@@ -5,10 +5,12 @@ import {TranslatorService} from "../translator.service";
 import {Resolvable} from "../../helper/resolvable";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
 import {DatabaseService} from "../database.service";
-import {PaginatedResult} from "../../types/paginated-result";
 import {Order} from "../../types/order";
 import {CacheService} from "../cache.service";
 import {GenerationOptions} from "../../types/db/generation-options";
+import {ImageLoader} from "../../helper/image-loader";
+import {Observable, of} from "rxjs";
+import {ProgressUpdater} from "../../helper/progress-updater";
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +29,7 @@ export class IndexedDbDataStorage implements DataStorage<Credentials> {
       return cacheItem.value!;
     }
     let result = 0;
-    const images = await this.loadImages(1, 100_000);
+    const images = await this.loadImages(1, 100_000).result;
     for (const image of images.rows) {
       result += image.data.size;
     }
@@ -59,8 +61,15 @@ export class IndexedDbDataStorage implements DataStorage<Credentials> {
     await this.database.deleteImage(image);
   }
 
-  public loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
-    return this.database.getImages(page, perPage, Order.Desc);
+  public loadImages(page: number, perPage: number): ImageLoader {
+    const updater: Observable<ProgressUpdater> = of({loaded: null, total: null});
+    return {
+      isLocal: true,
+      result: this.database.getImages(page, perPage, Order.Desc).then(result => {
+        return result;
+      }),
+      progressUpdater: updater,
+    };
   }
 
   public get displayName(): Resolvable<string> {

@@ -11,6 +11,8 @@ import {Sampler} from "../../types/horde/sampler";
 import {PostProcessor} from "../../types/horde/post-processor";
 import {OutputFormat} from "../../types/output-format";
 import {parseQrCodeFromRawValue} from "../../helper/qr-code-migration-helper";
+import {BehaviorSubject} from "rxjs";
+import {ProgressUpdater} from "../../helper/progress-updater";
 
 type Metadata = Record<keyof Omit<StoredImage, 'data' | 'onlyMyWorkers' | 'amount'>, string>;
 
@@ -39,11 +41,12 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
     return toPromise(this.dropbox.validateAccessToken(credentials.accessKey));
   }
 
-  protected override async getFreshImages(): Promise<StoredImage[]> {
+  protected override async getFreshImages(progressUpdater: BehaviorSubject<ProgressUpdater>): Promise<StoredImage[]> {
     try {
       const response = await toPromise(this.dropbox.listFolder('images'));
       const files = response.entries.filter(entry => entry[".tag"] === 'file');
 
+      progressUpdater.next({loaded: 0, total: files.length});
 
       return await Promise.all(files.map(async (file): Promise<StoredImage> => {
         const id = file.name!.substring(0, file.name!.length - 5);
@@ -52,9 +55,12 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
           throw new Error(`Image without metadata: ${file.name}`);
         }
 
+        const data = await toPromise(this.dropbox.downloadFile(file.path_display, true));
+        progressUpdater.next({loaded: progressUpdater.value.loaded! + 1, total: progressUpdater.value.total})
+
         return {
           id: id,
-          data: await toPromise(this.dropbox.downloadFile(file.path_display, true)),
+          data: data,
           sampler: <Sampler>metadata.sampler ?? Sampler.lcm,
           seed: metadata.seed,
           model: metadata.model,

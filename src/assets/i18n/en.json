@@ -307,5 +307,8 @@
   "app.settings.clear_cache": "Clear cache",
   "app.settings.clear_cache.success": "Cache has been successfully cleared.",
   "app.generate.loader_text.converting": "Converting the images to your chosen format ({{format}}), this might take a while...",
-  "app.generate.loader_text.uploading": "Uploading the images to your chosen cloud provider, this might take a while..."
+  "app.generate.loader_text.uploading": "Uploading the images to your chosen cloud provider, this might take a while...",
+  "app.images.loader_text.loading_from_cloud": "Downloading all of your images from your chosen cloud provider, this might take a while depending on the amount of images you have stored.",
+  "app.images.loader_text.loading_progress": "Downloading image #{{progress}} from cloud...",
+  "app.images.loader_text.loading_progress_with_total": "Downloading image #{{progress}} of {{total}} from cloud..."
 }

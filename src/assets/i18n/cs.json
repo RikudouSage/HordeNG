@@ -306,5 +306,8 @@
   "app.settings.clear_cache": "Vymazat cache",
   "app.settings.clear_cache.success": "Cache byla úspěšně vymazána.",
   "app.generate.loader_text.converting": "Konvertování obrázků do vámi zvoleného formátu ({{format}}), to může chvíli zabrat...",
-  "app.generate.loader_text.uploading": "Probíhá nahrávání vašich obrázků na vámi zvolený cloud, to může chvíli zabrat..."
+  "app.generate.loader_text.uploading": "Probíhá nahrávání vašich obrázků na vámi zvolený cloud, to může chvíli zabrat...",
+  "app.images.loader_text.loading_from_cloud": "Probíhá stahování všech vašich obrázků z vámi zvoleného cloudu, to může chvíli zabrat, pokud jich tam máte hodně.",
+  "app.images.loader_text.loading_progress": "Stahování obrázku č. {{progress}} z cloudu...",
+  "app.images.loader_text.loading_progress_with_total": "Stahování obrázku č. {{progress}} z {{total}} z cloudu..."
 }

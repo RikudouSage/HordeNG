@@ -2,11 +2,13 @@ import {DataStorage} from "./data-storage";
 import {Credentials} from "../../types/credentials/credentials";
 import {Resolvable} from "../../helper/resolvable";
 import {StoredImage, UnsavedStoredImage} from "../../types/db/stored-image";
-import {PaginatedResult} from "../../types/paginated-result";
 import {CacheService} from "../cache.service";
 import {GenerationOptions} from "../../types/db/generation-options";
 import {DatabaseService} from "../database.service";
 import {fromByteArray, toByteArray} from "base64-js";
+import {ImageLoader} from "../../helper/image-loader";
+import {BehaviorSubject} from "rxjs";
+import {ProgressUpdater} from "../../helper/progress-updater";
 
 export abstract class AbstractExternalDataStorage<TCredentials extends Credentials> implements DataStorage<TCredentials> {
   protected get BaseCacheKeys() {
@@ -23,7 +25,7 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
 
   protected abstract get cache(): CacheService;
   protected abstract get database(): DatabaseService;
-  protected abstract getFreshImages(): Promise<StoredImage[]>;
+  protected abstract getFreshImages(progressUpdater: BehaviorSubject<ProgressUpdater>): Promise<StoredImage[]>;
   protected abstract getFreshOptions(): Promise<Record<string, any>>;
   protected abstract doStoreImage(image: UnsavedStoredImage): Promise<void>;
   protected abstract uploadOptions(options: Record<string, any>): Promise<void>;
@@ -52,25 +54,40 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
     return options[option] ?? defaultValue;
   }
 
-  public async loadImages(page: number, perPage: number): Promise<PaginatedResult<StoredImage>> {
+  public async loadImages(page: number, perPage: number): Promise<ImageLoader> {
     const cacheItem = await this.cache.getItem<StoredImage[]>(this.BaseCacheKeys.Images);
-    let images: StoredImage[];
+    const updater = new BehaviorSubject<ProgressUpdater>({loaded: null, total: null});
+
+    let images: Promise<StoredImage[]>;
+    let isLocal: boolean;
+
     if (cacheItem.isHit) {
-      images = cacheItem.value!;
+      isLocal = true;
+      images = Promise.resolve(cacheItem.value!);
     } else {
-      images = await this.getFreshImages();
-      cacheItem.value = images;
-      await this.cache.save(cacheItem);
+      isLocal = false;
+      images = this.getFreshImages(updater).then(images => {
+        cacheItem.value = images;
+        this.cache.save(cacheItem);
+
+        return images;
+      });
     }
 
-    const total = images.length;
-    const lastPage = Math.ceil(total / perPage);
-
     return {
-      page: page,
-      lastPage: lastPage,
-      rows: images.slice((page - 1) * perPage, page * perPage),
-    };
+      isLocal: isLocal,
+      result: images.then(images => {
+        const total = images.length;
+        const lastPage = Math.ceil(total / perPage);
+
+        return {
+          page: page,
+          lastPage: lastPage,
+          rows: images.slice((page - 1) * perPage, page * perPage),
+        };
+      }),
+      progressUpdater: updater,
+    }
   }
 
   public async getSize(): Promise<number | null> {
@@ -79,7 +96,7 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
       return cacheItem.value!;
     }
     let result = 0;
-    const images = await this.loadImages(1, 1_000);
+    const images = await (await this.loadImages(1, 1_000)).result;
     for (const image of images.rows) {
       result += image.data.size;
     }

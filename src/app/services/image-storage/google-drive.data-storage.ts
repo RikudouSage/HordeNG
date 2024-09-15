@@ -10,6 +10,8 @@ import {PostProcessor} from "../../types/horde/post-processor";
 import {AbstractExternalDataStorage} from "./abstract-external.data-storage";
 import {OutputFormat} from "../../types/output-format";
 import {parseQrCodeFromRawValue} from "../../helper/qr-code-migration-helper";
+import {BehaviorSubject} from "rxjs";
+import {ProgressUpdater} from "../../helper/progress-updater";
 import TokenResponse = google.accounts.oauth2.TokenResponse;
 
 @Injectable({
@@ -118,7 +120,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
     await this.storeOption(`image.metadata.${image.id}`, metadata);
   }
 
-  protected override async getFreshImages(): Promise<StoredImage[]> {
+  protected override async getFreshImages(progressUpdater: BehaviorSubject<ProgressUpdater>): Promise<StoredImage[]> {
     const gapi = await this.getGapi();
     let files: gapi.client.drive.File[] = [];
     let nextPageToken: string | undefined = undefined;
@@ -132,6 +134,8 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       files = [...files, ...(response.files ?? []).filter(file => file.name?.endsWith('.webp') ?? false)];
     } while (nextPageToken);
 
+    progressUpdater.next({loaded: 0, total: files.length});
+
     const bodies = await Promise.all(files.map(
       file =>
         gapi.drive.files.get({
@@ -139,6 +143,10 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
           alt: 'media'
         })
           .then(response => response.body)
+          .then(raw => {
+            progressUpdater.next({loaded: progressUpdater.value.loaded! + 1, total: progressUpdater.value.total})
+            return raw;
+          })
           .then(raw => raw.split('').map(char => char.charCodeAt(0)))
           .then(bytes => new Uint8Array(bytes))
           .then(bytes => new Blob([bytes], {type: 'image/webp'})),

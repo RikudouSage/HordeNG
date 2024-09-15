@@ -1,5 +1,5 @@
 @if (loading()) {
-  <app-loader />
+  <app-loader [text]="loaderText()" />
 } @else {
   <div class="row wrap">
     @if (pages().length) {

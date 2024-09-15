@@ -14,6 +14,9 @@ import {CivitAiModelNamePipe} from "../../pipes/civit-ai-model-name.pipe";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
 import {DatabaseService} from "../../services/database.service";
 import {OutputFormat} from "../../types/output-format";
+import {TranslatorService} from "../../services/translator.service";
+import {toPromise} from "../../helper/resolvable";
+import {Unsubscribable} from "../../types/unsubscribable";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -43,6 +46,7 @@ export class ImagesComponent implements OnInit {
   private imagesSizeBytes = signal<number | null>(null);
 
   public loading = signal(true);
+  public loaderText = signal('');
   public pages: WritableSignal<number[]> = signal([]);
   public currentPage = signal(1);
   public lastPage = signal(1);
@@ -83,6 +87,7 @@ export class ImagesComponent implements OnInit {
     private readonly database: DatabaseService,
     @Inject(DOCUMENT) private readonly document: Document,
     @Inject(PLATFORM_ID) platformId: string,
+    private readonly translator: TranslatorService,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
@@ -135,12 +140,39 @@ export class ImagesComponent implements OnInit {
   }
 
   private async loadData(storage: DataStorage<any>): Promise<void> {
-    const images = await storage.loadImages(this.currentPage(), this.perPage);
+    const imagesResponse = await storage.loadImages(this.currentPage(), this.perPage);
+    let subscription: Unsubscribable | null = null;
+    if (!imagesResponse.isLocal) {
+      this.loaderText.set(await toPromise(this.translator.get('app.images.loader_text.loading_from_cloud')));
+      subscription = imagesResponse.progressUpdater.subscribe(async progress => {
+        if (progress.loaded === null) {
+          this.loaderText.set(await toPromise(this.translator.get('app.images.loader_text.loading_from_cloud')));
+          return;
+        }
+
+        if (progress.total !== null) {
+          this.loaderText.set(await toPromise(this.translator.get('app.images.loader_text.loading_progress_with_total', {
+            progress: progress.loaded,
+            total: progress.total,
+          })));
+          return;
+        }
+
+        this.loaderText.set(await toPromise(this.translator.get('app.images.loader_text.loading_progress', {
+          progress: progress.loaded,
+        })));
+      });
+    }
+    const images = await imagesResponse.result;
+    subscription?.unsubscribe();
+
     this.currentResults.set(images.rows.map(image => ({link: URL.createObjectURL(image.data), ...image})));
 
     this.pages.set([...Array(images.lastPage).keys()].map(i => i + 1));
     this.lastPage.set(images.lastPage);
     this.imagesSizeBytes.set(await storage.getSize());
+
+    this.loaderText.set('');
   }
 
   public async sendToTxt2Img(image: StoredImageWithLink): Promise<void> {
