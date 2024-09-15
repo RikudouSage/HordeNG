@@ -96,6 +96,8 @@ export class SharedKeysComponent implements OnInit {
       this.loadData().then(() => {
         this.loading.set(false);
       })
+    }, {
+      allowSignalWrites: true,
     });
   }
 
@@ -112,6 +114,10 @@ export class SharedKeysComponent implements OnInit {
   }
 
   private async loadData(): Promise<void> {
+    if (!this.currentUser()!.sharedkey_ids?.length) {
+      this.sharedKeyDetails.set([]);
+      return;
+    }
     const response = await toPromise(this.api.getSharedKeys(this.currentUser().sharedkey_ids ?? []));
     if (!response.success) {
       await this.messageService.error(this.translator.get('app.error.api_error', {
