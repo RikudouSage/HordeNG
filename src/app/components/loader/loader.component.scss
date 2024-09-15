@@ -1,6 +1,8 @@
 @import "../../../scss/colors";
 @import "../../../scss/breakpoints";
 
+$size: 75px;
+
 :host {
   display: flex;
   align-items: center;
@@ -13,7 +15,7 @@
 }
 
 .loader {
-  width: 75px;
+  width: $size;
   aspect-ratio: 1;
   border-radius: 50%;
   border: 8px solid $primaryColor;
@@ -25,6 +27,13 @@
   @include mediaMax($large) {
     width: 50px;
   }
+}
+
+p {
+  position: relative;
+  top: $size + 20px;
+  padding: 0 10vw;
+  text-align: center;
 }
 
 @keyframes l20-1 {

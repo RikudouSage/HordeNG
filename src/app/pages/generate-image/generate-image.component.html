@@ -1,5 +1,5 @@
 @if (loading()) {
-  <app-loader/>
+  <app-loader [text]="loaderText()"/>
 } @else {
   <form [formGroup]="form" (ngSubmit)="generateImage()">
     <div class="row setWrapper">

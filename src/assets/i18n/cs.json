@@ -304,5 +304,7 @@
   "app.discord.join": "Náš Discord server",
   "app.notification.discord": "Tip: Pokud jste se ještě nepřidali k Discordu AI Hordy, jděte na stránku Horda zde v HordeNG, kde najdete aktuální pozvánku na Discord.",
   "app.settings.clear_cache": "Vymazat cache",
-  "app.settings.clear_cache.success": "Cache byla úspěšně vymazána."
+  "app.settings.clear_cache.success": "Cache byla úspěšně vymazána.",
+  "app.generate.loader_text.converting": "Konvertování obrázků do vámi zvoleného formátu ({{format}}), to může chvíli zabrat...",
+  "app.generate.loader_text.uploading": "Probíhá nahrávání vašich obrázků na vámi zvolený cloud, to může chvíli zabrat..."
 }

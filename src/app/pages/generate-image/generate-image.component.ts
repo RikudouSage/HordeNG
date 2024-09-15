@@ -92,6 +92,7 @@ import {TextualInversionsComponent} from "./parts/textual-inversions/textual-inv
 import {OutputFormat} from "../../types/output-format";
 import {QrCodeComponentValue, QrCodeFormComponent} from "./parts/qr-code-form/qr-code-form.component";
 import {convertToJpeg, convertToPng} from "../../helper/image-converter";
+import {Unsubscribable} from "../../types/unsubscribable";
 
 interface Result {
   width: number;
@@ -176,6 +177,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   private imageWrapper = signal<ElementRef<HTMLDivElement> | null>(null);
 
   public loading = signal(true);
+  public loaderText = signal('');
   public kudosCost = signal<number | null>(null);
   public availableModels: WritableSignal<ModelConfigurations> = signal({});
   public liveModelDetails: WritableSignal<Record<string, number>> = signal({});
@@ -644,21 +646,25 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     this.loading.set(false);
 
     const subscription = interval(50).subscribe(() => {
-      if (this.imageWrapper()) {
-        const boundingRect = this.imageWrapper()!.nativeElement.getBoundingClientRect();
-        if (
-          boundingRect.top >= 0
-          && boundingRect.left >= 0
-          && boundingRect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-          && boundingRect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        ) {
-          subscription.unsubscribe();
-          return;
-        }
-        window.scrollTo({left: 0, top: boundingRect.top + document.documentElement.scrollTop});
-        subscription.unsubscribe();
-      }
+      this.scrollToImage(subscription);
     });
+  }
+
+  private scrollToImage(subscription: Unsubscribable | null) {
+    if (this.imageWrapper()) {
+      const boundingRect = this.imageWrapper()!.nativeElement.getBoundingClientRect();
+      if (
+        boundingRect.top >= 0
+        && boundingRect.left >= 0
+        && boundingRect.bottom <= (window.innerHeight || document.documentElement.clientHeight)
+        && boundingRect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      ) {
+        subscription?.unsubscribe();
+        return;
+      }
+      window.scrollTo({left: 0, top: boundingRect.top + document.documentElement.scrollTop});
+      subscription?.unsubscribe();
+    }
   }
 
   private get formAsOptions(): GenerationOptions {
@@ -745,11 +751,15 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
         seed: generations[i - 1].seed,
         generator: 'HordeNG (https://horde-ng.org)'
       };
+      const text = await toPromise(this.translator.get('app.generate.loader_text.converting', {format: format}));
       if (format === OutputFormat.Png) {
+        this.loaderText.set(text)
         image = await this.convertToPng(image, generationMetadata);
       } else if (format === OutputFormat.Jpeg) {
+        this.loaderText.set(text)
         image = await this.convertToJpeg(image, generationMetadata);
       }
+      this.loaderText.set('');
 
       results.push({
         source: URL.createObjectURL(image),
@@ -780,10 +790,18 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       };
       storeImagePromises.push(storage.storeImage(storeData));
     }
+
+    this.loaderText.set(await toPromise(this.translator.get('app.generate.loader_text.uploading')));
     const storedImages = await Promise.all(storeImagePromises);
+    this.loaderText.set('');
+
     await storage.storeImagesInCache(...storedImages);
     await this.database.removeJobMetadata(metadata);
     this.result.set(results);
+
+    const subscription = interval(50).subscribe(() => {
+      this.scrollToImage(subscription);
+    });
   }
 
   public async cancelGeneration(): Promise<void> {
