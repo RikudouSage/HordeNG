@@ -310,5 +310,8 @@
   "app.generate.loader_text.uploading": "Uploading the images to your chosen cloud provider, this might take a while...",
   "app.images.loader_text.loading_from_cloud": "Downloading all of your images from your chosen cloud provider, this might take a while depending on the amount of images you have stored.",
   "app.images.loader_text.loading_progress": "Downloading image #{{progress}} from cloud...",
-  "app.images.loader_text.loading_progress_with_total": "Downloading image #{{progress}} of {{total}} from cloud..."
+  "app.images.loader_text.loading_progress_with_total": "Downloading image #{{progress}} of {{total}} from cloud...",
+  "app.images.temp_share.success": "The image has been uploaded to a temporary storage and the link has been copied to your clipboard! The link will expire in 24 hours.",
+  "app.share.temporary": "Share image",
+  "app.share.temporary.progress": "Uploading your image into a temporary storage..."
 }

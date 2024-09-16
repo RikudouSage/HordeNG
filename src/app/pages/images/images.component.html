@@ -36,7 +36,10 @@
         <div class="cursor-pointer" (click)="openModal(modal)">
           <img src="{{image.link}}" alt="{{'app.generated_image.alt' | transloco}}" />
           <ng-template #modal>
-            <div class="modal-content">
+            @if (shareInProgress()) {
+              <app-loader [text]="'app.share.temporary.progress' | transloco" />
+            }
+            <div class="modal-content" [class.invisible]="shareInProgress()">
               <div class="image">
                 <a target="_blank" href="{{image.link}}">
                   <img src="{{image.link}}" alt="{{'app.generated_image.alt' | transloco}}" />
@@ -94,6 +97,11 @@
                 <button class="btn btn-danger" (click)="deleteImage(image)">{{'app.delete' | transloco}}</button>
                 <button class="btn btn-primary" (click)="sendToTxt2Img(image)">{{'app.send.txt2img' | transloco}}</button>
                 <button class="btn btn-primary" (click)="download(image)">{{'app.download' | transloco}}</button>
+                <button class="btn btn-primary"
+                        share-image [image]="image"
+                        (uploadStarted)="shareInProgress.set(true)"
+                        (uploadFinished)="shareInProgress.set(false)"
+                >{{'app.share.temporary' | transloco}}</button>
               </div>
             </div>
           </ng-template>

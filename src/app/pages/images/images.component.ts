@@ -17,6 +17,7 @@ import {OutputFormat} from "../../types/output-format";
 import {TranslatorService} from "../../services/translator.service";
 import {toPromise} from "../../helper/resolvable";
 import {Unsubscribable} from "../../types/unsubscribable";
+import {ShareImageButtonDirective} from "../../directives/share-image-button.directive";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -33,7 +34,8 @@ interface StoredImageWithLink extends StoredImage {
     YesNoComponent,
     CivitAiModelNamePipe,
     AsyncPipe,
-    LoraTextRowComponent
+    LoraTextRowComponent,
+    ShareImageButtonDirective,
   ],
   templateUrl: './images.component.html',
   styleUrl: './images.component.scss'
@@ -78,6 +80,7 @@ export class ImagesComponent implements OnInit {
 
     return map[index];
   });
+  public shareInProgress = signal(false);
 
   constructor(
     private readonly storageManager: DataStorageManagerService,

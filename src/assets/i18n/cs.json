@@ -309,5 +309,8 @@
   "app.generate.loader_text.uploading": "Probíhá nahrávání vašich obrázků na vámi zvolený cloud, to může chvíli zabrat...",
   "app.images.loader_text.loading_from_cloud": "Probíhá stahování všech vašich obrázků z vámi zvoleného cloudu, to může chvíli zabrat, pokud jich tam máte hodně.",
   "app.images.loader_text.loading_progress": "Stahování obrázku č. {{progress}} z cloudu...",
-  "app.images.loader_text.loading_progress_with_total": "Stahování obrázku č. {{progress}} z {{total}} z cloudu..."
+  "app.images.loader_text.loading_progress_with_total": "Stahování obrázku č. {{progress}} z {{total}} z cloudu...",
+  "app.images.temp_share.success": "Obrázek byl nahrán do dočasného uložiště a odkaz byl zkopírován do vaší schránky! Odkaz vyprší za 24 hodin.",
+  "app.share.temporary": "Sdílet obrázek",
+  "app.share.temporary.progress": "Nahrávání obrázku do dočasného uložiště..."
 }
