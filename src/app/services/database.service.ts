@@ -149,6 +149,7 @@ export class DatabaseService {
       textualInversionList: <TextualInversionGenerationOption[]>valuesMap['textualInversionList'] ?? DefaultGenerationOptions.textualInversionList,
       qrCode: valuesMap['qrCode'] ?? DefaultGenerationOptions.qrCode,
       transparent: <boolean>valuesMap['transparent'] ?? false,
+      extraSlowWorkers: <boolean>valuesMap['extraSlowWorkers'] ?? false,
     };
   }
 

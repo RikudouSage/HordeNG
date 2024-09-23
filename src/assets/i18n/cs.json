@@ -312,5 +312,7 @@
   "app.images.loader_text.loading_progress_with_total": "Stahování obrázku č. {{progress}} z {{total}} z cloudu...",
   "app.images.temp_share.success": "Obrázek byl nahrán do dočasného uložiště a odkaz byl zkopírován do vaší schránky! Odkaz vyprší za 24 hodin.",
   "app.share.temporary": "Sdílet obrázek",
-  "app.share.temporary.progress": "Nahrávání obrázku do dočasného uložiště..."
+  "app.share.temporary.progress": "Nahrávání obrázku do dočasného uložiště...",
+  "app.generate.extra_slow_workers": "Velmi pomalí workeři?",
+  "app.generate.help.extra_slow_workers": "Povolí i velmi pomalým workerům zpracovat váš požadavek. Použijte pouze, pokud na obrázek nespěcháte, generování může zabrat několik minut."
 }

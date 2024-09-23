@@ -324,6 +324,11 @@
             </app-toggle-checkbox>
           </div>
           <div class="form-group">
+            <app-toggle-checkbox [description]="'app.generate.extra_slow_workers' | transloco" formControlName="extraSlowWorkers">
+              <app-tooltip [text]="'app.generate.help.extra_slow_workers' | transloco" />
+            </app-toggle-checkbox>
+          </div>
+          <div class="form-group">
             <app-toggle-checkbox [description]="'app.generate.censor_nsfw' | transloco" formControlName="censorNsfw">
               <app-tooltip [text]="'app.generate.help.censor_nsfw' | transloco" />
             </app-toggle-checkbox>

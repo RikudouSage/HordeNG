@@ -46,6 +46,7 @@ export interface GenerationOptions {
   amount: number;
   qrCode: QrCodeComponentValue | null;
   transparent: boolean;
+  extraSlowWorkers: boolean;
 }
 
 export const DefaultGenerationOptions: GenerationOptions = {
@@ -76,4 +77,5 @@ export const DefaultGenerationOptions: GenerationOptions = {
   amount: 1,
   qrCode: null,
   transparent: false,
+  extraSlowWorkers: false,
 };

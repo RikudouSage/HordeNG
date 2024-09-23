@@ -313,5 +313,7 @@
   "app.images.loader_text.loading_progress_with_total": "Downloading image #{{progress}} of {{total}} from cloud...",
   "app.images.temp_share.success": "The image has been uploaded to a temporary storage, and the link has been copied to your clipboard! The link will expire in 24 hours.",
   "app.share.temporary": "Share image",
-  "app.share.temporary.progress": "Uploading your image into a temporary storage..."
+  "app.share.temporary.progress": "Uploading your image into a temporary storage...",
+  "app.generate.extra_slow_workers": "Extra slow workers?",
+  "app.generate.help.extra_slow_workers": "Allows even workers that are very slow to process your jobs. Use this if you're in no rush, generations might possibly take multiple minutes."
 }
