@@ -12,7 +12,7 @@
   "navigationDividerColorDark": "#000000",
   "backgroundColor": "#1C1B22",
   "enableNotifications": true,
-  "startUrl": "/",
+  "startUrl": "/setup-censorship",
   "iconUrl": "https://horde-ng.org/assets/icons/icon-512x512.png",
   "maskableIconUrl": "https://horde-ng.org/assets/icons/icon-512x512.png",
   "splashScreenFadeOutDuration": 300,

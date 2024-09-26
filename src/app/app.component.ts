@@ -51,6 +51,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public async ngOnInit(): Promise<void> {
+    this.censorshipService.initialize();
     if (this.isBrowser) {
       const availableLanguages = this.transloco.getAvailableLangs().map(value => typeof value === 'string' ? value : value.id);
       const storedLanguage = await this.database.getAppLanguage();

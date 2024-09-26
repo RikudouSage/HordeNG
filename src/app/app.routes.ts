@@ -29,4 +29,8 @@ export const routes: Routes = [
     path: 'privacy-policy',
     loadComponent: () => import('./pages/privacy-policy/privacy-policy.component').then(m => m.PrivacyPolicyComponent),
   },
+  {
+    path: 'setup-censorship',
+    loadComponent: () => import('./pages/setup-censorship/setup-censorship.component').then(m => m.SetupCensorshipComponent),
+  },
 ];
