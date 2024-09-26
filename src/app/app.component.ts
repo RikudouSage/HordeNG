@@ -17,6 +17,7 @@ import {isPlatformBrowser} from "@angular/common";
 import {NotificationService} from "./services/notification/notification.service";
 import {interval, startWith} from "rxjs";
 import {Subscriptions} from "./helper/subscriptions";
+import {CensorshipService} from "./services/censorship.service";
 
 @Component({
   selector: 'app-root',
@@ -42,6 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
     @Inject(PLATFORM_ID) platformId: string,
     private readonly notifications: NotificationService,
     private readonly router: Router,
+    private readonly censorshipService: CensorshipService,
     view: ViewContainerRef,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);

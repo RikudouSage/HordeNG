@@ -48,8 +48,20 @@
     background: linear-gradient(to bottom, $mainTextColor 0%, $mainTextColor 100%);
   }
 
+  &.disabled {
+    .toggle:hover &:before {
+      background: gray;
+    }
+    &:before {
+      background: gray;
+    }
+  }
+
   .toggle-checkbox:checked + & {
     background: $successColor;
+    &.disabled {
+      background: darken($successColor, 30%);
+    }
 
     &:before {
       left: 24px;

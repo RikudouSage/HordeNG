@@ -314,5 +314,6 @@
   "app.share.temporary": "Sdílet obrázek",
   "app.share.temporary.progress": "Nahrávání obrázku do dočasného uložiště...",
   "app.generate.extra_slow_workers": "Velmi pomalí workeři?",
-  "app.generate.help.extra_slow_workers": "Povolí i velmi pomalým workerům zpracovat váš požadavek. Použijte pouze, pokud na obrázek nespěcháte, generování může zabrat několik minut."
+  "app.generate.help.extra_slow_workers": "Povolí i velmi pomalým workerům zpracovat váš požadavek. Použijte pouze, pokud na obrázek nespěcháte, generování může zabrat několik minut.",
+  "app.generate.help.censored_option": "Kvůli Google Play nemůžete tuto možnost upravit. Pokud chcete necenzurovanou verzi aplikace, zobrazte si ji na webu."
 }

@@ -93,6 +93,7 @@ import {OutputFormat} from "../../types/output-format";
 import {QrCodeComponentValue, QrCodeFormComponent} from "./parts/qr-code-form/qr-code-form.component";
 import {convertToJpeg, convertToPng} from "../../helper/image-converter";
 import {Unsubscribable} from "../../types/unsubscribable";
+import {CensorshipService} from "../../services/censorship.service";
 
 interface Result {
   width: number;
@@ -176,6 +177,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
   private swiperThumbsContainer = signal<ElementRef<HTMLDivElement> | null>(null);
   private imageWrapper = signal<ElementRef<HTMLDivElement> | null>(null);
 
+  public nsfwCensored = this.censorshipService.nsfwCensored;
   public loading = signal(true);
   public loaderText = signal('');
   public kudosCost = signal<number | null>(null);
@@ -371,6 +373,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     private readonly modalService: ModalService,
     private readonly civitAi: CivitAiService,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly censorshipService: CensorshipService,
     @Inject(DOCUMENT) private readonly document: Document,
     @Inject(PLATFORM_ID) platformId: string,
   ) {
@@ -388,6 +391,17 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
         setting: 'chosen_style',
         value: style,
       });
+    });
+
+    effect(() => {
+      if (this.nsfwCensored()) {
+        this.form.patchValue({
+          nsfw: false,
+          censorNsfw: true,
+        });
+        this.form.controls.nsfw.disable();
+        this.form.controls.censorNsfw.disable();
+      }
     });
 
     // swiper
@@ -696,8 +710,8 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       seed: value.seed || null,
       hiresFix: value.hiresFix ?? false,
       faceFixerStrength: value.faceFixerStrength ?? 0.75,
-      nsfw: value.nsfw ?? false,
-      censorNsfw: value.censorNsfw ?? false,
+      nsfw: this.nsfwCensored() ? false : (value.nsfw ?? false),
+      censorNsfw: this.nsfwCensored() ? true : (value.censorNsfw ?? false),
       slowWorkers: value.slowWorkers ?? true,
       trustedWorkers: value.trustedWorkers ?? false,
       allowDowngrade: value.allowDowngrade ?? false,
