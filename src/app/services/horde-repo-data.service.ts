@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {CacheService} from "./cache.service";
 import {HttpClient} from "@angular/common/http";
-import {catchError, from, map, Observable, of, switchMap, tap, zip} from "rxjs";
+import {from, map, Observable, of, switchMap, tap, zip} from "rxjs";
 import {ModelConfigurations} from "../types/sd-repo/model-configuration";
 import {CategoriesResponse, EnrichedPromptStyle, PromptStyles} from "../types/sd-repo/prompt-style";
 import {mergeDeep} from "../helper/merge-deep";
@@ -35,20 +35,11 @@ export class HordeRepoDataService {
           return of(cacheItem.value!);
         }
 
-        return this.httpClient.get<ModelConfigurations>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-image-model-reference/refs/heads/flux/stable_diffusion.json').pipe(
+        return this.httpClient.get<ModelConfigurations>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-image-model-reference/main/stable_diffusion.json').pipe(
           tap(result => {
             cacheItem.value = result;
             cacheItem.expiresAfter(24 * 60 * 60)
             this.cache.save(cacheItem);
-          }),
-          catchError(() => {
-            return this.httpClient.get<ModelConfigurations>('https://raw.githubusercontent.com/Haidra-Org/AI-Horde-image-model-reference/main/stable_diffusion.json').pipe(
-              tap(result => {
-                cacheItem.value = result;
-                cacheItem.expiresAfter(24 * 60 * 60)
-                this.cache.save(cacheItem);
-              }),
-            );
           }),
         );
       }),
