@@ -161,3 +161,8 @@ label {
   font-weight: bold;
 }
 
+input, select, textare {
+  &.ng-invalid {
+    border: 1px solid $dangerColor !important;
+  }
+}
