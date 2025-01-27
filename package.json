@@ -68,6 +68,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "patch-package": "^8.0.0",
     "postinstall-postinstall": "^2.1.0",
+    "serverless": "3",
     "typescript": "~5.5.3"
   }
 }
