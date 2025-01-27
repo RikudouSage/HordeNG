@@ -30,6 +30,7 @@ export class DatabaseService {
     Settings: 'settings',
     Cache: 'cache',
     Notifications: 'notifications',
+    PrivateMessages: 'private_messages',
   };
 
   public async getAppLanguage(): Promise<string | null> {
@@ -184,6 +185,16 @@ export class DatabaseService {
     await Promise.all(promises);
   }
 
+  public async privateMessageAlreadyRead(messageHash: string): Promise<boolean> {
+    return (await this.getValue(this.ObjectStores.PrivateMessages, messageHash)) !== undefined;
+  }
+
+  public async markPrivateMessageAsRead(messageHash: string, expiresAt: Date): Promise<void> {
+    await this.setValue(this.ObjectStores.PrivateMessages, {
+      hash: messageHash,
+    });
+  }
+
   private async getAll<T>(storeName: string): Promise<T[]> {
     const db = await this.getDatabase();
     const transaction = db.transaction(storeName, "readonly");
@@ -281,7 +292,7 @@ export class DatabaseService {
     }
 
     return new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open("horde_ng", 3);
+      const request = indexedDB.open("horde_ng", 4);
       request.onsuccess = () => {
         this._database = request.result;
         resolve(request.result);
@@ -329,6 +340,12 @@ export class DatabaseService {
             case 2:
               db.createObjectStore(this.ObjectStores.Notifications, {
                 keyPath: 'id',
+                autoIncrement: false,
+              });
+              break;
+            case 3:
+              db.createObjectStore(this.ObjectStores.PrivateMessages, {
+                keyPath: 'hash',
                 autoIncrement: false,
               });
               break;

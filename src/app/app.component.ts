@@ -18,6 +18,7 @@ import {NotificationService} from "./services/notification/notification.service"
 import {interval, startWith} from "rxjs";
 import {Subscriptions} from "./helper/subscriptions";
 import {CensorshipService} from "./services/censorship.service";
+import {PrivateMessageService} from "./services/private-message.service";
 
 @Component({
   selector: 'app-root',
@@ -44,6 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private readonly notifications: NotificationService,
     private readonly router: Router,
     private readonly censorshipService: CensorshipService,
+    private readonly privateMessageService: PrivateMessageService,
     view: ViewContainerRef,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -95,6 +97,32 @@ export class AppComponent implements OnInit, OnDestroy {
           await this.notifications.markAsRead(notification);
         }));
       }));
+
+      let currentlyDisplayedPrivateMessage: string | null = null;
+      this.subscriptions.add(interval(60_000).pipe(startWith(0)).subscribe(async () => {
+        const message = await this.privateMessageService.getMessageToDisplay();
+        if (message === null) {
+          return;
+        }
+
+        if (currentlyDisplayedPrivateMessage === message.id) {
+          return;
+        }
+        currentlyDisplayedPrivateMessage = message.id;
+
+        const item = this.toastr.info(
+          message.message,
+          await toPromise(this.translator.get('app.private_message.title', {from: message.origin})),
+          {
+            closeButton: true,
+            disableTimeOut: true,
+          }
+        );
+        this.subscriptions.add(item.onHidden.subscribe(async () => {
+          currentlyDisplayedPrivateMessage = null;
+          await this.privateMessageService.markAsRead(message);
+        }));
+      }));
     }
 
     if (this.updates.isEnabled) {
@@ -129,7 +157,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (typeof navigator !== 'undefined' && !await navigator.storage.persisted()) {
+    if (typeof navigator !== 'undefined' && navigator.storage !== undefined && !await navigator.storage.persisted()) {
       await navigator.storage.persist();
     }
   }

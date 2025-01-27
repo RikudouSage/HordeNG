@@ -315,5 +315,7 @@
   "app.share.temporary.progress": "Nahrávání obrázku do dočasného uložiště...",
   "app.generate.extra_slow_workers": "Velmi pomalí workeři?",
   "app.generate.help.extra_slow_workers": "Povolí i velmi pomalým workerům zpracovat váš požadavek. Použijte pouze, pokud na obrázek nespěcháte, generování může zabrat několik minut.",
-  "app.generate.help.censored_option": "Kvůli Google Play nemůžete tuto možnost upravit. Pokud chcete necenzurovanou verzi aplikace, zobrazte si ji na webu."
+  "app.generate.help.censored_option": "Kvůli Google Play nemůžete tuto možnost upravit. Pokud chcete necenzurovanou verzi aplikace, zobrazte si ji na webu.",
+  "app.private_message.title": "Nová soukromá zpráva od {{from}}",
+  "app.notifications.workers": "Zprávy poslané přímo tvým workerům"
 }

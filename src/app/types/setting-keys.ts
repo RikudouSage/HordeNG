@@ -5,4 +5,5 @@ export enum SettingKey {
   NotificationsHordeNewsEnabled = 'notificationsHordeNewsEnabled',
   NotificationsPartiesEnabled = 'notificationsPartiesEnabled',
   NotificationsOtherEnabled = 'notificationsOtherEnabled',
+  NotificationsWorkerMessages = 'notificationsWorkerMessages',
 }

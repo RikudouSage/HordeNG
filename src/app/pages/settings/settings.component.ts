@@ -2,7 +2,6 @@ import {Component, Inject, OnInit, PLATFORM_ID, Signal, signal, WritableSignal} 
 import {TranslocoPipe, TranslocoService} from "@jsverse/transloco";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthManagerService} from "../../services/auth-manager.service";
-import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
 import {LoaderComponent} from "../../components/loader/loader.component";
@@ -38,7 +37,6 @@ import {CacheService} from "../../services/cache.service";
   imports: [
     TranslocoPipe,
     ReactiveFormsModule,
-    FaIconComponent,
     LoaderComponent,
     KeyValuePipe,
     ToggleablePasswordInputComponent,
@@ -91,6 +89,7 @@ export class SettingsComponent implements OnInit {
     notificationsHordeNews: new FormControl<boolean>(false),
     notificationsParties: new FormControl<boolean>(false),
     notificationsOther: new FormControl<boolean>(false),
+    notificationsWorkerMessages: new FormControl<boolean>(true),
     s3_accessKey: new FormControl<string>(''),
     s3_secretKey: new FormControl<string>(''),
     s3_bucket: new FormControl<string>(''),
@@ -193,6 +192,7 @@ export class SettingsComponent implements OnInit {
         notificationsHordeNgNews: (await this.database.getSetting(SettingKey.NotificationsHordeNgNewsEnabled, true)).value,
         notificationsMarketing: (await this.database.getSetting(SettingKey.NotificationsMarketingEnabled, true)).value,
         notificationsOther: (await this.database.getSetting(SettingKey.NotificationsOtherEnabled, true)).value,
+        notificationsWorkerMessages: (await this.database.getSetting(SettingKey.NotificationsWorkerMessages, true)).value,
       });
 
       const storages: {[key: string]: string} = {};
@@ -267,6 +267,10 @@ export class SettingsComponent implements OnInit {
       this.database.setSetting({
         setting: SettingKey.NotificationsOtherEnabled,
         value: this.form.value.notificationsOther,
+      }),
+      this.database.setSetting({
+        setting: SettingKey.NotificationsWorkerMessages,
+        value: this.form.value.notificationsWorkerMessages,
       }),
     ]);
 
