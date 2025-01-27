@@ -84,6 +84,7 @@ export abstract class AbstractExternalDataStorage<TCredentials extends Credentia
           page: page,
           lastPage: lastPage,
           rows: images.slice((page - 1) * perPage, page * perPage),
+          totalCount: total,
         };
       }),
       progressUpdater: updater,

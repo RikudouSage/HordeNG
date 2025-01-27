@@ -241,10 +241,20 @@ export class DatabaseService {
           if (result.length < limit) {
             cursor.continue();
           } else {
-            resolve({page: page, lastPage: Math.ceil(count / limit), rows: result});
+            resolve({
+              page: page,
+              lastPage: Math.ceil(count / limit),
+              rows: result,
+              totalCount: count,
+            });
           }
         } else {
-          resolve({page: page, lastPage: Math.ceil(count / limit), rows: result});
+          resolve({
+            page: page,
+            lastPage: Math.ceil(count / limit),
+            rows: result,
+            totalCount: count,
+          });
         }
       };
     });

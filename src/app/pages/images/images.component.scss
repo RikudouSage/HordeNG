@@ -96,6 +96,9 @@
   &:nth-of-type(2) {
     order: -1;
   }
+  &:nth-of-type(3) {
+    order: -2;
+  }
 
   &.wrap {
     flex-wrap: wrap;
@@ -156,4 +159,16 @@
     line-height: 1.5;
     background: #26252B;
   }
+}
+
+.list-buttons {
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  text-align: right;
+}
+
+app-loader.static {
+  position: relative;
+  margin-top: 4vh;
+  margin-bottom: 4vh;
 }

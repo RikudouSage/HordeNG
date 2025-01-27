@@ -111,4 +111,24 @@
       }
     </div>
   </div>
+  <div class="row">
+    <ng-template #downloadAllImagesConfirm>
+      <div class="modal-content">
+        @if (downloadAllInProgress()) {
+          <p>{{'app.download_all.in_progress' | transloco:{total: downloadProgress()[1], current: downloadProgress()[0]} }}</p>
+          <app-loader class="static" />
+        } @else {
+          <transloco key="app.download_all.warning" />
+          <div class="buttons">
+            <button class="btn btn-primary" (click)="downloadAllImages()">{{'app.download' | transloco}}</button>
+          </div>
+        }
+      </div>
+    </ng-template>
+
+    <div class="col-md-9"></div>
+    <div class="col-md-3 list-buttons">
+      <button class="btn btn-primary" (click)="openModal(downloadAllImagesConfirm)">{{'app.images.download_all' | transloco}}</button>
+    </div>
+  </div>
 }

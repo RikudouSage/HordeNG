@@ -318,5 +318,9 @@
   "app.generate.help.extra_slow_workers": "Allows even workers that are very slow to process your jobs. Use this if you're in no rush, generations might possibly take multiple minutes.",
   "app.generate.help.censored_option": "Google Play policies disallow you to edit this option. If you want to see an uncensored version of this app, visit it in your web browser.",
   "app.private_message.title": "New private message from {{from}}",
-  "app.notifications.workers": "Messages sent directly to your workers"
+  "app.notifications.workers": "Messages sent directly to your workers",
+  "app.images.download_all": "Download all images",
+  "app.download_all.warning": "[p]Are you sure you want to download all of your images?[/p][p]If you have a lot of them, it might take a very long time and low-end devices might not be able to download them at all.[/p]",
+  "app.cancel": "Cancel",
+  "app.download_all.in_progress": "Downloading image #{{current}} of {{total}}"
 }

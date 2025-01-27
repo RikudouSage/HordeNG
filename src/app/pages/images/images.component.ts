@@ -1,7 +1,7 @@
 import {Component, computed, Inject, OnInit, PLATFORM_ID, signal, TemplateRef, WritableSignal} from '@angular/core';
 import {DataStorageManagerService} from "../../services/data-storage-manager.service";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
-import {AsyncPipe, DOCUMENT, isPlatformBrowser} from "@angular/common";
+import {DOCUMENT, isPlatformBrowser} from "@angular/common";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {StoredImage} from "../../types/db/stored-image";
 import {TranslocoPipe} from "@jsverse/transloco";
@@ -10,7 +10,6 @@ import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {YesNoComponent} from "../../components/yes-no/yes-no.component";
 import {DataStorage} from "../../services/image-storage/data-storage";
 import {PostProcessor} from "../../types/horde/post-processor";
-import {CivitAiModelNamePipe} from "../../pipes/civit-ai-model-name.pipe";
 import {LoraTextRowComponent} from "../../components/lora-text-row/lora-text-row.component";
 import {DatabaseService} from "../../services/database.service";
 import {OutputFormat} from "../../types/output-format";
@@ -18,6 +17,9 @@ import {TranslatorService} from "../../services/translator.service";
 import {toPromise} from "../../helper/resolvable";
 import {Unsubscribable} from "../../types/unsubscribable";
 import {ShareImageButtonDirective} from "../../directives/share-image-button.directive";
+import {TranslocoMarkupComponent} from "ngx-transloco-markup";
+import JSZip from "jszip";
+import {saveAs} from "file-saver";
 
 interface StoredImageWithLink extends StoredImage {
   link: string;
@@ -32,10 +34,9 @@ interface StoredImageWithLink extends StoredImage {
     TranslocoPipe,
     FormatNumberPipe,
     YesNoComponent,
-    CivitAiModelNamePipe,
-    AsyncPipe,
     LoraTextRowComponent,
     ShareImageButtonDirective,
+    TranslocoMarkupComponent,
   ],
   templateUrl: './images.component.html',
   styleUrl: './images.component.scss'
@@ -81,6 +82,8 @@ export class ImagesComponent implements OnInit {
     return map[index];
   });
   public shareInProgress = signal(false);
+  public downloadAllInProgress = signal(false);
+  public downloadProgress = signal<[number, number]>([0, 0]);
 
   constructor(
     private readonly storageManager: DataStorageManagerService,
@@ -174,6 +177,7 @@ export class ImagesComponent implements OnInit {
     this.pages.set([...Array(images.lastPage).keys()].map(i => i + 1));
     this.lastPage.set(images.lastPage);
     this.imagesSizeBytes.set(await storage.getSize());
+    this.downloadProgress.update(value => [value[0], images.totalCount]);
 
     this.loaderText.set('');
   }
@@ -197,5 +201,30 @@ export class ImagesComponent implements OnInit {
     a.download = `${image.prompt.trim()}.${image.format ?? OutputFormat.Webp}`;
     a.click();
     a.remove();
+  }
+
+  public async downloadAllImages(): Promise<void> {
+    this.downloadAllInProgress.set(true);
+    this.downloadProgress.update(value => [0, value[1]]);
+    const storage = await this.storageManager.currentStorage;
+
+    const zip = new JSZip();
+
+    let lastPage = 1;
+    let imageIndex = 0;
+    for (let i = 1; i <= lastPage; i++) {
+      const imagesResponse = await storage.loadImages(i, this.perPage);
+      const images = await imagesResponse.result;
+      lastPage = images.lastPage;
+
+      for (const image of images.rows) {
+        zip.file(`${image.id}.${image.format ?? OutputFormat.Webp}`, image.data);
+        this.downloadProgress.update(value => [imageIndex++, value[1]]);
+      }
+    }
+
+    const binary = await zip.generateAsync({type: 'blob'});
+    saveAs(binary, 'HordeNG-Export.zip');
+    this.downloadAllInProgress.set(false);
   }
 }
