@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {PrivateMessage} from "../types/private-message";
+import {IncomingPrivateMessage} from "../types/incoming-private-message";
 import {AiHorde} from "./ai-horde.service";
 import {toPromise} from "../helper/resolvable";
 import {DatabaseService} from "./database.service";
@@ -15,7 +15,7 @@ export class PrivateMessageService {
   ) {
   }
 
-  public async getMessageToDisplay(): Promise<PrivateMessage | null> {
+  public async getMessageToDisplay(): Promise<IncomingPrivateMessage | null> {
     const enabled = await this.database.getSetting(SettingKey.NotificationsWorkerMessages, true);
     if (!enabled.value) {
       return null;
@@ -37,7 +37,7 @@ export class PrivateMessageService {
     return null;
   }
 
-  public async markAsRead(message: PrivateMessage): Promise<void> {
+  public async markAsRead(message: IncomingPrivateMessage): Promise<void> {
     await this.database.markPrivateMessageAsRead(message.id, new Date(message.expiry));
   }
 }

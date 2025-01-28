@@ -10,6 +10,7 @@
         [collapsedByDefault]="true"
         [onlineInTitle]="true"
         (pauseStatusUpdated)="refreshWorkerPauseStatus(worker, $event)"
+        [canSendMessage]="true"
       />
     } @empty {
       <p>{{'app.workers.no_workers' | transloco}}</p>
