@@ -1,7 +1,7 @@
-import {Component, effect, input, OnInit, output, Signal, signal, TemplateRef} from '@angular/core';
+import {Component, Directive, effect, input, OnInit, output, Signal, signal, TemplateRef} from '@angular/core';
 import {TranslocoPipe} from "@jsverse/transloco";
 import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
-import {faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faPencil, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {BoxComponent} from "../../../../components/box/box.component";
@@ -17,6 +17,20 @@ import {MessageService} from "../../../../services/message.service";
 import {TranslatorService} from "../../../../services/translator.service";
 import {ModalService} from "../../../../services/modal.service";
 import {toPromise} from "../../../../helper/resolvable";
+import {ApiResponse} from "../../../../types/api-response";
+
+@Directive({
+  selector: 'ng-template[shared-key-form]',
+  standalone: true,
+})
+export class SharedKeyFormNgTemplate {
+  static ngTemplateContextGuard(
+    directive: SharedKeyFormNgTemplate,
+    context: unknown
+  ): context is {sharedKey?: SharedKey} {
+    return true;
+  }
+}
 
 @Component({
   selector: 'app-shared-keys',
@@ -29,7 +43,8 @@ import {toPromise} from "../../../../helper/resolvable";
     FormatNumberPipe,
     FormatDatetimePipe,
     FaIconComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SharedKeyFormNgTemplate
   ],
   templateUrl: './shared-keys.component.html',
   styleUrl: './shared-keys.component.scss'
@@ -39,12 +54,13 @@ export class SharedKeysComponent implements OnInit {
 
   public loading = signal(true);
   public removeIcon: Signal<IconDefinition> = signal(faTrash);
+  public editIcon: Signal<IconDefinition> = signal(faPencil);
   public sharedKeyDetails = signal<SharedKey[] | null>(null);
 
   public sharedKeyRemoved = output<string>();
   public sharedKeyCreated = output<string>();
 
-    public createSharedKeyForm = new FormGroup({
+  public form = new FormGroup({
     kudosLimit: new FormControl<number>(5_000, [
       Validators.min(-1),
       Validators.max(50_000_000),
@@ -102,13 +118,13 @@ export class SharedKeysComponent implements OnInit {
   }
 
   public async ngOnInit(): Promise<void> {
-    this.createSharedKeyForm.controls.maxImagePixels.valueChanges.subscribe(value => {
+    this.form.controls.maxImagePixels.valueChanges.subscribe(value => {
       if (value === null) {
         return;
       }
 
       if (value < -1) {
-        this.createSharedKeyForm.patchValue({maxImagePixels: -1});
+        this.form.patchValue({maxImagePixels: -1});
       }
     });
   }
@@ -147,27 +163,55 @@ export class SharedKeysComponent implements OnInit {
     this.loading.set(false);
   }
 
-  public async openModal(createKeyModal: TemplateRef<any>): Promise<void> {
-    this.modalService.open(createKeyModal);
+  public async openModal(modal: TemplateRef<any>, sharedKey?: SharedKey): Promise<void> {
+    this.form.patchValue({
+      name: sharedKey?.name,
+      expiry: sharedKey?.expiry ? Number(sharedKey.expiry) : -1,
+      kudosLimit: sharedKey?.kudos ?? 5_000,
+      maxImagePixels: sharedKey?.max_image_pixels ?? -1,
+      maxImageSteps: sharedKey?.max_image_steps ?? -1,
+      maxTextTokens: sharedKey?.max_text_tokens ?? -1,
+    })
+
+    this.modalService.open(modal, {
+      context: {
+        sharedKey: sharedKey,
+      }
+    });
   }
 
-  public async createSharedKey(): Promise<void> {
-    if (!this.createSharedKeyForm.valid) {
+  public async saveSharedKey(sharedKey?: SharedKey): Promise<void> {
+    if (!this.form.valid) {
       await this.messageService.error(this.translator.get('app.error.form_invalid'));
       return;
     }
     await this.modalService.close();
 
-    const form = this.createSharedKeyForm.value;
+    const form = this.form.value;
     this.loading.set(true);
-    const response = await toPromise(this.api.createSharedKey({
-      name: form.name!,
-      expiry: form.expiry!,
-      kudos: form.kudosLimit!,
-      max_image_pixels: form.maxImagePixels!,
-      max_image_steps: form.maxImageSteps!,
-      max_text_tokens: form.maxTextTokens!,
-    }));
+
+    let response: ApiResponse<SharedKey>;
+    if (sharedKey === undefined) {
+      response = await toPromise(this.api.createSharedKey({
+        name: form.name!,
+        expiry: form.expiry!,
+        kudos: form.kudosLimit!,
+        max_image_pixels: form.maxImagePixels!,
+        max_image_steps: form.maxImageSteps!,
+        max_text_tokens: form.maxTextTokens!,
+      }));
+    } else {
+      response = await toPromise(this.api.updateSharedKey({
+        name: form.name!,
+        expiry: String(form.expiry!),
+        kudos: form.kudosLimit!,
+        max_image_pixels: form.maxImagePixels!,
+        max_image_steps: form.maxImageSteps!,
+        max_text_tokens: form.maxTextTokens!,
+        id: sharedKey.id,
+      }))
+    }
+
     if (!response.success) {
       await this.messageService.error(this.translator.get('app.error.api_error', {
         message: response.errorResponse!.message,
@@ -177,7 +221,11 @@ export class SharedKeysComponent implements OnInit {
       return;
     }
 
-    await this.messageService.success(this.translator.get('app.shared_key.create.success'));
+    if (sharedKey === undefined) {
+      await this.messageService.success(this.translator.get('app.shared_key.create.success'));
+    } else {
+      await this.messageService.success(this.translator.get('app.shared_key.update.success'));
+    }
     this.sharedKeyCreated.emit(response.successResponse!.id);
 
     await this.loadData();
