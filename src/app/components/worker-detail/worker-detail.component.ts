@@ -56,7 +56,7 @@ export class WorkerDetailComponent implements OnInit {
   public sendMessageForm = new FormGroup({
     message: new FormControl<string>('', [Validators.required]),
     expiry: new FormControl<number>(1, [Validators.required]),
-    origin: new FormControl<string>('HordeNG', [Validators.required]), // todo
+    // origin: new FormControl<string>('HordeNG', [Validators.required]), // todo
   });
 
   public buttons = computed((): BoxButton[] => {
@@ -137,11 +137,11 @@ export class WorkerDetailComponent implements OnInit {
   }
 
   public async ngOnInit() {
-    const origin = await this.cacheService.getItem<string>('app.private_message.origin');
+    // const origin = await this.cacheService.getItem<string>('app.private_message.origin');
     const expiry = await this.cacheService.getItem<number>('app.private_message.expiry');
-    if (origin.isHit) {
-      this.sendMessageForm.patchValue({origin: origin.value});
-    }
+    // if (origin.isHit) {
+    //   this.sendMessageForm.patchValue({origin: origin.value});
+    // }
     if (expiry.isHit) {
       this.sendMessageForm.patchValue({expiry: expiry.value});
     }
@@ -174,7 +174,7 @@ export class WorkerDetailComponent implements OnInit {
     const result = await toPromise(this.api.sendMessage({
       message: form.message!,
       expiry: form.expiry!,
-      origin: form.origin!,
+      // origin: form.origin!,
       worker_id: this.worker()!.id,
     }));
 
