@@ -254,7 +254,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
     await client.send(new PutObjectCommand({
       Bucket: await this.getBucket(),
       Key: `${await this.getPrefix()}/${image.id}.webp`,
-      Body: image.data,
+      Body: new Uint8Array(await image.data.arrayBuffer()),
       Metadata: metadata,
       ContentType: 'image/webp',
     }));
