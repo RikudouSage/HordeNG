@@ -322,5 +322,11 @@
   "app.images.download_all": "Download all images",
   "app.download_all.warning": "[p]Are you sure you want to download all of your images?[/p][p]If you have a lot of them, it might take a very long time and low-end devices might not be able to download them at all.[/p]",
   "app.cancel": "Cancel",
-  "app.download_all.in_progress": "Downloading image #{{current}} of {{total}}"
+  "app.download_all.in_progress": "Downloading image #{{current}} of {{total}}",
+  "app.worker.send_message": "Send a message",
+  "app.send_message.intro": "You're sending a message to [b]{{worker}}[/b].",
+  "app.private_message.origin": "Origin",
+  "app.private_message.message": "Message",
+  "app.success.private_message": "The private message was sent successfully!",
+  "app.send": "Send"
 }

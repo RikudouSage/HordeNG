@@ -11,6 +11,10 @@
   background: none;
   border: none;
   cursor: pointer;
+  margin-right: 0.4vw;
+  &:last-of-type {
+    margin-right: 0;
+  }
 
   &[disabled] {
     color: $mainTextDisabledColor;

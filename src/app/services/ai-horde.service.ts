@@ -21,7 +21,7 @@ import {UpdateWorkerRequest} from "../types/horde/update-worker-request";
 import {CacheHelperService} from "./cache-helper.service";
 import {RequestErrorCode} from "../types/horde/request-error-code";
 import {WorkerType} from "../types/horde/worker-type";
-import {PrivateMessage} from "../types/private-message";
+import {IncomingPrivateMessage, OutgoingPrivateMessage} from "../types/incoming-private-message";
 
 @Injectable({
   providedIn: 'root'
@@ -191,8 +191,12 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Get, `generate/status/${job.id}`);
   }
 
-  public getMessages(): Observable<ApiResponse<PrivateMessage[]>> {
+  public getMessages(): Observable<ApiResponse<IncomingPrivateMessage[]>> {
     return this.sendRequest(HttpMethod.Get, `workers/messages`);
+  }
+
+  public sendMessage(message: OutgoingPrivateMessage): Observable<ApiResponse<IncomingPrivateMessage>> {
+    return this.sendRequest(HttpMethod.Post, `workers/messages`, message);
   }
 
   public cancelJob(job: JobInProgress): Observable<ApiResponse<any>> {
