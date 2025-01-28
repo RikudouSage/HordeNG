@@ -317,5 +317,9 @@
   "app.generate.help.extra_slow_workers": "Povolí i velmi pomalým workerům zpracovat váš požadavek. Použijte pouze, pokud na obrázek nespěcháte, generování může zabrat několik minut.",
   "app.generate.help.censored_option": "Kvůli Google Play nemůžete tuto možnost upravit. Pokud chcete necenzurovanou verzi aplikace, zobrazte si ji na webu.",
   "app.private_message.title": "Nová soukromá zpráva od {{from}}",
-  "app.notifications.workers": "Zprávy poslané přímo tvým workerům"
+  "app.notifications.workers": "Zprávy poslané přímo tvým workerům",
+  "app.images.download_all": "Stáhnout všechny obrázky",
+  "app.download_all.warning": "[p]Určitě chcete stáhnout všechny obrázky?[/p][p]Pokud jich máte hodně, může to zabrat opravdu dlouho a na slabších zařízeních se to nemusí povést vůbec.[/p]",
+  "app.cancel": "Zrušit",
+  "app.download_all.in_progress": "Stahování obrázku {{current}} z {{total}}"
 }
