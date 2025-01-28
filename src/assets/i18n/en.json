@@ -328,5 +328,7 @@
   "app.private_message.origin": "Origin",
   "app.private_message.message": "Message",
   "app.success.private_message": "The private message was sent successfully!",
-  "app.send": "Send"
+  "app.send": "Send",
+  "app.edit": "Edit",
+  "app.shared_key.update.success": "Your shared key was successfully updated."
 }

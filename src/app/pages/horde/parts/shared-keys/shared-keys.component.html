@@ -102,6 +102,10 @@
           <!--                  </tr>-->
         </table>
         <div class="flex-end">
+          <button class="btn btnBig btn-primary mr-05" (click)="openModal(createKeyModal, sharedKey)">
+            <fa-icon [icon]="editIcon()" />
+            {{'app.edit' | transloco}}
+          </button>
           <button class="btn btnBig btn-danger" (click)="removeSharedKey(sharedKey)">
             <fa-icon [icon]="removeIcon()" />
             {{'app.delete' | transloco}}
@@ -118,13 +122,13 @@
   </div>
 </app-box>
 
-<ng-template #createKeyModal>
+<ng-template #createKeyModal let-sharedKey="sharedKey" shared-key-form>
   <div class="row create-key-row">
     <div class="col-md-12">
-      <form [formGroup]="createSharedKeyForm" (ngSubmit)="createSharedKey()">
+      <form [formGroup]="form" (ngSubmit)="saveSharedKey(sharedKey)">
         <div class="form-group">
           <label for="inputSharedKeyName">{{'app.shared_keys.create.name' | transloco}}</label>
-          <input type="text" class="form-control" formControlName="name" id="inputSharedKeyName" />
+          <input type="text" class="form-control" formControlName="name" id="inputSharedKeyName" autofocus />
         </div>
         <div class="form-group">
           <label for="inputSharedKeyKudosLimit">{{'app.shared_keys.create.kudos_limit' | transloco}}</label>
@@ -138,7 +142,7 @@
         </div>
         <div class="form-group">
           <label for="inputSharedKeyMaxImagePixels">{{'app.shared_keys.create.max_image_pixels' | transloco}}</label>
-          <input type="number" [step]="createSharedKeyForm.controls.maxImagePixels.value! < 0 ? 1 : 64" max="4194304" class="form-control" formControlName="maxImagePixels" id="inputSharedKeyMaxImagePixels" />
+          <input type="number" [step]="form.controls.maxImagePixels.value! < 0 ? 1 : 64" max="4194304" class="form-control" formControlName="maxImagePixels" id="inputSharedKeyMaxImagePixels" />
           <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
         </div>
         <div class="form-group">
@@ -147,7 +151,13 @@
           <small>{{'app.shared_keys.create.minus_one_unlimited' | transloco}}</small>
         </div>
 
-        <button type="submit" class="btn btnBig btn-primary" [disabled]="!createSharedKeyForm.valid">{{'app.shared_keys.create.create' | transloco}}</button>
+        <button type="submit" class="btn btnBig btn-primary" [disabled]="!form.valid">
+          @if (sharedKey) {
+            {{'app.save' | transloco}}
+          } @else {
+            {{'app.shared_keys.create.create' | transloco}}
+          }
+        </button>
       </form>
     </div>
   </div>

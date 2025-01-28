@@ -321,5 +321,7 @@
   "app.images.download_all": "Stáhnout všechny obrázky",
   "app.download_all.warning": "[p]Určitě chcete stáhnout všechny obrázky?[/p][p]Pokud jich máte hodně, může to zabrat opravdu dlouho a na slabších zařízeních se to nemusí povést vůbec.[/p]",
   "app.cancel": "Zrušit",
-  "app.download_all.in_progress": "Stahování obrázku {{current}} z {{total}}"
+  "app.download_all.in_progress": "Stahování obrázku {{current}} z {{total}}",
+  "app.edit": "Upravit",
+  "app.shared_key.update.success": "Sdílený klíč byl úspěšně upraven."
 }

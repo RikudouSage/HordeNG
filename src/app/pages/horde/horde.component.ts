@@ -5,23 +5,12 @@ import {UserDetails} from "../../types/horde/user-details";
 import {toPromise} from "../../helper/resolvable";
 import {MessageService} from "../../services/message.service";
 import {TranslatorService} from "../../services/translator.service";
-import {TranslocoPipe} from "@jsverse/transloco";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
-import {SmallBoxComponent} from "../../components/small-box/small-box.component";
-import {FormatNumberPipe} from "../../pipes/format-number.pipe";
-import {BoxComponent} from "../../components/box/box.component";
-import {AsyncPipe, isPlatformBrowser} from "@angular/common";
-import {YesNoComponent} from "../../components/yes-no/yes-no.component";
-import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
-import {MathSqrtPipe} from "../../pipes/math-sqrt.pipe";
+import {isPlatformBrowser} from "@angular/common";
 import {ReactiveFormsModule} from "@angular/forms";
 import {AuthManagerService} from "../../services/auth-manager.service";
-import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
-import {FormatDatetimePipe} from "../../pipes/format-date.pipe";
-import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {CurrentUserStatusComponent} from "./parts/current-user-status/current-user-status.component";
 import {HordeStatusComponent} from "./parts/horde-status/horde-status.component";
-import {WorkerDetailComponent} from "../../components/worker-detail/worker-detail.component";
 import {YourWorkersComponent} from "./parts/your-workers/your-workers.component";
 import {TransferKudosComponent} from "./parts/transfer-kudos/transfer-kudos.component";
 import {SharedKeysComponent} from "./parts/shared-keys/shared-keys.component";
@@ -32,22 +21,10 @@ import {AllWorkersComponent} from "./parts/all-workers/all-workers.component";
   standalone: true,
   imports: [
     LoaderComponent,
-    TranslocoPipe,
     TranslocoMarkupComponent,
-    SmallBoxComponent,
-    FormatNumberPipe,
-    BoxComponent,
-    YesNoComponent,
-    PrintSecondsPipe,
-    AsyncPipe,
-    MathSqrtPipe,
     ReactiveFormsModule,
-    CopyButtonComponent,
-    FormatDatetimePipe,
-    FaIconComponent,
     CurrentUserStatusComponent,
     HordeStatusComponent,
-    WorkerDetailComponent,
     YourWorkersComponent,
     TransferKudosComponent,
     SharedKeysComponent,

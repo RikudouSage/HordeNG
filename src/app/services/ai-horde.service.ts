@@ -231,6 +231,18 @@ export class AiHorde {
     return this.sendRequest(HttpMethod.Put, `sharedkeys`, key);
   }
 
+  public updateSharedKey(key: Omit<SharedKey, 'utilized' | 'username'>): Observable<ApiResponse<SharedKey>> {
+    const update: Omit<SharedKey, 'utilized' | 'username' | 'id'> = {
+      name: key.name,
+      expiry: key.expiry,
+      max_text_tokens: key.max_text_tokens,
+      kudos: key.kudos,
+      max_image_steps: key.max_image_steps,
+      max_image_pixels: key.max_image_pixels,
+    };
+    return this.sendRequest(HttpMethod.Patch, `sharedkeys/${key.id}`, update);
+  }
+
   public removeSharedKey(key: SharedKey): Observable<ApiResponse<any>> {
     // noinspection SpellCheckingInspection
     return this.sendRequest(HttpMethod.Delete, `sharedkeys/${key.id}`);
