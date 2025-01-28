@@ -322,6 +322,12 @@
   "app.download_all.warning": "[p]Určitě chcete stáhnout všechny obrázky?[/p][p]Pokud jich máte hodně, může to zabrat opravdu dlouho a na slabších zařízeních se to nemusí povést vůbec.[/p]",
   "app.cancel": "Zrušit",
   "app.download_all.in_progress": "Stahování obrázku {{current}} z {{total}}",
+  "app.worker.send_message": "Odeslat zprávu",
+  "app.send_message.intro": "Odesíláte zprávu pro [b]{{worker}}[/b].",
+  "app.private_message.origin": "Původ",
+  "app.private_message.message": "Zpráva",
+  "app.success.private_message": "Zpráva byla úspěšně odeslána!",
+  "app.send": "Odeslat",
   "app.edit": "Upravit",
   "app.shared_key.update.success": "Sdílený klíč byl úspěšně upraven."
 }
