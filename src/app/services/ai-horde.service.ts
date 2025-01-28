@@ -240,7 +240,7 @@ export class AiHorde {
       max_image_steps: key.max_image_steps,
       max_image_pixels: key.max_image_pixels,
     };
-    return this.sendRequest(HttpMethod.Patch, `sharedKeys/${key.id}`, update);
+    return this.sendRequest(HttpMethod.Patch, `sharedkeys/${key.id}`, update);
   }
 
   public removeSharedKey(key: SharedKey): Observable<ApiResponse<any>> {

@@ -223,10 +223,10 @@ export class SharedKeysComponent implements OnInit {
 
     if (sharedKey === undefined) {
       await this.messageService.success(this.translator.get('app.shared_key.create.success'));
+      this.sharedKeyCreated.emit(response.successResponse!.id);
     } else {
       await this.messageService.success(this.translator.get('app.shared_key.update.success'));
     }
-    this.sharedKeyCreated.emit(response.successResponse!.id);
 
     await this.loadData();
     this.loading.set(false);
