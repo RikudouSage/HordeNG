@@ -1,23 +1,57 @@
-@if (!isDeleted()) {
-  <ng-template #sendMessageModal>
-    <div class="modal-body">
-      <form [formGroup]="sendMessageForm" (ngSubmit)="sendMessage()">
-        <div class="mb-2">
-          <transloco key="app.send_message.intro" [params]="{worker: worker().name}" />
-        </div>
-<!--        <div class="form-group">-->
-<!--          <label for="origin">{{'app.private_message.origin' | transloco}}</label>-->
-<!--          <input class="form-control" id="origin" formControlName="origin" />-->
-<!--        </div>-->
-        <div class="form-group">
-          <label for="message">{{'app.private_message.message' | transloco}}</label>
-          <textarea class="form-control" id="message" formControlName="message" auto-grow></textarea>
-        </div>
+<ng-template #sendMessageModal>
+  <div class="modal-body">
+    <form [formGroup]="sendMessageForm" (ngSubmit)="sendMessage()">
+      <div class="mb-2">
+        <transloco key="app.send_message.intro" [params]="{worker: worker().name}" />
+      </div>
+      <!--        <div class="form-group">-->
+      <!--          <label for="origin">{{'app.private_message.origin' | transloco}}</label>-->
+      <!--          <input class="form-control" id="origin" formControlName="origin" />-->
+      <!--        </div>-->
+      <div class="form-group">
+        <label for="message">{{'app.private_message.message' | transloco}}</label>
+        <textarea class="form-control" id="message" formControlName="message" auto-grow></textarea>
+      </div>
 
-        <button class="btn btn-primary" type="submit">{{'app.send' | transloco}}</button>
-      </form>
-    </div>
-  </ng-template>
+      <button class="btn btn-primary" type="submit">{{'app.send' | transloco}}</button>
+    </form>
+  </div>
+</ng-template>
+<ng-template #editWorkerModal>
+  <div class="modal-body">
+    <form [formGroup]="editWorkerForm" (ngSubmit)="saveWorker()">
+      <div class="form-group">
+        <app-toggle-checkbox [description]="'app.worker.maintenance_mode' | transloco" formControlName="maintenanceMode"/>
+      </div>
+      @if (editWorkerForm.value.maintenanceMode) {
+        <div class="form-group">
+          <label for="maintenanceMessage">{{'app.worker.maintenance_message' | transloco}}</label>
+          <textarea class="form-control" id="maintenanceMessage" formControlName="maintenanceMessage" auto-grow></textarea>
+          <small>{{'app.worker.maintenance_message.description' | transloco}}</small>
+        </div>
+      }
+      <div class="form-group">
+        <label for="name">{{'app.worker.name' | transloco}}</label>
+        <input class="form-control" id="name" formControlName="name" />
+        <small>{{'app.worker.name.description' | transloco}}</small>
+      </div>
+      <div class="form-group">
+        <label for="info">{{'app.worker.info' | transloco}}</label>
+        <textarea class="form-control" id="info" formControlName="info" auto-grow></textarea>
+        <small>{{'app.worker.info.description' | transloco}}</small>
+      </div>
+      <div class="form-group">
+        <label for="teamId">{{'app.worker.team_id' | transloco}}</label>
+        <textarea class="form-control" id="teamId" formControlName="teamId" auto-grow></textarea>
+        <small>{{'app.worker.team_id.description' | transloco}}</small>
+      </div>
+
+      <button type="submit" class="btn btn-primary">{{'app.save' | transloco}}</button>
+    </form>
+  </div>
+</ng-template>
+
+@if (!isDeleted()) {
   <div class="workersDetail">
   <app-box [title]="title()" [collapsible]="collapsible()" [collapsedByDefault]="collapsedByDefault()" [buttons]="buttons()">
     <table class="table key-value">
@@ -25,6 +59,12 @@
         <td>{{'app.worker.type' | transloco}}</td>
         <td>{{worker().type}}</td>
       </tr>
+      @if (worker().info) {
+        <tr>
+          <td>{{'app.worker.info' | transloco}}</td>
+          <td>{{worker().info}}</td>
+        </tr>
+      }
       <tr>
         <td>{{'app.worker.online' | transloco}}</td>
         <td><app-yes-no [value]="worker().online" /></td>

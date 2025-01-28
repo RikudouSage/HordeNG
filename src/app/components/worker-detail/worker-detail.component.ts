@@ -8,7 +8,7 @@ import {YesNoComponent} from "../yes-no/yes-no.component";
 import {MathSqrtPipe} from "../../pipes/math-sqrt.pipe";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {AsyncPipe} from "@angular/common";
-import {faMessage, faPauseCircle, faPlayCircle} from "@fortawesome/free-solid-svg-icons";
+import {faMessage, faPauseCircle, faPencil, faPlayCircle} from "@fortawesome/free-solid-svg-icons";
 import {AiHorde} from "../../services/ai-horde.service";
 import {toPromise} from "../../helper/resolvable";
 import {MessageService} from "../../services/message.service";
@@ -18,6 +18,7 @@ import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/
 import {AutoGrowDirective} from "../../directives/auto-grow.directive";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {CacheService} from "../../services/cache.service";
+import {ToggleCheckboxComponent} from "../toggle-checkbox/toggle-checkbox.component";
 
 @Component({
   selector: 'app-worker-detail',
@@ -32,7 +33,8 @@ import {CacheService} from "../../services/cache.service";
     AsyncPipe,
     ReactiveFormsModule,
     AutoGrowDirective,
-    TranslocoMarkupComponent
+    TranslocoMarkupComponent,
+    ToggleCheckboxComponent
   ],
   templateUrl: './worker-detail.component.html',
   styleUrl: './worker-detail.component.scss'
@@ -59,6 +61,14 @@ export class WorkerDetailComponent implements OnInit {
     // origin: new FormControl<string>('HordeNG', [Validators.required]), // todo
   });
 
+  public editWorkerForm = new FormGroup({
+    maintenanceMode: new FormControl<boolean>(false),
+    maintenanceMessage: new FormControl<string>(''),
+    info: new FormControl<string>(''),
+    name: new FormControl<string>(''),
+    teamId: new FormControl<string>(''),
+  });
+
   public buttons = computed((): BoxButton[] => {
     if (!this.editable()) {
       return [];
@@ -66,7 +76,21 @@ export class WorkerDetailComponent implements OnInit {
 
     const buttons: BoxButton[] = [];
 
-    if (this.canSendMessage() && this.modal()) {
+    if (this.sendMessageModal()) {
+      buttons.push({
+        icon: faPencil,
+        enabled: true,
+        action: async event => {
+          event.preventDefault();
+          event.stopPropagation();
+
+          this.modalService.open(this.editWorkerModal()!);
+        },
+        title: this.transloco.translate('app.edit'),
+      });
+    }
+
+    if (this.canSendMessage() && this.sendMessageModal()) {
       buttons.push({
         icon: faMessage,
         enabled: true,
@@ -74,7 +98,7 @@ export class WorkerDetailComponent implements OnInit {
           event.preventDefault();
           event.stopPropagation();
 
-          this.modalService.open(this.modal()!);
+          this.modalService.open(this.sendMessageModal()!);
         },
         title: this.transloco.translate('app.worker.send_message')
       })
@@ -124,7 +148,8 @@ export class WorkerDetailComponent implements OnInit {
   public pauseStatusUpdated = output<boolean>();
   public deleted = output<void>();
 
-  private modal = viewChild<TemplateRef<unknown>>('sendMessageModal');
+  private sendMessageModal = viewChild<TemplateRef<unknown>>('sendMessageModal');
+  private editWorkerModal = viewChild<TemplateRef<unknown>>('editWorkerModal');
 
   constructor(
     private readonly transloco: TranslocoService,
@@ -145,6 +170,13 @@ export class WorkerDetailComponent implements OnInit {
     if (expiry.isHit) {
       this.sendMessageForm.patchValue({expiry: expiry.value});
     }
+
+    this.editWorkerForm.patchValue({
+      maintenanceMode: this.worker().maintenance_mode,
+      info: this.worker().info,
+      name: this.worker().name,
+      teamId: this.worker().team.id,
+    });
   }
 
   public async deleteWorker(): Promise<void> {
@@ -185,6 +217,33 @@ export class WorkerDetailComponent implements OnInit {
     }
 
     await this.messenger.success(this.translator.get('app.success.private_message'));
+    this.loading.set(false);
+    await this.modalService.close();
+  }
+
+  public async saveWorker(): Promise<void> {
+    if (!this.editWorkerForm.valid) {
+      await this.messenger.error(this.translator.get('app.error.form_invalid'));
+      return;
+    }
+
+    this.loading.set(true);
+    const form = this.editWorkerForm.value;
+    const result = await toPromise(this.api.updateWorker(this.worker().id, {
+      maintenance: form.maintenanceMode ?? undefined,
+      info: form.info ?? undefined,
+      name: form.name ?? undefined,
+      maintenance_msg: form.maintenanceMessage ?? undefined,
+      team: form.teamId ?? undefined,
+    }));
+
+    if (!result.success) {
+      await this.messenger.error(this.translator.get('app.error.api_error', {message: result.errorResponse!.message, code: result.errorResponse!.rc}));
+      this.loading.set(false);
+      return;
+    }
+
+    await this.messenger.success(this.translator.get('app.success.update_worker'));
     this.loading.set(false);
     await this.modalService.close();
   }

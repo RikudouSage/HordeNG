@@ -330,5 +330,14 @@
   "app.success.private_message": "The private message was sent successfully!",
   "app.send": "Send",
   "app.edit": "Edit",
-  "app.shared_key.update.success": "Your shared key was successfully updated."
+  "app.shared_key.update.success": "Your shared key was successfully updated.",
+  "app.worker.maintenance_message": "Maintenance message",
+  "app.worker.maintenance_message.description": "The (optional) message that will be displayed if you put your worker into maintenance.",
+  "app.worker.info": "Info",
+  "app.worker.info.description": "A description of your worker that will be visible on the server. Please avoid any profanities.",
+  "app.worker.name": "Name",
+  "app.worker.name.description": "The name of the worker, you can change it here instead of in worker configuration. Please avoid any profanities.",
+  "app.worker.team_id": "Team ID",
+  "app.worker.team_id.description": "The ID of the team this worker contributes kudos to.",
+  "app.success.update_worker": "Worker details were successfully updated."
 }

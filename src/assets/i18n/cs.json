@@ -329,5 +329,14 @@
   "app.success.private_message": "Zpráva byla úspěšně odeslána!",
   "app.send": "Odeslat",
   "app.edit": "Upravit",
-  "app.shared_key.update.success": "Sdílený klíč byl úspěšně upraven."
+  "app.shared_key.update.success": "Sdílený klíč byl úspěšně upraven.",
+  "app.worker.maintenance_message": "Zpráva o údržbě",
+  "app.worker.maintenance_message.description": "Volitelná zpráva, která se zobrazí poté, co přepnete workera do režimu údržby.",
+  "app.worker.info": "Info",
+  "app.worker.info.description": "Popisek vašeho workera viditelný na serveru. Vyhněte se prosím nevhodným výrazům.",
+  "app.worker.name": "Jméno",
+  "app.worker.name.description": "Jméno workera, můžete jej změnit zde namísto v konfiguraci workera. Vyhněte se prosím nevhodným výrazům.",
+  "app.worker.team_id": "ID týmu",
+  "app.worker.team_id.description": "ID týmu, do kterého tento worker příspívá kudos.",
+  "app.success.update_worker": "Detaily vašeho workera byly úspěšně upraveny."
 }
