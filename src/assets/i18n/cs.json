@@ -338,5 +338,7 @@
   "app.worker.name.description": "Jméno workera, můžete jej změnit zde namísto v konfiguraci workera. Vyhněte se prosím nevhodným výrazům.",
   "app.worker.team_id": "ID týmu",
   "app.worker.team_id.description": "ID týmu, do kterého tento worker příspívá kudos.",
-  "app.success.update_worker": "Detaily vašeho workera byly úspěšně upraveny."
+  "app.success.update_worker": "Detaily vašeho workera byly úspěšně upraveny.",
+  "app.share": "Sdílet",
+  "app.shared_key.share.copied": "Odkaz na {{app.title.simple}} s vašim api klíčem byl zkopírován! Stačí jej otevřít a sdílený klíč bude automaticky použit."
 }

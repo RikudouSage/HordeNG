@@ -102,6 +102,10 @@
           <!--                  </tr>-->
         </table>
         <div class="flex-end">
+          <button class="btn btnBig btn-primary mr-05" (click)="shareLink(sharedKey)">
+            <fa-icon [icon]="shareIcon()" />
+            {{'app.share' | transloco}}
+          </button>
           <button class="btn btnBig btn-primary mr-05" (click)="openModal(createKeyModal, sharedKey)">
             <fa-icon [icon]="editIcon()" />
             {{'app.edit' | transloco}}

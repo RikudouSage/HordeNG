@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit, PLATFORM_ID, signal, ViewContainerRef} from '@angular/core';
-import {Router, RouterOutlet} from '@angular/router';
+import {ActivatedRoute, Router, RouterOutlet} from '@angular/router';
 import {TopMenuComponent} from "./components/top-menu/top-menu.component";
 import {AiHorde} from "./services/ai-horde.service";
 import {AuthManagerService} from "./services/auth-manager.service";
@@ -46,6 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly censorshipService: CensorshipService,
     private readonly privateMessageService: PrivateMessageService,
+    private readonly activatedRoute: ActivatedRoute,
     view: ViewContainerRef,
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -160,6 +161,13 @@ export class AppComponent implements OnInit, OnDestroy {
     if (typeof navigator !== 'undefined' && navigator.storage !== undefined && !await navigator.storage.persisted()) {
       await navigator.storage.persist();
     }
+
+    this.activatedRoute.queryParamMap.subscribe(paramMap => {
+      if (!paramMap.has('apiKey')) {
+        return;
+      }
+      this.authManager.apiKey = paramMap.get('apiKey')!;
+    });
   }
 
   public ngOnDestroy(): void {

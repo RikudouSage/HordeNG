@@ -1,7 +1,7 @@
 import {Component, Directive, effect, input, OnInit, output, Signal, signal, TemplateRef} from '@angular/core';
 import {TranslocoPipe} from "@jsverse/transloco";
 import {IconDefinition} from "@fortawesome/free-regular-svg-icons";
-import {faPencil, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faPencil, faShare, faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {BoxComponent} from "../../../../components/box/box.component";
@@ -55,6 +55,7 @@ export class SharedKeysComponent implements OnInit {
   public loading = signal(true);
   public removeIcon: Signal<IconDefinition> = signal(faTrash);
   public editIcon: Signal<IconDefinition> = signal(faPencil);
+  public shareIcon: Signal<IconDefinition> = signal(faShare);
   public sharedKeyDetails = signal<SharedKey[] | null>(null);
 
   public sharedKeyRemoved = output<string>();
@@ -230,5 +231,27 @@ export class SharedKeysComponent implements OnInit {
 
     await this.loadData();
     this.loading.set(false);
+  }
+
+  public async shareLink(sharedKey: SharedKey): Promise<void> {
+    const url = `${window.location.protocol}//${window.location.host}/generate?apiKey=${sharedKey.id}`;
+
+    const params = {
+      url: url,
+      title: 'HordeNG',
+    };
+
+    if (typeof navigator === 'undefined' || typeof navigator.share === 'undefined' || !navigator.canShare(params)) {
+      await navigator.clipboard.writeText(url);
+      await this.messageService.success(this.translator.get('app.shared_key.share.copied'));
+      return;
+    }
+
+    try {
+      await navigator.share(params);
+    } catch (e) {
+      await navigator.clipboard.writeText(url);
+      await this.messageService.success(this.translator.get('app.shared_key.share.copied'));
+    }
   }
 }

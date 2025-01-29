@@ -339,5 +339,7 @@
   "app.worker.name.description": "The name of the worker, you can change it here instead of in worker configuration. Please avoid any profanities.",
   "app.worker.team_id": "Team ID",
   "app.worker.team_id.description": "The ID of the team this worker contributes kudos to.",
-  "app.success.update_worker": "Worker details were successfully updated."
+  "app.success.update_worker": "Worker details were successfully updated.",
+  "app.share": "Share",
+  "app.shared_key.share.copied": "A link to {{app.title.simple}} with the API key has been copied to clipboard! Simply open it and the shared key will be applied automatically."
 }
