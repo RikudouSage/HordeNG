@@ -20,7 +20,7 @@ import {Sampler} from "../../types/horde/sampler";
 import {DatabaseService} from "../../services/database.service";
 import {LoaderComponent} from "../../components/loader/loader.component";
 import {TranslocoPipe} from "@jsverse/transloco";
-import {AsyncPipe, DOCUMENT, isPlatformBrowser, JsonPipe, KeyValuePipe, NgOptimizedImage} from "@angular/common";
+import {AsyncPipe, DOCUMENT, isPlatformBrowser, KeyValuePipe} from "@angular/common";
 import {AppValidators} from "../../helper/app-validators";
 import {FormatNumberPipe} from "../../pipes/format-number.pipe";
 import {KudosCostCalculator} from "../../services/kudos-cost-calculator.service";
@@ -40,7 +40,6 @@ import {
 import {RequestStatusCheck} from "../../types/horde/request-status-check";
 import {PrintSecondsPipe} from "../../pipes/print-seconds.pipe";
 import {HttpClient, HttpResponse} from "@angular/common/http";
-import {BlobToUrlPipe} from "../../pipes/blob-to-url.pipe";
 import {JobMetadata} from "../../types/job-metadata";
 import {TranslocoMarkupComponent} from "ngx-transloco-markup";
 import {RequestStatusFull} from "../../types/horde/request-status-full";
@@ -83,7 +82,6 @@ import {Swiper} from "swiper";
 import {Navigation, Pagination, Thumbs} from "swiper/modules";
 import {CopyButtonComponent} from "../../components/copy-button/copy-button.component";
 import {CivitAiModelIdPipe} from "../../pipes/civit-ai-model-id.pipe";
-import {GreatestCommonDivisorPipe} from "../../pipes/greatest-common-divisor.pipe";
 import {AspectRatioComponent} from "../../components/aspect-ratio/aspect-ratio.component";
 import {ActivatedRoute} from "@angular/router";
 import {toByteArray} from "base64-js";
@@ -121,12 +119,9 @@ interface Result {
     FormatNumberPipe,
     PrintSecondsPipe,
     AsyncPipe,
-    BlobToUrlPipe,
-    NgOptimizedImage,
     TranslocoMarkupComponent,
     TomSelectDirective,
     ToggleCheckboxComponent,
-    JsonPipe,
     YesNoComponent,
     PromptStyleModalComponent,
     EffectiveValueComponent,
@@ -143,7 +138,6 @@ interface Result {
     CivitAiModelVersionIdPipe,
     CopyButtonComponent,
     CivitAiModelIdPipe,
-    GreatestCommonDivisorPipe,
     AspectRatioComponent,
     TextualInversionsComponent,
     QrCodeFormComponent
@@ -694,6 +688,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     }
     postProcessors = postProcessors.concat(value.genericPostProcessors ?? []);
     postProcessors = postProcessors.filter((processor, index) => postProcessors.indexOf(processor) === index);
+    postProcessors = postProcessors.filter(processor => <string>processor !== '');
 
     return {
       prompt: value.prompt ?? '',
