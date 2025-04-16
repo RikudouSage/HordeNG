@@ -151,6 +151,7 @@ export class DatabaseService {
       qrCode: valuesMap['qrCode'] ?? DefaultGenerationOptions.qrCode,
       transparent: <boolean>valuesMap['transparent'] ?? false,
       extraSlowWorkers: <boolean>valuesMap['extraSlowWorkers'] ?? false,
+      replacementFilter: <boolean>valuesMap['replacementFilter'] ?? true,
     };
   }
 

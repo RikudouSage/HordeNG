@@ -116,6 +116,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
       qrCode: String(image.qrCode),
       transparent: String(Number(image.transparent)),
       extraSlowWorkers: String(Number(image.extraSlowWorkers)),
+      replacementFilter: String(Number(image.replacementFilter)),
     };
 
     await this.storeOption(`image.metadata.${image.id}`, metadata);
@@ -197,6 +198,7 @@ export class GoogleDriveDataStorage extends AbstractExternalDataStorage<GoogleDr
         qrCode: parseQrCodeFromRawValue(metadata['qrCode']),
         transparent: Boolean(Number(metadata['transparent'] ?? 0)),
         extraSlowWorkers: Boolean(Number(metadata['extraSlowWorkers'] ?? 0)),
+        replacementFilter: Boolean(Number(metadata['replacementFilter'] ?? 0)),
       }
     }));
   }

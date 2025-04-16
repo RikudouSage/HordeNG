@@ -200,6 +200,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
         qrCode: parseQrCodeFromRawValue(image.Metadata!['qrCode']),
         transparent: Boolean(Number(image.Metadata!['transparent'] ?? 0)),
         extraSlowWorkers: Boolean(Number(image.Metadata!['extraSlowWorkers'] ?? 0)),
+        replacementFilter: Boolean(Number(image.Metadata!['replacementFilter'] ?? 0)),
       }
     });
   }
@@ -249,6 +250,7 @@ export class S3DataStorage extends AbstractExternalDataStorage<S3Credentials> {
       qrCode: String(image.qrCode),
       transparent: String(Number(image.transparent)),
       extraSlowWorkers: String(Number(image.extraSlowWorkers)),
+      replacementFilter: String(Number(image.replacementFilter)),
     }
 
     await client.send(new PutObjectCommand({

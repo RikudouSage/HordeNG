@@ -342,6 +342,11 @@
             </app-toggle-checkbox>
           </div>
           <div class="form-group">
+            <app-toggle-checkbox [description]="'app.generate.replacement_filter' | transloco" formControlName="replacementFilter">
+              <app-tooltip [text]="'app.generate.help.replacement_filter' | transloco" />
+            </app-toggle-checkbox>
+          </div>
+          <div class="form-group">
             <app-toggle-checkbox [description]="'app.generate.trusted_workers' | transloco" formControlName="trustedWorkers">
               <app-tooltip [text]="'app.generate.help.trusted_workers' | transloco" />
             </app-toggle-checkbox>

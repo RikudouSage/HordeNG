@@ -341,5 +341,7 @@
   "app.worker.team_id.description": "The ID of the team this worker contributes kudos to.",
   "app.success.update_worker": "Worker details were successfully updated.",
   "app.share": "Share",
-  "app.shared_key.share.copied": "A link to {{app.title.simple}} with the API key has been copied to clipboard! Simply open it and the shared key will be applied automatically."
+  "app.shared_key.share.copied": "A link to {{app.title.simple}} with the API key has been copied to clipboard! Simply open it and the shared key will be applied automatically.",
+  "app.generate.replacement_filter": "Replacement filter",
+  "app.generate.help.replacement_filter": "If enabled, prompts are sanitized using string replacement filters."
 }

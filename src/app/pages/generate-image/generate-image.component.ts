@@ -340,6 +340,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
     qrCode: new FormControl<QrCodeComponentValue | null>(null),
     transparent: new FormControl<boolean>(false),
     extraSlowWorkers: new FormControl<boolean>(false),
+    replacementFilter: new FormControl<boolean>(true),
   });
 
   @ViewChild('swiperContainer', {static: false}) set swiperContainerChanged(container: ElementRef<HTMLDivElement> | undefined) {
@@ -719,6 +720,7 @@ export class GenerateImageComponent implements OnInit, OnDestroy, AfterViewInit 
       qrCode: value.qrCode ?? null,
       transparent: value.transparent ?? false,
       extraSlowWorkers: value.extraSlowWorkers ?? false,
+      replacementFilter: value.replacementFilter ?? true,
     };
   }
 

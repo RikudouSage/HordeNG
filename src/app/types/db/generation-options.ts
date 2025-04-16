@@ -47,6 +47,7 @@ export interface GenerationOptions {
   qrCode: QrCodeComponentValue | null;
   transparent: boolean;
   extraSlowWorkers: boolean;
+  replacementFilter: boolean;
 }
 
 export const DefaultGenerationOptions: GenerationOptions = {
@@ -78,4 +79,5 @@ export const DefaultGenerationOptions: GenerationOptions = {
   qrCode: null,
   transparent: false,
   extraSlowWorkers: false,
+  replacementFilter: true,
 };

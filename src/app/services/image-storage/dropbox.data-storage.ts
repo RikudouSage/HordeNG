@@ -94,6 +94,7 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
           qrCode: parseQrCodeFromRawValue(metadata.qrCode),
           transparent: Boolean(Number(metadata['transparent'] ?? 0)),
           extraSlowWorkers: Boolean(Number(metadata['extraSlowWorkers'] ?? 0)),
+          replacementFilter: Boolean(Number(metadata['replacementFilter'] ?? 0)),
         };
       }));
     } catch (e) {
@@ -141,6 +142,7 @@ export class DropboxDataStorage extends AbstractExternalDataStorage<DropboxCrede
       qrCode: String(image.qrCode),
       transparent: String(Number(image.transparent)),
       extraSlowWorkers: String(Number(image.extraSlowWorkers)),
+      replacementFilter: String(Number(image.replacementFilter)),
     };
     await Promise.all([
       this.uploadFile(`images/${image.id}.webp`, image.data, metadata),
