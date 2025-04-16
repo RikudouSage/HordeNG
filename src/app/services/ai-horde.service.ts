@@ -136,6 +136,7 @@ export class AiHorde {
         slow_workers: workers !== null ? true : options.slowWorkers,
         extra_slow_workers: workers !== null ? true : options.extraSlowWorkers,
         censor_nsfw: options.censorNsfw,
+        replacement_filter: options.replacementFilter,
         models: [options.model],
         dry_run: dryRun,
         allow_downgrade: options.allowDowngrade,
