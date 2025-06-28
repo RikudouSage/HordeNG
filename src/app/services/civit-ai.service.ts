@@ -14,7 +14,6 @@ enum ModelType {
 
 interface SearchOptions {
   query?: string;
-  page?: number;
   nsfw?: boolean;
   baseModels?: CivitAiBaseModel[];
   nextPageCursor?: string;
@@ -39,7 +38,6 @@ export class CivitAiService {
 
   public searchModels(options: SearchOptions): Observable<ModelSearchResponse> {
     options.query ??= '';
-    options.page ??= 1;
     options.nsfw ??= false;
     options.baseModels ??= [];
 
@@ -51,7 +49,7 @@ export class CivitAiService {
     const types = options.types?.map(type => `types=${type}`).join('&');
 
     const nsfwString = options.nsfw ? 'true' : 'false';
-    let url = `https://civitai.com/api/v1/models?${types}&sort=Highest%20Rated&limit=20&page=${options.page}&nsfw=${nsfwString}&query=${options.query.toLowerCase()}${baseModelsString}`
+    let url = `https://civitai.com/api/v1/models?${types}&sort=Highest%20Rated&limit=20&nsfw=${nsfwString}&query=${options.query.toLowerCase()}${baseModelsString}`
     if (options.nextPageCursor) {
       url += `&cursor=${options.nextPageCursor}`;
     }
@@ -59,7 +57,7 @@ export class CivitAiService {
     return this.httpClient.get<ModelSearchResponse>(url).pipe(
       catchError((err): Observable<ModelSearchResponse> => {
         console.error(err);
-        return of({items: [], metadata: {pageSize: 20, currentPage: options.page!}});
+        return of({items: [], metadata: {pageSize: 20}});
       }),
     );
   }
