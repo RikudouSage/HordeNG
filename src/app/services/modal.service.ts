@@ -36,12 +36,16 @@ export class ModalService {
 
   public async close(): Promise<void> {
     await this.lock();
-    if (!this.modals.length) {
-      return;
+    try {
+      if (!this.modals.length) {
+        return;
+      }
+      const modal = this.modals[this.modals.length - 1];
+      await modal.instance.close();
+      this.modals.pop();
+    } finally {
+      this.releaseLock();
     }
-    await this.modals[this.modals.length - 1].instance.close();
-    this.modals.pop();
-    this.releaseLock();
   }
 
   private assignDefaultOptions<T>(options: ModalOptions<T> | undefined): ModalOptions<T> {
